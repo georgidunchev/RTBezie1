@@ -29,7 +29,7 @@ void myMessageOutput(QtMsgType type, const char *msg)
 //    case QtFatalMsg:
 //	fprintf(stderr, "Fatal: %s\n", msg);
 //	abort();
-//    }123
+//    }
 }
 
 int main(int argc, char *argv[])
