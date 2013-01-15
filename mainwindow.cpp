@@ -13,7 +13,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     GetRaytracer()->GetCamera().SetCameraPos(QVector3D(0, 0, -1), QVector3D(0, 0, 1), QVector3D(0, -1, 0) );
     GetRaytracer()->SetCanvas(300,300);
-    GetRaytracer()->Render();
+    GetRaytracer()->RenderThreaded();
 }
 
 void MainWindow::paintEvent(QPaintEvent *pe)

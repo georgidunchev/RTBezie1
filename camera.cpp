@@ -57,7 +57,7 @@ void Camera::BeginFrame()
     vVertical = vDownLeftCorner - vUpLeftCorner;
 }
 
-CRay Camera::GetScreenRay(qreal x, qreal y)
+CRay Camera::GetScreenRay(int x, int y)
 {
     QVector3D vDest = vUpLeftCorner + vHorizontal * (x / m_fWidth)
 			 + vVertical * (y / m_fHeight);

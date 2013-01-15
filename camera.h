@@ -12,7 +12,7 @@ public:
     explicit Camera(QObject *parent = 0);
     
     void SetCameraPos(QVector3D vPos, QVector3D vDir, QVector3D vUp);
-    CRay GetScreenRay(qreal x, qreal y);
+    CRay GetScreenRay(int x, int y);
     void SetAspectRatio(qreal fAspectRatio);
     void SetCameraResolution(qreal fWidth, qreal fHeight);
     //calculate camera properties based on previous set up

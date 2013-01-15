@@ -17,7 +17,8 @@ SOURCES += main.cpp\
     ray.cpp \
     cmesh.cpp \
     intersactioninfo.cpp \
-    triangle.cpp
+    triangle.cpp \
+    raytracerthread.cpp
 
 HEADERS  += mainwindow.h \
     raytracer.h \
@@ -26,6 +27,7 @@ HEADERS  += mainwindow.h \
     ray.h \
     cmesh.h \
     intersactioninfo.h \
-    triangle.h
+    triangle.h \
+    raytracerthread.h
 
 FORMS    += mainwindow.ui
