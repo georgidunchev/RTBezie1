@@ -7,25 +7,32 @@
 #include "cmesh.h"
 
 CRaytracerThread::CRaytracerThread(int nThreadID)
-    :m_nThreadID(nThreadID)
+    : m_nThreadID(nThreadID)
 {
+
+}
+
+CRaytracerThread::~CRaytracerThread()
+{
+
 }
 
 void CRaytracerThread::run()
-{
+{     
+    emit ThreadStarted(m_nThreadID);
     forever
     {
 	m_nBucketId = GetRaytracer()->GetNextBucketId();
 	if (m_nBucketId < 0)
 	{
-	    return;
+	    break;
 	}
 
 	QRect bucketRect;
 	GetRaytracer()->GetBucketRectById(m_nBucketId, bucketRect);
 
-	for( int j = bucketRect.top(); j < bucketRect.bottom(); ++j)
-	    for (int i = bucketRect.left(); i < bucketRect.right(); ++i )
+	for( int j = bucketRect.top(); j <= bucketRect.bottom(); ++j)
+	    for (int i = bucketRect.left(); i <= bucketRect.right(); ++i )
 	    {
 		QRgb value = qRgb(0,0,0);
 		CIntersactionInfo intersectionInfo;
@@ -39,6 +46,7 @@ void CRaytracerThread::run()
 		GetRaytracer()->GetImage().setPixel(i, j, value);
 	    }
 
-	qDebug()<<"Thread"<<m_nThreadID<<"Rendered Bucket"<<m_nBucketId;
-    }
+//	qDebug()<<"Thread"<<m_nThreadID<<"Rendered Bucket"<<m_nBucketId;
+    }    
+    emit ThreadEnded(m_nThreadID);
 }

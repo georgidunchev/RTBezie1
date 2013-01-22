@@ -10,6 +10,7 @@ RayTracer::RayTracer(QObject *parent)
     : QObject(parent)
     , m_Camera(this)
     , m_pMesh(NULL)
+    , m_nRunningThreads(0)
 {
     m_nThreads = 4;
     m_nHorizontalBuckets = 10;
@@ -27,9 +28,9 @@ void RayTracer::SetCanvas(qreal fWidth, qreal fHeight)
     m_nWidth = fWidth;
     m_nHeight = fHeight;
 
-    m_pMesh = new CMesh();
-//    m_Mesh->Load("Triangle.obj");
-    m_pMesh->Load("bunny_1k.obj");
+//    m_pMesh = new CMesh();
+////    m_Mesh->Load("Triangle.obj");
+//    m_pMesh->Load("bunny_1k.obj");
 
     GetCamera().SetCameraResolution(m_nWidth, m_nHeight);
     GetCamera().BeginFrame();
@@ -68,13 +69,17 @@ void RayTracer::RenderThreaded()
     {
 	CRaytracerThread* pThread = new CRaytracerThread(j);
 	m_arrThreads.push_back(pThread);
+
 	pThread->start();
+
+	QObject::connect(pThread, SIGNAL(ThreadStarted(int)), this, SLOT(ThreadStarted(int)));
+	QObject::connect(pThread, SIGNAL(ThreadEnded(int)), this, SLOT(ThreadEnded(int)));
     }
 
-    for( int j = 0; j < m_arrThreads.size(); ++j)
-    {
-	m_arrThreads[j]->wait();
-    }
+//    for( int j = 0; j < m_arrThreads.size(); ++j)
+//    {
+//	m_arrThreads[j]->wait();
+//    }
 }
 
 QImage& RayTracer::GetImage()
@@ -84,6 +89,10 @@ QImage& RayTracer::GetImage()
 
 CMesh& RayTracer::GetMesh()
 {
+    if (!m_pMesh)
+    {
+	m_pMesh = new CMesh(this);
+    }
     return *m_pMesh;
 }
 
@@ -92,12 +101,20 @@ Camera &RayTracer::GetCamera()
     return m_Camera;
 }
 
+int RayTracer::GetBucketsCount() const
+{
+    return m_nVerticalBuckets * m_nHorizontalBuckets;
+}
+
 int RayTracer::GetNextBucketId()
 {
-    if ( m_nNextBucket >= m_nVerticalBuckets * m_nHorizontalBuckets)
+    if ( m_nNextBucket >= GetBucketsCount())
     {
+	emit sigBucketDone(GetBucketsCount());
 	return -1;
     }
+
+    emit sigBucketDone(m_nNextBucket);
 
     return m_nNextBucket.fetchAndAddRelaxed(1);
 }
@@ -126,4 +143,23 @@ void RayTracer::GetBucketRectById(int nBucketId, QRect &rect) const
 	nBucketHeight += m_nHeight - m_nVerticalBuckets * nBucketHeight;
     }
     rect.setHeight(nBucketHeight);
+}
+
+void RayTracer::ThreadsFinished()
+{
+    sigThreadsFinished();
+}
+
+void RayTracer::ThreadStarted(int nId)
+{
+    m_nRunningThreads++;
+}
+
+void RayTracer::ThreadEnded(int nId)
+{
+    m_nRunningThreads--;
+    if(m_nRunningThreads <= 0)
+    {
+	ThreadsFinished();
+    }
 }

@@ -5,8 +5,10 @@
 #include <QtGlobal>
 #include <QImage>
 #include <QAtomicInt>
+#include <QElapsedTimer>
 
 #include <camera.h>
+#include <QProgressDialog>
 
 class CRaytracerThread;
 class CMesh;
@@ -28,9 +30,12 @@ public:
 
     Camera & GetCamera();
 
+    QElapsedTimer& GetTimer() { return m_Timer; }
     //threaded methods
+    int GetBucketsCount() const;
     int GetNextBucketId();
     void GetBucketRectById(int nBucketId, QRect &rect) const;
+    void ThreadsFinished();
 
 private:
     Camera m_Camera;
@@ -41,6 +46,8 @@ private:
 
     CMesh* m_pMesh;
 
+    QElapsedTimer m_Timer;
+
     // threaded rendering settings
     int m_nThreads; //number of threads
     QAtomicInt m_nNextBucket;
@@ -48,9 +55,16 @@ private:
     int m_nVerticalBuckets;
     QVector<CRaytracerThread*> m_arrThreads;
 
-signals:
+    QProgressDialog* progress;
 
+    int m_nRunningThreads;
+
+signals:
+    void sigBucketDone(int value);
+    void sigThreadsFinished();
 public slots:
+    void ThreadStarted(int nId);
+    void ThreadEnded(int nId);
 };
 
 #endif // RAYTRACER_H
