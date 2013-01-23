@@ -10,7 +10,7 @@ RayTracer::RayTracer(QObject *parent)
     : QObject(parent)
     , m_Camera(this)
     , m_pMesh(NULL)
-    , m_nRunningThreads(0)
+    , m_nRunningThreads(0)   
 {
     m_nThreads = 4;
     m_nHorizontalBuckets = 10;
@@ -65,6 +65,8 @@ void RayTracer::Render()
 
 void RayTracer::RenderThreaded()
 {
+    m_nNextBucket = 0;
+
     for( int j = 0; j < m_nThreads; ++j)
     {
 	CRaytracerThread* pThread = new CRaytracerThread(j);
@@ -75,11 +77,6 @@ void RayTracer::RenderThreaded()
 	QObject::connect(pThread, SIGNAL(ThreadStarted(int)), this, SLOT(ThreadStarted(int)));
 	QObject::connect(pThread, SIGNAL(ThreadEnded(int)), this, SLOT(ThreadEnded(int)));
     }
-
-//    for( int j = 0; j < m_arrThreads.size(); ++j)
-//    {
-//	m_arrThreads[j]->wait();
-//    }
 }
 
 QImage& RayTracer::GetImage()
@@ -94,6 +91,17 @@ CMesh& RayTracer::GetMesh()
 	m_pMesh = new CMesh(this);
     }
     return *m_pMesh;
+}
+
+void RayTracer::LoadNewMesh(const QString& strInputFileName)
+{
+    if (m_pMesh)
+    {
+	delete m_pMesh;
+    }
+
+    m_pMesh = new CMesh(this);
+    m_pMesh->Load(strInputFileName);
 }
 
 Camera &RayTracer::GetCamera()
@@ -147,7 +155,7 @@ void RayTracer::GetBucketRectById(int nBucketId, QRect &rect) const
 
 void RayTracer::ThreadsFinished()
 {
-    sigThreadsFinished();
+    emit sigThreadsFinished();
 }
 
 void RayTracer::ThreadStarted(int nId)

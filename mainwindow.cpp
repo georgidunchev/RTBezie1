@@ -7,9 +7,10 @@
 #include <QFileDialog>
 #include <QProgressDialog>
 
-MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::MainWindow)
+MainWindow::MainWindow(QWidget *parent)
+    : QMainWindow(parent)
+    , ui(new Ui::MainWindow)
+//    , progress("Rendering", "Abort")
 {
     ui->setupUi(this);
     QGraphicsScene* scene = new QGraphicsScene(this);
@@ -17,6 +18,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     GetRaytracer()->GetCamera().SetCameraPos(QVector3D(0, 0, -1), QVector3D(0, 0, 1), QVector3D(0, -1, 0) );
     GetRaytracer()->SetCanvas(300,300);
+
+    progress.setLabelText("Rendering");
+    progress.setWindowModality(Qt::WindowModal);
 }
 
 void MainWindow::paintEvent(QPaintEvent *pe)
@@ -33,42 +37,33 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-
 void MainWindow::on_openMeshButton_clicked()
 {
     QString strFileName;
     strFileName = QFileDialog::getOpenFileName(this,
 	tr("Open Model"), "", tr("Image Files (*.obj)"));
 
-
-    GetRaytracer()->GetMesh().Load(strFileName);
+    GetRaytracer()->LoadNewMesh(strFileName);
 
     emit EnableRenderButton(true);
 }
 
 void MainWindow::on_StartRender_clicked()
 {
-    int numFiles = GetRaytracer()->GetBucketsCount();
-    progress = new QProgressDialog("Subdividing", "Abort", 0, numFiles);
-    progress->setWindowModality(Qt::WindowModal);
+    progress.setMaximum( GetRaytracer()->GetBucketsCount() );
 
-    QObject::connect(GetRaytracer(), SIGNAL(sigBucketDone(int)), progress, SLOT(setValue(int)));
+    QObject::connect(GetRaytracer(), SIGNAL(sigBucketDone(int)), &progress, SLOT(setValue(int)));
     QObject::connect(GetRaytracer(), SIGNAL(sigThreadsFinished()), this, SLOT(slotRenderFinished()));
 
     GetRaytracer()->GetTimer().start();
 
     GetRaytracer()->RenderThreaded();
-
-
 }
 
 void MainWindow::slotRenderFinished()
 {
-    if (progress)
-    {
-	progress->reset();
-	delete progress;
-    }
+    progress.reset();
+
     ui->graphicsView->scene()->addPixmap(QPixmap::fromImage(GetRaytracer()->GetImage()));
 
     if (GetRaytracer()->GetTimer().isValid())

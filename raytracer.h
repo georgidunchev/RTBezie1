@@ -28,6 +28,8 @@ public:
 
     CMesh &GetMesh();
 
+    void LoadNewMesh(const QString& strInputFileName);
+
     Camera & GetCamera();
 
     QElapsedTimer& GetTimer() { return m_Timer; }

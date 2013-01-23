@@ -29,7 +29,7 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
-    QProgressDialog * progress;
+    QProgressDialog progress;
 };
 
 #endif // MAINWINDOW_H
