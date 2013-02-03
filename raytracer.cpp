@@ -74,8 +74,8 @@ void RayTracer::RenderThreaded()
 
 	pThread->start();
 
-	QObject::connect(pThread, SIGNAL(ThreadStarted(int)), this, SLOT(ThreadStarted(int)));
-	QObject::connect(pThread, SIGNAL(ThreadEnded(int)), this, SLOT(ThreadEnded(int)));
+	QObject::connect(pThread, SIGNAL(slotThreadStarted(int)), this, SLOT(slotThreadStarted(int)));
+	QObject::connect(pThread, SIGNAL(slotThreadEnded(int)), this, SLOT(slotThreadEnded(int)));
     }
 }
 
@@ -86,10 +86,6 @@ QImage& RayTracer::GetImage()
 
 CMesh& RayTracer::GetMesh()
 {
-    if (!m_pMesh)
-    {
-	m_pMesh = new CMesh(this);
-    }
     return *m_pMesh;
 }
 
@@ -158,16 +154,22 @@ void RayTracer::ThreadsFinished()
     emit sigThreadsFinished();
 }
 
-void RayTracer::ThreadStarted(int nId)
+
+void RayTracer::slotThreadStarted(int nId)
 {
     m_nRunningThreads++;
 }
 
-void RayTracer::ThreadEnded(int nId)
+void RayTracer::slotThreadEnded(int nId)
 {
     m_nRunningThreads--;
     if(m_nRunningThreads <= 0)
     {
 	ThreadsFinished();
     }
+}
+
+void RayTracer::GenerateKDTree()
+{
+
 }

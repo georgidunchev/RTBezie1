@@ -6,8 +6,10 @@
 #include "mainwindow.h"
 #include "main.h"
 #include "raytracer.h"
+#include <settings.h>
 
 RayTracer * raytracer_instace;
+CSettings * m_pSettingsInstance;
 
 void myMessageOutput(QtMsgType type, const char *msg)
 {
@@ -38,6 +40,7 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
 
     raytracer_instace = new RayTracer();
+    m_pSettingsInstance = new CSettings();
 
     MainWindow w;
     w.show();
@@ -48,4 +51,9 @@ int main(int argc, char *argv[])
 RayTracer* GetRaytracer()
 {
     return raytracer_instace;
+}
+
+CSettings* GetSettings()
+{
+    return m_pSettingsInstance;
 }

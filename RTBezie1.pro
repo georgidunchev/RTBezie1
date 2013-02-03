@@ -18,7 +18,11 @@ SOURCES += main.cpp\
     cmesh.cpp \
     intersactioninfo.cpp \
     triangle.cpp \
-    raytracerthread.cpp
+    raytracerthread.cpp \
+    settings.cpp \
+    kdtreenode.cpp \
+    AABox.cpp \
+    Utils.cpp
 
 HEADERS  += mainwindow.h \
     raytracer.h \
@@ -28,6 +32,10 @@ HEADERS  += mainwindow.h \
     cmesh.h \
     intersactioninfo.h \
     triangle.h \
-    raytracerthread.h
+    raytracerthread.h \
+    settings.h \
+    kdtreenode.h \
+    AABox.h \
+    Utils.h
 
 FORMS    += mainwindow.ui

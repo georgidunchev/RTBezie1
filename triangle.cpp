@@ -23,6 +23,7 @@ static qreal Triple(QVector3D vec1, QVector3D vec2, QVector3D vec3)
 
 CTriangle::CTriangle( const QVector<QVector3D> & aVertecis, int v1, int v2, int v3)
     :m_aVertecis(aVertecis)
+    , m_bHasBoundingBox(false)
 {
     m_aVertIndices << v1 << v2 << v3;
     m_vAB = B() - A();
@@ -120,5 +121,40 @@ const QVector3D &CTriangle::B() const
 const QVector3D &CTriangle::C() const
 {
     return m_aVertecis[m_aVertIndices[2]];
+}
+
+void CTriangle::MakeBoundingBox()
+{
+    m_vMinVertex = A();
+    m_vMaxVertex = A();
+    for(int i = 1; i < Vertices().size(); ++i)
+    {
+	if(m_vMinVertex.x() > m_aVertecis[m_aVertIndices[i]].x())
+	{
+	    m_vMinVertex.setX( m_aVertecis[m_aVertIndices[i]].x());
+	}
+	if(m_vMinVertex.x() > m_aVertecis[m_aVertIndices[i]].x())
+	{
+	    m_vMinVertex.setX( m_aVertecis[m_aVertIndices[i]].x());
+	}
+	if(m_vMinVertex.x() > m_aVertecis[m_aVertIndices[i]].x())
+	{
+	    m_vMinVertex.setX( m_aVertecis[m_aVertIndices[i]].x());
+	}
+
+	if(m_vMaxVertex.x() < m_aVertecis[m_aVertIndices[i]].x())
+	{
+	    m_vMaxVertex.setX( m_aVertecis[m_aVertIndices[i]].x());
+	}
+	if(m_vMaxVertex.x() < m_aVertecis[m_aVertIndices[i]].x())
+	{
+	    m_vMaxVertex.setX( m_aVertecis[m_aVertIndices[i]].x());
+	}
+	if(m_vMaxVertex.x() < m_aVertecis[m_aVertIndices[i]].x())
+	{
+	    m_vMaxVertex.setX( m_aVertecis[m_aVertIndices[i]].x());
+	}
+    }
+    m_bHasBoundingBox = true;
 }
 

@@ -39,6 +39,9 @@ public:
     void GetBucketRectById(int nBucketId, QRect &rect) const;
     void ThreadsFinished();
 
+    //KD tree
+    void GenerateKDTree();
+
 private:
     Camera m_Camera;
 
@@ -65,8 +68,8 @@ signals:
     void sigBucketDone(int value);
     void sigThreadsFinished();
 public slots:
-    void ThreadStarted(int nId);
-    void ThreadEnded(int nId);
+    void slotThreadStarted(int nId);
+    void slotThreadEnded(int nId);
 };
 
 #endif // RAYTRACER_H

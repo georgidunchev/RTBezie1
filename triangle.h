@@ -21,9 +21,16 @@ public:
     const QVector3D& B() const;
     const QVector3D& C() const;
 
+    void MakeBoundingBox();
+
 private:
     QVector<int> m_aVertIndices;
     QVector<QVector3D> m_aVertecis;
+
+    //bounding box
+    bool m_bHasBoundingBox;
+    QVector3D m_vMinVertex;
+    QVector3D m_vMaxVertex;
 
     QVector3D m_vAB, m_vAC, m_vNormal;
 };

@@ -2,6 +2,7 @@
 #include "QTextStream"
 #include <QDebug>
 #include <QFile>
+#include "kdtreenode.h"
 
 CMesh::CMesh(QObject *parent)
     : QObject(parent)
@@ -79,6 +80,11 @@ void CMesh::Load(const QString& strInputFileName)
 	}
     }
     file.close();
+
+    for (int i = 0; i < m_aTriangles.size(); ++i)
+    {
+	m_aTriangles[i].MakeBoundingBox();
+    }
 }
 
 bool CMesh::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo)
@@ -106,4 +112,16 @@ bool CMesh::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo)
     }
 
     return bIntersected;
+}
+
+void CMesh::GenerateKDTree()
+{
+    //initialize an array containing all triangles
+    QVector<int>* pAllTriangleIndeces = new QVector<int>(m_aTriangles.size());
+    for (int i = 0; i < m_aTriangles.size(); ++i)
+    {
+	(*pAllTriangleIndeces)[i] = i;
+    }
+
+    m_pRoot = new CKDTreeNode();
 }
