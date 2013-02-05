@@ -5,14 +5,15 @@
 #include <qmath.h>
 #include <QDebug>
 #include <Utils.h>
+#include <settings.h>
 
-CAABox::CAABox(QObject *parent) :
-    QObject(parent)
+CAABox::CAABox()
+    : m_vMaxVertex(QVector3D(k_fMIN,k_fMIN,k_fMIN))
+    , m_vMinVertex(QVector3D(k_fMAX,k_fMAX,k_fMAX))
 {
 }
 
-CAABox::CAABox(const QVector3D &vMinVertex, const QVector3D &vMaxVertex, QObject *parent)
-    : QObject(parent)
+CAABox::CAABox(const QVector3D &vMinVertex, const QVector3D &vMaxVertex)
 {
     m_vMinVertex = vMinVertex;
     m_vMaxVertex = vMaxVertex;
@@ -23,14 +24,35 @@ void CAABox::Set(const QVector3D &vMinVertex, const QVector3D &vMaxVertex)
     m_vMinVertex = vMinVertex;
     m_vMaxVertex = vMaxVertex;
 }
+
 /// Checks if a point is inside the bounding box (borders-inclusive)
 bool CAABox::IsInside(const QVector3D& vPoint) const
 {
     return (m_vMinVertex.x() <= vPoint.x() && vPoint.x() <= m_vMaxVertex.x() &&
 	    m_vMinVertex.y() <= vPoint.y() && vPoint.y() <= m_vMaxVertex.y() &&
 	    m_vMinVertex.z() <= vPoint.z() && vPoint.z() <= m_vMaxVertex.z());
-
 }
+
+void CAABox::AddPoint(const QVector3D& vPoint)
+{
+    for(EDimiensions i = e_Dimension_X; i < e_Dimension_MAX; i = (EDimiensions)((int)i + 1) )
+    {
+	const float fMinVDir( CUtils::GetDimension(m_vMinVertex, i) );
+	const float fMaxVDir( CUtils::GetDimension(m_vMaxVertex, i) );
+	const float fPointDir( CUtils::GetDimension(vPoint, i) );
+
+	if(fMinVDir > fPointDir)
+	{
+	    CUtils::SetDimension(m_vMinVertex, i, fPointDir);
+	}
+
+	if(fMaxVDir < fPointDir)
+	{
+	    CUtils::SetDimension(m_vMaxVertex, i, fPointDir);
+	}
+    }
+}
+
 bool CAABox::Intersect(const CRay &ray) const
 {
     if (IsInside(ray.StartPoint()))
@@ -38,7 +60,7 @@ bool CAABox::Intersect(const CRay &ray) const
 	return true;
     }
 
-
+    //create needed data for intersection
     float aRayDir[3], aRayStart[3], aRayRevDir[3], aVMin[3], aVMax[3];
     for (int i = 0; i < 3; ++i)
     {
@@ -112,4 +134,14 @@ bool CAABox::Intersect(const CRay &ray) const
 	}
     }
     return false;
+}
+
+const QVector3D &CAABox::GetMinVertex() const
+{
+    return m_vMinVertex;
+}
+
+const QVector3D &CAABox::GetMaxVertex() const
+{
+    return m_vMaxVertex;
 }

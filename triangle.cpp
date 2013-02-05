@@ -125,36 +125,17 @@ const QVector3D &CTriangle::C() const
 
 void CTriangle::MakeBoundingBox()
 {
-    m_vMinVertex = A();
-    m_vMaxVertex = A();
-    for(int i = 1; i < Vertices().size(); ++i)
+    for(int i = 0; i < m_aVertIndices.size(); ++i)
     {
-	if(m_vMinVertex.x() > m_aVertecis[m_aVertIndices[i]].x())
-	{
-	    m_vMinVertex.setX( m_aVertecis[m_aVertIndices[i]].x());
-	}
-	if(m_vMinVertex.x() > m_aVertecis[m_aVertIndices[i]].x())
-	{
-	    m_vMinVertex.setX( m_aVertecis[m_aVertIndices[i]].x());
-	}
-	if(m_vMinVertex.x() > m_aVertecis[m_aVertIndices[i]].x())
-	{
-	    m_vMinVertex.setX( m_aVertecis[m_aVertIndices[i]].x());
-	}
-
-	if(m_vMaxVertex.x() < m_aVertecis[m_aVertIndices[i]].x())
-	{
-	    m_vMaxVertex.setX( m_aVertecis[m_aVertIndices[i]].x());
-	}
-	if(m_vMaxVertex.x() < m_aVertecis[m_aVertIndices[i]].x())
-	{
-	    m_vMaxVertex.setX( m_aVertecis[m_aVertIndices[i]].x());
-	}
-	if(m_vMaxVertex.x() < m_aVertecis[m_aVertIndices[i]].x())
-	{
-	    m_vMaxVertex.setX( m_aVertecis[m_aVertIndices[i]].x());
-	}
+	m_BoundingBox.AddPoint(m_aVertecis[m_aVertIndices[i]]);
+	qDebug()<<m_aVertecis[m_aVertIndices[i]];
     }
+    qDebug()<<"min"<<m_BoundingBox.GetMinVertex()<<"max"<<m_BoundingBox.GetMaxVertex();
     m_bHasBoundingBox = true;
+}
+
+const CAABox& CTriangle::GetBoundingBox()
+{
+    return m_BoundingBox;
 }
 

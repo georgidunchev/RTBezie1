@@ -2,7 +2,7 @@
 #define CAMERA_H
 
 #include <QObject>
-#include <vector3df.h>
+
 #include <ray.h>
 
 class Camera : public QObject

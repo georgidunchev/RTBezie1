@@ -3,6 +3,8 @@
 
 #include <QVector3D>
 #include <QVector>
+#include <AABox.h>
+
 class CRay;
 class CIntersactionInfo;
 
@@ -22,6 +24,7 @@ public:
     const QVector3D& C() const;
 
     void MakeBoundingBox();
+    const CAABox& GetBoundingBox();
 
 private:
     QVector<int> m_aVertIndices;
@@ -29,8 +32,7 @@ private:
 
     //bounding box
     bool m_bHasBoundingBox;
-    QVector3D m_vMinVertex;
-    QVector3D m_vMaxVertex;
+    CAABox m_BoundingBox;
 
     QVector3D m_vAB, m_vAC, m_vNormal;
 };

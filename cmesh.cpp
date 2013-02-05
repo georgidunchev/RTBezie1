@@ -1,8 +1,10 @@
+#include <qalgorithms.h>
 #include "cmesh.h"
 #include "QTextStream"
 #include <QDebug>
 #include <QFile>
 #include "kdtreenode.h"
+#include "AABox.h"
 
 CMesh::CMesh(QObject *parent)
     : QObject(parent)
@@ -114,8 +116,14 @@ bool CMesh::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo)
     return bIntersected;
 }
 
+CTriangle &CMesh::GetTriangle(int n)
+{
+    return m_aTriangles[n];
+}
+
 void CMesh::GenerateKDTree()
 {
+    SortBBoxes();
     //initialize an array containing all triangles
     QVector<int>* pAllTriangleIndeces = new QVector<int>(m_aTriangles.size());
     for (int i = 0; i < m_aTriangles.size(); ++i)
@@ -124,4 +132,67 @@ void CMesh::GenerateKDTree()
     }
 
     m_pRoot = new CKDTreeNode();
+}
+
+bool CMesh::CompareBB(const CSortedBBEntry &s1, const CSortedBBEntry &s2)
+{
+    const CAABox& BB1 = m_aTriangles[s1.m_nTriangleId].GetBoundingBox();
+    const QVector3D& vBB1( s1.m_bStart ? BB1.GetMinVertex() : BB1.GetMaxVertex() );
+    float fValue1 = CUtils::GetDimension(vBB1, m_eSortingDimention);
+
+    const CAABox& BB2 = m_aTriangles[s2.m_nTriangleId].GetBoundingBox();
+    const QVector3D& vBB2( s2.m_bStart ? BB2.GetMinVertex() : BB2.GetMaxVertex() );
+    float fValue2 = CUtils::GetDimension(vBB2, m_eSortingDimention);
+
+    return fValue1 < fValue2;
+}
+
+void CMesh::SortBBoxes()
+{
+    CSortedBBEntry::m_pMesh = this;
+
+    int nSize = m_aTriangles.size() * 2;
+    for(EDimiensions i = e_Dimension_X; i < e_Dimension_MAX; i = (EDimiensions)((int)i + 1) )
+    {
+	CSortedBBEntry::m_eSortingDimention = i;
+
+	m_aSortedBBoxes[i].resize(nSize);
+	for (int j = 0; j < m_aSortedBBoxes[i].size(); ++j)
+	{
+	    m_aSortedBBoxes[i][j].m_bStart = j%2==0;
+	    m_aSortedBBoxes[i][j].m_nTriangleId = j/2;
+	}
+
+
+	qSort(m_aSortedBBoxes[i].begin(), m_aSortedBBoxes[i].end());
+//	qSort(m_aSortedBBoxes[i].begin(), m_aSortedBBoxes[i].end(), CompareBB);
+
+//	const float fMinVDir( CUtils::GetDimension(m_vMinVertex, i) );
+//	const float fMaxVDir( CUtils::GetDimension(m_vMaxVertex, i) );
+//	const float fPointDir( CUtils::GetDimension(vPoint, i) );
+
+//	if(fMinVDir > fPointDir)
+//	{
+//	    CUtils::SetDimension(m_vMinVertex, i, fPointDir);
+//	}
+
+//	if(fMaxVDir < fPointDir)
+//	{
+//	    CUtils::SetDimension(m_vMaxVertex, i, fPointDir);
+//	}
+    }
+    //    m_aSortedBBoxes
+}
+
+bool CSortedBBEntry::operator <(const CSortedBBEntry &s2) const
+{
+    const CAABox& BB1 = m_pMesh->GetTriangle(m_nTriangleId).GetBoundingBox();
+    const QVector3D& vBB1( m_bStart ? BB1.GetMinVertex() : BB1.GetMaxVertex() );
+    float fValue1 = CUtils::GetDimension(vBB1, m_eSortingDimention);
+
+    const CAABox& BB2 = s2.m_pMesh->GetTriangle(m_nTriangleId).GetBoundingBox();
+    const QVector3D& vBB2( s2.m_bStart ? BB2.GetMinVertex() : BB2.GetMaxVertex() );
+    float fValue2 = CUtils::GetDimension(vBB2, m_eSortingDimention);
+
+    return fValue1 < fValue2;
 }
