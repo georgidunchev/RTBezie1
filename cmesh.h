@@ -43,8 +43,8 @@ private:
 
 struct CSortedBBEntry
 {
-    static CMesh* m_pMesh;
-    static EDimiensions m_eSortingDimention;
+    static CMesh* m_pMesh = NULL;
+    static EDimiensions m_eSortingDimention = e_Dimension_MAX;
 
     bool m_bStart;
     int m_nTriangleId;

@@ -149,12 +149,13 @@ bool CMesh::CompareBB(const CSortedBBEntry &s1, const CSortedBBEntry &s2)
 
 void CMesh::SortBBoxes()
 {
-    CSortedBBEntry::m_pMesh = this;
+    CSortedBBEntry a;
+    a.m_pMesh = this;
 
     int nSize = m_aTriangles.size() * 2;
     for(EDimiensions i = e_Dimension_X; i < e_Dimension_MAX; i = (EDimiensions)((int)i + 1) )
     {
-	CSortedBBEntry::m_eSortingDimention = i;
+	a.m_eSortingDimention = i;
 
 	m_aSortedBBoxes[i].resize(nSize);
 	for (int j = 0; j < m_aSortedBBoxes[i].size(); ++j)
