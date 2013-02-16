@@ -13,8 +13,8 @@ private:
     int m_nBucketId;
     int m_nThreadID;
 signals:
-    void ThreadStarted(int nId);
-    void ThreadEnded(int nId);
+    void sigThreadStarted(int nId);
+    void sigThreadEnded(int nId);
 };
 
 #endif // RAYTRACERTHREAD_H

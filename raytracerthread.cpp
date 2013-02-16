@@ -19,7 +19,7 @@ CRaytracerThread::~CRaytracerThread()
 
 void CRaytracerThread::run()
 {     
-    emit ThreadStarted(m_nThreadID);
+    emit sigThreadStarted(m_nThreadID);
     forever
     {
 	m_nBucketId = GetRaytracer()->GetNextBucketId();
@@ -48,5 +48,5 @@ void CRaytracerThread::run()
 
 //	qDebug()<<"Thread"<<m_nThreadID<<"Rendered Bucket"<<m_nBucketId;
     }    
-    emit ThreadEnded(m_nThreadID);
+    emit sigThreadEnded(m_nThreadID);
 }

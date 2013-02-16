@@ -118,7 +118,7 @@ bool CMesh::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo, cons
 	{
 	    if (pBBox) // if bounding box is supplied, discard all intersection outside it
 	    {
-		QVector3D vIntersection = CUtils::GetPointAtDistance(ray, intersectionInfo.m_fDistance);
+		QVector3D vIntersection = CUtils::GetPointAtDistance(ray, LastIntersection.m_fDistance);
 		if (!pBBox->IsInside(vIntersection))
 		{
 		    continue;

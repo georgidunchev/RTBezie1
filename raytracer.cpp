@@ -12,7 +12,7 @@ RayTracer::RayTracer(QObject *parent)
     , m_pMesh(NULL)
     , m_nRunningThreads(0)   
 {
-    m_nThreads = 4;
+    m_nThreads = 1;
     m_nHorizontalBuckets = 10;
     m_nVerticalBuckets = 10;
 }
@@ -74,8 +74,8 @@ void RayTracer::RenderThreaded()
 
 	pThread->start();
 
-	QObject::connect(pThread, SIGNAL(slotThreadStarted(int)), this, SLOT(slotThreadStarted(int)));
-	QObject::connect(pThread, SIGNAL(slotThreadEnded(int)), this, SLOT(slotThreadEnded(int)));
+	QObject::connect(pThread, SIGNAL(sigThreadStarted(int)), this, SLOT(slotThreadStarted(int)));
+	QObject::connect(pThread, SIGNAL(sigThreadEnded(int)), this, SLOT(slotThreadEnded(int)));
     }
 }
 

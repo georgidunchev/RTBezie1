@@ -34,9 +34,10 @@ void CAABox::Reset()
 /// Checks if a point is inside the bounding box (borders-inclusive)
 bool CAABox::IsInside(const QVector3D& vPoint) const
 {
-    return (m_vMinVertex.x() <= vPoint.x() && vPoint.x() <= m_vMaxVertex.x() &&
-	    m_vMinVertex.y() <= vPoint.y() && vPoint.y() <= m_vMaxVertex.y() &&
-	    m_vMinVertex.z() <= vPoint.z() && vPoint.z() <= m_vMaxVertex.z());
+    bool bX = m_vMinVertex.x() - k_fSMALL <= vPoint.x() && vPoint.x() <= m_vMaxVertex.x() + k_fSMALL;
+    bool bY = m_vMinVertex.y() - k_fSMALL  <= vPoint.y() && vPoint.y() <= m_vMaxVertex.y() + k_fSMALL;
+    bool bZ = m_vMinVertex.z() - k_fSMALL  <= vPoint.z() && vPoint.z() <= m_vMaxVertex.z() + k_fSMALL;
+    return (bX && bY && bZ);
 }
 
 void CAABox::AddPoint(const QVector3D& vPoint)

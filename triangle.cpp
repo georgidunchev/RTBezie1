@@ -82,6 +82,7 @@ bool CTriangle::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo) 
 	return false;
 
     closestdist = gamma;
+    intersectionInfo.m_fDistance = closestdist;
     return true;
 
     intersectionInfo.m_fDistance = 1.f;

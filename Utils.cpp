@@ -57,8 +57,9 @@ void CUtils::SafeDel(void *pointer)
 
 QVector3D CUtils::GetPointAtDistance(const CRay &ray, float fDistance)
 {
-    QVector3D vNewPos = ray.Direction() * fDistance;
-    vNewPos + ray.StartPoint();
+    QVector3D vNewPos = ray.Direction();
+    vNewPos *= fDistance;
+    vNewPos += ray.StartPoint();
     return vNewPos;
 }
 
