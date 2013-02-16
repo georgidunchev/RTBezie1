@@ -37,7 +37,7 @@ void CRaytracerThread::run()
 		QRgb value = qRgb(0,0,0);
 		CIntersactionInfo intersectionInfo;
 
-		if ( GetRaytracer()->GetMesh().Intersect(GetRaytracer()->GetCamera().GetScreenRay(i, j), intersectionInfo) )
+		if ( GetRaytracer()->GetMesh().IntersectKDTree(GetRaytracer()->GetCamera().GetScreenRay(i, j), intersectionInfo) )
 		{
 		    value = qRgb(189, 149, 39);
 		}

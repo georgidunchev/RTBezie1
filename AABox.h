@@ -2,6 +2,7 @@
 #define AABOX_H
 
 #include <QVector3D>
+#include <Utils.h>
 
 class CRay;
 
@@ -14,6 +15,7 @@ public:
     void AddPoint(const QVector3D& vPoint);
 
     void Set(const QVector3D & vMinVertex,const QVector3D & vMaxVertex);
+    void Reset();
 
     bool IsInside(const QVector3D& vPoint) const;
 
@@ -21,6 +23,8 @@ public:
 
     const QVector3D& GetMinVertex() const;
     const QVector3D& GetMaxVertex() const;
+
+    void Split(float fWhere, CAABox& LeftBBox, CAABox& RightBBox, EDimiensions eSplitDimension) const;
 
 signals:
     

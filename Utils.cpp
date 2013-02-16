@@ -1,4 +1,5 @@
-#include "Utils.h"
+#include <Utils.h>
+#include <ray.h>
 
 CUtils::CUtils()
 {
@@ -44,5 +45,20 @@ void CUtils::SetDimension(QVector3D &pVector, EDimiensions eDimension, const flo
 	break;
     }
     }
+}
+
+void CUtils::SafeDel(void *pointer)
+{
+    if (pointer)
+    {
+	delete pointer;
+    }
+}
+
+QVector3D CUtils::GetPointAtDistance(const CRay &ray, float fDistance)
+{
+    QVector3D vNewPos = ray.Direction() * fDistance;
+    vNewPos + ray.StartPoint();
+    return vNewPos;
 }
 

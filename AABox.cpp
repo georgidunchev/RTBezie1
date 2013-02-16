@@ -25,6 +25,12 @@ void CAABox::Set(const QVector3D &vMinVertex, const QVector3D &vMaxVertex)
     m_vMaxVertex = vMaxVertex;
 }
 
+void CAABox::Reset()
+{
+    m_vMaxVertex = QVector3D(k_fMIN,k_fMIN,k_fMIN);
+    m_vMinVertex = QVector3D(k_fMAX,k_fMAX,k_fMAX);
+}
+
 /// Checks if a point is inside the bounding box (borders-inclusive)
 bool CAABox::IsInside(const QVector3D& vPoint) const
 {
@@ -144,4 +150,19 @@ const QVector3D &CAABox::GetMinVertex() const
 const QVector3D &CAABox::GetMaxVertex() const
 {
     return m_vMaxVertex;
+}
+
+void CAABox::Split(float fWhere, CAABox &LeftBBox, CAABox &RightBBox, EDimiensions eSplitDimension) const
+{
+    float fLeft = CUtils::GetDimension(m_vMinVertex, eSplitDimension);
+    float fRight = CUtils::GetDimension(m_vMaxVertex, eSplitDimension);
+    float fSplit = (1.f - fWhere)*fLeft + fWhere*fRight;
+
+    QVector3D vNewLeft(m_vMaxVertex);
+    CUtils::SetDimension(vNewLeft, eSplitDimension, fSplit);
+    LeftBBox.Set(m_vMinVertex, vNewLeft);
+
+    QVector3D vNewRight(m_vMinVertex);
+    CUtils::SetDimension(vNewRight, eSplitDimension, fSplit);
+    RightBBox.Set(vNewRight, m_vMaxVertex);
 }

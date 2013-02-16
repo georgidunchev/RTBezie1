@@ -88,6 +88,23 @@ bool CTriangle::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo) 
     return true;
 }
 
+bool CTriangle::Intersect(const QVector3D &vStart, const QVector3D &vEnd) const
+{
+    CIntersactionInfo Intersection;
+    CRay Ray(vStart, vEnd);
+    if (!Intersect(Ray, Intersection))
+    {
+	return false;
+    }
+
+    float fLength = (vEnd - vStart).length();
+    if (Intersection.m_fDistance < fLength)
+    {
+	return true;
+    }
+    return false;
+}
+
 const QVector<int> &CTriangle::Vertices() const
 {
     return m_aVertIndices;

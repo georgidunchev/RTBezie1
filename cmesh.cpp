@@ -5,6 +5,8 @@
 #include <QFile>
 #include "kdtreenode.h"
 #include "AABox.h"
+#include <main.h>
+#include <raytracer.h>
 
 CMesh::CMesh(QObject *parent)
     : QObject(parent)
@@ -83,21 +85,45 @@ void CMesh::Load(const QString& strInputFileName)
     }
     file.close();
 
+    mBoundingBox.Reset();
     for (int i = 0; i < m_aTriangles.size(); ++i)
     {
 	m_aTriangles[i].MakeBoundingBox();
+	mBoundingBox.AddPoint(m_aTriangles[i].GetBoundingBox().GetMinVertex());
+	mBoundingBox.AddPoint(m_aTriangles[i].GetBoundingBox().GetMaxVertex());
     }
+
+    GenerateKDTree();
 }
 
 bool CMesh::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo)
 {
+    QVector<int> aTriangles(m_aTriangles.size());
+    for (int i = 0; i < aTriangles.size(); ++i)
+    {
+	aTriangles[i] = i;
+    }
+    return Intersect(ray, intersectionInfo, aTriangles);
+}
+
+bool CMesh::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo, const QVector<int>& aTriangles, CAABox* pBBox)
+{
     bool bIntersected = false;
 
-    for (int i = 0; i < m_aTriangles.size(); ++i)
+    for (int i = 0; i < aTriangles.size(); ++i)
     {
+	CTriangle& Triangle = m_aTriangles[aTriangles[i]];
 	CIntersactionInfo LastIntersection;
-	if ( m_aTriangles[i].Intersect(ray, LastIntersection) )
+	if ( Triangle.Intersect(ray, LastIntersection) )
 	{
+	    if (pBBox) // if bounding box is supplied, discard all intersection outside it
+	    {
+		QVector3D vIntersection = CUtils::GetPointAtDistance(ray, intersectionInfo.m_fDistance);
+		if (!pBBox->IsInside(vIntersection))
+		{
+		    continue;
+		}
+	    }
 	    if ( !bIntersected )
 	    {
 		intersectionInfo = LastIntersection;
@@ -116,6 +142,11 @@ bool CMesh::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo)
     return bIntersected;
 }
 
+bool CMesh::IntersectKDTree(const CRay &ray, CIntersactionInfo &intersectionInfo)
+{
+    return m_pRoot->Intersect(ray, intersectionInfo);
+}
+
 CTriangle &CMesh::GetTriangle(int n)
 {
     return m_aTriangles[n];
@@ -123,7 +154,7 @@ CTriangle &CMesh::GetTriangle(int n)
 
 void CMesh::GenerateKDTree()
 {
-    SortBBoxes();
+//    SortBBoxes();
     //initialize an array containing all triangles
     QVector<int>* pAllTriangleIndeces = new QVector<int>(m_aTriangles.size());
     for (int i = 0; i < m_aTriangles.size(); ++i)
@@ -131,7 +162,8 @@ void CMesh::GenerateKDTree()
 	(*pAllTriangleIndeces)[i] = i;
     }
 
-    m_pRoot = new CKDTreeNode();
+    m_pRoot = new CKDTreeNode(pAllTriangleIndeces, 0, mBoundingBox);
+    m_pRoot->Process();
 }
 
 bool CMesh::CompareBB(const CSortedBBEntry &s1, const CSortedBBEntry &s2)
@@ -147,53 +179,56 @@ bool CMesh::CompareBB(const CSortedBBEntry &s1, const CSortedBBEntry &s2)
     return fValue1 < fValue2;
 }
 
+int CMesh::GetKDTreeNextID()
+{
+    return 1;
+}
+
 void CMesh::SortBBoxes()
 {
-    CSortedBBEntry a;
-    a.m_pMesh = this;
-
     int nSize = m_aTriangles.size() * 2;
     for(EDimiensions i = e_Dimension_X; i < e_Dimension_MAX; i = (EDimiensions)((int)i + 1) )
     {
-	a.m_eSortingDimention = i;
-
-	m_aSortedBBoxes[i].resize(nSize);
+    	m_aSortedBBoxes[i].resize(nSize);
 	for (int j = 0; j < m_aSortedBBoxes[i].size(); ++j)
 	{
 	    m_aSortedBBoxes[i][j].m_bStart = j%2==0;
 	    m_aSortedBBoxes[i][j].m_nTriangleId = j/2;
 	}
-
-
-	qSort(m_aSortedBBoxes[i].begin(), m_aSortedBBoxes[i].end());
-//	qSort(m_aSortedBBoxes[i].begin(), m_aSortedBBoxes[i].end(), CompareBB);
-
-//	const float fMinVDir( CUtils::GetDimension(m_vMinVertex, i) );
-//	const float fMaxVDir( CUtils::GetDimension(m_vMaxVertex, i) );
-//	const float fPointDir( CUtils::GetDimension(vPoint, i) );
-
-//	if(fMinVDir > fPointDir)
-//	{
-//	    CUtils::SetDimension(m_vMinVertex, i, fPointDir);
-//	}
-
-//	if(fMaxVDir < fPointDir)
-//	{
-//	    CUtils::SetDimension(m_vMaxVertex, i, fPointDir);
-//	}
     }
-    //    m_aSortedBBoxes
+
+    qSort(m_aSortedBBoxes[e_Dimension_X].begin(), m_aSortedBBoxes[e_Dimension_X].end(), CSortedBBEntry::compare_X);
+    qSort(m_aSortedBBoxes[e_Dimension_Y].begin(), m_aSortedBBoxes[e_Dimension_Y].end(), CSortedBBEntry::compare_Y);
+    qSort(m_aSortedBBoxes[e_Dimension_Z].begin(), m_aSortedBBoxes[e_Dimension_Z].end(), CSortedBBEntry::compare_Z);
+
 }
 
-bool CSortedBBEntry::operator <(const CSortedBBEntry &s2) const
+bool CSortedBBEntry::compare_X(const CSortedBBEntry &that, const CSortedBBEntry &other)
 {
-    const CAABox& BB1 = m_pMesh->GetTriangle(m_nTriangleId).GetBoundingBox();
-    const QVector3D& vBB1( m_bStart ? BB1.GetMinVertex() : BB1.GetMaxVertex() );
-    float fValue1 = CUtils::GetDimension(vBB1, m_eSortingDimention);
+    return compare(that, other, e_Dimension_X);
+}
 
-    const CAABox& BB2 = s2.m_pMesh->GetTriangle(m_nTriangleId).GetBoundingBox();
-    const QVector3D& vBB2( s2.m_bStart ? BB2.GetMinVertex() : BB2.GetMaxVertex() );
-    float fValue2 = CUtils::GetDimension(vBB2, m_eSortingDimention);
+bool CSortedBBEntry::compare_Y(const CSortedBBEntry &that, const CSortedBBEntry &other)
+{
+    return compare(that, other, e_Dimension_Y);
+}
+
+bool CSortedBBEntry::compare_Z(const CSortedBBEntry &that, const CSortedBBEntry &other)
+{
+    return compare(that, other, e_Dimension_Z);
+}
+
+bool CSortedBBEntry::compare(const CSortedBBEntry &that, const CSortedBBEntry &other, EDimiensions eSortingDimention)
+{
+    CMesh& mesh = GetRaytracer()->GetMesh();
+
+    const CAABox& BB1 = mesh.GetTriangle(that.m_nTriangleId).GetBoundingBox();
+    const QVector3D& vBB1( that.m_bStart ? BB1.GetMinVertex() : BB1.GetMaxVertex() );
+    float fValue1 = CUtils::GetDimension(vBB1, eSortingDimention);
+
+    const CAABox& BB2 = mesh.GetTriangle(other.m_nTriangleId).GetBoundingBox();
+    const QVector3D& vBB2( other.m_bStart ? BB2.GetMinVertex() : BB2.GetMaxVertex() );
+    float fValue2 = CUtils::GetDimension(vBB2, eSortingDimention);
 
     return fValue1 < fValue2;
 }

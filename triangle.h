@@ -15,6 +15,7 @@ public:
 
     CTriangle( const QVector<QVector3D> & aVertecis, int v1, int v2, int v3);
     bool Intersect(const CRay& ray, CIntersactionInfo& intersectionInfo ) const;
+    bool Intersect(const QVector3D& vStart, const QVector3D& vEnd) const;
     const QVector<int>& Vertices() const;
     const QVector3D& AB() const;
     const QVector3D& AC() const;
