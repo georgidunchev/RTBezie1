@@ -4,6 +4,7 @@
 #include <ray.h>
 #include <camera.h>
 #include <raytracerthread.h>
+#include <settings.h>
 #include <QDebug>
 
 RayTracer::RayTracer(QObject *parent)
@@ -12,7 +13,6 @@ RayTracer::RayTracer(QObject *parent)
     , m_pMesh(NULL)
     , m_nRunningThreads(0)   
 {
-    m_nThreads = 1;
     m_nHorizontalBuckets = 10;
     m_nVerticalBuckets = 10;
 }
@@ -67,7 +67,7 @@ void RayTracer::RenderThreaded()
 {
     m_nNextBucket = 0;
 
-    for( int j = 0; j < m_nThreads; ++j)
+    for( int j = 0; j < k_nTHREADS; ++j)
     {
 	CRaytracerThread* pThread = new CRaytracerThread(j);
 	m_arrThreads.push_back(pThread);

@@ -48,9 +48,9 @@ void CKDTreeNode::Process()
     CAABox LeftBBox, RightBBox;
     m_BoundingBox.Split(fWhere, LeftBBox, RightBBox, eDimention);
 
-    m_pLeftNode = new CKDTreeNode(pLeftTriangleIndeces, m_nLevel, LeftBBox);
+    m_pLeftNode = new CKDTreeNode(pLeftTriangleIndeces, m_nLevel+1, LeftBBox);
     m_pLeftNode->Process();
-    m_pRightNode = new CKDTreeNode(pRightTriangleIndeces, m_nLevel, RightBBox);
+    m_pRightNode = new CKDTreeNode(pRightTriangleIndeces, m_nLevel+1, RightBBox);
     m_pRightNode->Process();
 
     m_pTriangles->clear();

@@ -6,6 +6,11 @@ static const float k_fMAX = 1e9;
 static const float k_fSMALL = 1e-9;
 static const float k_fMIN = -k_fMAX;
 
+//number of threads
+static const int k_nTHREADS = 4;
+
+static const bool k_bUSE_KDTREE = true;
+
 //end criteria for kd-tree construction
 static const int k_nMAX_LEVEL_OF_TREE = 10;
 static const int k_nMIN_NUMBER_OF_TRIANGLES_TO_SPLIT = 4;

@@ -7,6 +7,7 @@
 #include "AABox.h"
 #include <main.h>
 #include <raytracer.h>
+#include <settings.h>
 
 CMesh::CMesh(QObject *parent)
     : QObject(parent)
@@ -98,12 +99,19 @@ void CMesh::Load(const QString& strInputFileName)
 
 bool CMesh::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo)
 {
-    QVector<int> aTriangles(m_aTriangles.size());
-    for (int i = 0; i < aTriangles.size(); ++i)
+    if (k_bUSE_KDTREE)
     {
-	aTriangles[i] = i;
+	return IntersectKDTree(ray, intersectionInfo);
     }
-    return Intersect(ray, intersectionInfo, aTriangles);
+    else
+    {
+	QVector<int> aTriangles(m_aTriangles.size());
+	for (int i = 0; i < aTriangles.size(); ++i)
+	{
+	    aTriangles[i] = i;
+	}
+	return Intersect(ray, intersectionInfo, aTriangles);
+    }
 }
 
 bool CMesh::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo, const QVector<int>& aTriangles, CAABox* pBBox)

@@ -54,7 +54,6 @@ private:
     QElapsedTimer m_Timer;
 
     // threaded rendering settings
-    int m_nThreads; //number of threads
     QAtomicInt m_nNextBucket;
     int m_nHorizontalBuckets;
     int m_nVerticalBuckets;
