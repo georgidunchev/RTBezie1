@@ -22,7 +22,11 @@ SOURCES += main.cpp\
     settings.cpp \
     kdtreenode.cpp \
     AABox.cpp \
-    Utils.cpp
+    Utils.cpp \
+    light.cpp \
+    lightsscene.cpp \
+    lightpoint.cpp \
+    shader.cpp
 
 HEADERS  += mainwindow.h \
     raytracer.h \
@@ -36,6 +40,10 @@ HEADERS  += mainwindow.h \
     settings.h \
     kdtreenode.h \
     AABox.h \
-    Utils.h
+    Utils.h \
+    light.h \
+    lightsscene.h \
+    lightpoint.h \
+    shader.h
 
 FORMS    += mainwindow.ui

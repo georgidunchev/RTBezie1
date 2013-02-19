@@ -55,7 +55,7 @@ void RayTracer::Render()
 //		GetCamera().getCameraToViewportRay(.getCameraToViewportRay(i, j);
 		if ( m_pMesh->Intersect(GetCamera().GetScreenRay(i, j), intersectionInfo) )
 		{
-		    value = qRgb(189, 149, 39);
+		    value = GetShader().Shade(intersectionInfo);
 		}
 	    }
 
@@ -103,6 +103,16 @@ void RayTracer::LoadNewMesh(const QString& strInputFileName)
 Camera &RayTracer::GetCamera()
 {
     return m_Camera;
+}
+
+CLightsScene &RayTracer::GetLightScene()
+{
+    return m_LightScene;
+}
+
+CShader &RayTracer::GetShader()
+{
+    return m_Shader;
 }
 
 int RayTracer::GetBucketsCount() const

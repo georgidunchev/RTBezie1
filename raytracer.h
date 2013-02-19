@@ -6,9 +6,11 @@
 #include <QImage>
 #include <QAtomicInt>
 #include <QElapsedTimer>
-
-#include <camera.h>
 #include <QProgressDialog>
+
+#include <lightsscene.h>
+#include <camera.h>
+#include <shader.h>
 
 class CRaytracerThread;
 class CMesh;
@@ -31,6 +33,8 @@ public:
     void LoadNewMesh(const QString& strInputFileName);
 
     Camera & GetCamera();
+    CLightsScene & GetLightScene();
+    CShader & GetShader();
 
     QElapsedTimer& GetTimer() { return m_Timer; }
     //threaded methods
@@ -44,6 +48,8 @@ public:
 
 private:
     Camera m_Camera;
+    CLightsScene m_LightScene;
+    CShader m_Shader;
 
     QImage * m_pImage;
     int m_nWidth;
