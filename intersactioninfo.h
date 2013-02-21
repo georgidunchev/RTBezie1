@@ -6,10 +6,9 @@
 class CIntersactionInfo
 {
 public:
-    CIntersactionInfo();
-
-    QVector3D GetIntersectionPoint();
+    CIntersactionInfo();    
     qreal m_fDistance;
+    QVector3D m_vIntersectionPoint;
     QVector3D m_vNormal;
 
 };

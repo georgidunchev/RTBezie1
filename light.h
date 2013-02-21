@@ -8,6 +8,7 @@ class ILight
 public:
     ILight();
     void SetPosition(const QVector3D& vPosition);
+    const QVector3D& GetPosition() const;
 private:
     QVector3D m_vPosition;
 };

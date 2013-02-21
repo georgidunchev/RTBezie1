@@ -5,6 +5,7 @@
 #include <QVector>
 #include <qmath.h>
 #include <QDebug>
+#include <Utils.h>
 
 static qreal Dot(QVector3D vec1, QVector3D vec2)
 {
@@ -28,7 +29,7 @@ CTriangle::CTriangle( const QVector<QVector3D> & aVertecis, int v1, int v2, int 
     m_aVertIndices << v1 << v2 << v3;
     m_vAB = B() - A();
     m_vAC = C() - A();
-    m_vNormal = Cross(AB(), AC());
+    m_vNormal = Cross(AB(), AC()).normalized();
 }
 
 bool CTriangle::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo) const
@@ -83,6 +84,8 @@ bool CTriangle::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo) 
 
     closestdist = gamma;
     intersectionInfo.m_fDistance = closestdist;
+    intersectionInfo.m_vNormal = m_vNormal;
+    intersectionInfo.m_vIntersectionPoint = CUtils::GetPointAtDistance(ray, closestdist);
     return true;
 
     intersectionInfo.m_fDistance = 1.f;
@@ -156,4 +159,3 @@ const CAABox& CTriangle::GetBoundingBox()
 {
     return m_BoundingBox;
 }
-

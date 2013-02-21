@@ -10,8 +10,11 @@ class CLightsScene
 {
 public:
     explicit CLightsScene();
+    virtual ~CLightsScene();
 
     void AddLight(const ILight &Light);
+    const ILight& GetLight(int n);
+    const int GetLightsNumber();
 private:
     CMesh &GetMesh();
     QVector<ILight> m_aLights;

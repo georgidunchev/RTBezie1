@@ -26,7 +26,8 @@ SOURCES += main.cpp\
     light.cpp \
     lightsscene.cpp \
     lightpoint.cpp \
-    shader.cpp
+    shader.cpp \
+    color.cpp
 
 HEADERS  += mainwindow.h \
     raytracer.h \
@@ -44,6 +45,7 @@ HEADERS  += mainwindow.h \
     light.h \
     lightsscene.h \
     lightpoint.h \
-    shader.h
+    shader.h \
+    color.h
 
 FORMS    += mainwindow.ui

@@ -5,15 +5,17 @@
 
 #include <cmesh.h>
 #include <intersactioninfo.h>
+#include <lightsscene.h>
 
 class CShader
 {
 public:
     CShader();
-    QRgb Shade(CIntersactionInfo& intersectionInfo);
+    QRgb Shade(const CRay& ray, CIntersactionInfo& intersectionInfo);
 private:
     CMesh &GetMesh();
-    QRgb ShadeLambert(CIntersactionInfo& intersectionInfo);
+    CLightsScene &GetLightScene();
+    QRgb ShadeLambert(const CRay& ray, CIntersactionInfo& intersectionInfo);
 };
 
 #endif // SHADER_H

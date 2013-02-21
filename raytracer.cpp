@@ -55,7 +55,7 @@ void RayTracer::Render()
 //		GetCamera().getCameraToViewportRay(.getCameraToViewportRay(i, j);
 		if ( m_pMesh->Intersect(GetCamera().GetScreenRay(i, j), intersectionInfo) )
 		{
-		    value = GetShader().Shade(intersectionInfo);
+//		    value = GetShader().Shade(intersectionInfrayo);
 		}
 	    }
 

@@ -5,6 +5,7 @@
 #include <QDebug>
 #include "intersactioninfo.h"
 #include "cmesh.h"
+#include "shader.h"
 
 CRaytracerThread::CRaytracerThread(int nThreadID)
     : m_nThreadID(nThreadID)
@@ -37,9 +38,10 @@ void CRaytracerThread::run()
 		QRgb value = qRgb(0,0,0);
 		CIntersactionInfo intersectionInfo;
 
-		if ( GetRaytracer()->GetMesh().Intersect(GetRaytracer()->GetCamera().GetScreenRay(i, j), intersectionInfo) )
+		CRay Ray = GetRaytracer()->GetCamera().GetScreenRay(i, j);
+		if ( GetRaytracer()->GetMesh().Intersect(Ray, intersectionInfo) )
 		{
-		    value = qRgb(189, 149, 39);
+		    value = GetRaytracer()->GetShader().Shade(Ray, intersectionInfo);
 		}
 
 		//	    QMutexLocker();

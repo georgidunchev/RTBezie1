@@ -16,8 +16,8 @@ MainWindow::MainWindow(QWidget *parent)
     QGraphicsScene* scene = new QGraphicsScene(this);
     ui->graphicsView->setScene(scene);
 
-    GetRaytracer()->GetCamera().SetCameraPos(QVector3D(0, 0, -1), QVector3D(0, 0, 1), QVector3D(0, -1, 0) );
-    GetRaytracer()->SetCanvas(300,300);
+    GetRaytracer()->GetCamera().SetCameraPos(QVector3D(0, 0.2, -0.4), QVector3D(0, 0, 1), QVector3D(0, -1, 0) );
+    GetRaytracer()->SetCanvas(500,500);
 
     progress.setLabelText("Rendering");
     progress.setWindowModality(Qt::WindowModal);
