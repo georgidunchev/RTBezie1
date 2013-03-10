@@ -27,7 +27,8 @@ SOURCES += main.cpp\
     lightsscene.cpp \
     lightpoint.cpp \
     shader.cpp \
-    color.cpp
+    color.cpp \
+    beziertriangle.cpp
 
 HEADERS  += mainwindow.h \
     raytracer.h \
@@ -46,6 +47,10 @@ HEADERS  += mainwindow.h \
     lightsscene.h \
     lightpoint.h \
     shader.h \
-    color.h
+    color.h \
+    beziertriangle.h
 
 FORMS    += mainwindow.ui
+
+OTHER_FILES += \
+    ToDo.txt

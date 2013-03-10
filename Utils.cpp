@@ -63,3 +63,17 @@ QVector3D CUtils::GetPointAtDistance(const CRay &ray, float fDistance)
     return vNewPos;
 }
 
+float  CUtils::Dot(QVector3D vec1, QVector3D vec2)
+{
+    return QVector3D::dotProduct(vec1, vec2);
+}
+
+QVector3D  CUtils::Cross(QVector3D vec1, QVector3D vec2)
+{
+    return QVector3D::crossProduct(vec1, vec2);
+}
+
+float CUtils::Triple(QVector3D vec1, QVector3D vec2, QVector3D vec3)
+{
+    return Dot(vec1, Cross(vec2, vec3) );
+}

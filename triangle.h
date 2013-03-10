@@ -14,8 +14,8 @@ public:
     CTriangle() {}
 
     CTriangle( const QVector<QVector3D> & aVertecis, int v1, int v2, int v3);
-    bool Intersect(const CRay& ray, CIntersactionInfo& intersectionInfo ) const;
-    bool Intersect(const QVector3D& vStart, const QVector3D& vEnd) const;
+    virtual bool Intersect(const CRay& ray, CIntersactionInfo& intersectionInfo ) const;
+    virtual bool Intersect(const QVector3D& vStart, const QVector3D& vEnd) const;
     const QVector<int>& Vertices() const;
     const QVector3D& AB() const;
     const QVector3D& AC() const;
@@ -27,7 +27,7 @@ public:
     void MakeBoundingBox();
     const CAABox& GetBoundingBox();
 
-private:
+protected:
     QVector<int> m_aVertIndices;
     QVector<QVector3D> m_aVertecis;
 

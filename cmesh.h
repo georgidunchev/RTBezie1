@@ -6,11 +6,35 @@
 #include <ray.h>
 #include <intersactioninfo.h>
 #include <triangle.h>
+#include <beziertriangle.h>
 #include <Utils.h>
+#include <vector>
 
 class CKDTreeNode;
 
 struct CSortedBBEntry;
+struct SAdjacencyOfTriangle
+{
+    QVector<int> aAdjacentTriangles;
+    QVector<int> aAdjacentVertices;
+    enum EAdjTrianglesFlags
+    {
+	k_AdjTriangles_Has_A = 0x01,    //0001
+	k_AdjTriangles_Has_B = 0x02,    //0010
+	k_AdjTriangles_Has_C = 0x04,    //0100
+	k_AdjTriangles_Complete = 0x07  //0111
+    };
+    unsigned int Flags;
+
+    SAdjacencyOfTriangle()
+	: Flags(0)
+    {
+	aAdjacentTriangles.resize(3);
+	aAdjacentVertices.resize(3);
+    };
+    bool Complete(int nSide = -1) const;
+    void SetComplete(int nSide);
+};
 
 class CMesh : public QObject
 {
@@ -23,7 +47,14 @@ public:
     bool Intersect(const CRay& ray, CIntersactionInfo& intersectionInfo );
     bool Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo, const QVector<int>& aTriangles, CAABox *pBBox = NULL);
 
-    CTriangle& GetTriangle(int n);
+    QVector<CTriangle> *GetPrimitives();
+    CTriangle& GetPrimitive(int n);
+    QVector<CTriangle> &GetTriangles();
+    const QVector<QVector3D>& GetVertices();
+
+    const SAdjacencyOfTriangle& GetAdjacentTriangles(int n);
+
+    CBezierTriangle *GetBezierTriangle(int n);
 
     void GenerateKDTree();
     bool CompareBB(const CSortedBBEntry &s1, const CSortedBBEntry &s2);
@@ -31,6 +62,7 @@ public:
     int GetKDTreeNextID();
 
     bool IntersectKDTree(const CRay &ray, CIntersactionInfo &intersectionInfo);
+
 signals:
     
 public slots:
@@ -38,8 +70,16 @@ public slots:
 private:
     void SortBBoxes();
 
+    void BuildAdjacency();
+    int FindAdjacentTriangle(int nTriangleID, int nSide);
+
+    void BuildBezierTriangles();
+
     QVector<QVector3D> m_aVertices;
     QVector<CTriangle> m_aTriangles;
+    std::vector< SAdjacencyOfTriangle > m_aAdjacentTriangles;
+    int m_nTrianglesWithCompleteAdjacency;
+    QVector<CTriangle> m_aBezierTriangles;
 
     CAABox mBoundingBox;
 

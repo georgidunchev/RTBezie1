@@ -7,20 +7,6 @@
 #include <QDebug>
 #include <Utils.h>
 
-static qreal Dot(QVector3D vec1, QVector3D vec2)
-{
-    return QVector3D::dotProduct(vec1, vec2);
-}
-
-static QVector3D Cross(QVector3D vec1, QVector3D vec2)
-{
-    return QVector3D::crossProduct(vec1, vec2);
-}
-
-static qreal Triple(QVector3D vec1, QVector3D vec2, QVector3D vec3)
-{
-    return Dot(vec1, Cross(vec2, vec3) );
-}
 
 CTriangle::CTriangle( const QVector<QVector3D> & aVertecis, int v1, int v2, int v3)
     :m_aVertecis(aVertecis)
@@ -29,7 +15,7 @@ CTriangle::CTriangle( const QVector<QVector3D> & aVertecis, int v1, int v2, int 
     m_aVertIndices << v1 << v2 << v3;
     m_vAB = B() - A();
     m_vAC = C() - A();
-    m_vNormal = Cross(AB(), AC()).normalized();
+    m_vNormal = CUtils::Cross(AB(), AC()).normalized();
 }
 
 bool CTriangle::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo) const
@@ -57,7 +43,7 @@ bool CTriangle::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo) 
 	     */
     //
     // Find the determinant of the left part of the equation
-    double Dcr = Triple(AB(), AC(), c);
+    double Dcr = CUtils::Triple(AB(), AC(), c);
     // check for zero; if it is zero, then the triangle and the ray are parallel
     if (fabs(Dcr) < 1e-9)
 	return false;
@@ -66,15 +52,15 @@ bool CTriangle::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo) 
     double rDcr = 1.0 / Dcr;
     // calculate `gamma' by substituting the right part of the equation in the third column of the matrix,
     // getting the determinant, and dividing by Dcr)
-    double gamma = Triple(AB(), AC(), h) * rDcr;
+    double gamma = CUtils::Triple(AB(), AC(), h) * rDcr;
     // Is the intersection point behind us?  Is the intersection point worse than what we currently have?
     if (gamma <= 0 || gamma > closestdist)
 	return false;
-    lambda2 = Triple(h, AC(), c) * rDcr;
+    lambda2 = CUtils::Triple(h, AC(), c) * rDcr;
     // Check if it is in range (barycentric coordinates)
     if (lambda2 < 0 || lambda2 > 1)
 	return false;
-    lambda3 = Triple(AB(), h, c) * rDcr;
+    lambda3 = CUtils::Triple(AB(), h, c) * rDcr;
 
     // Calculate lambda3 and check if it is in range as well
     if (lambda3 < 0 || lambda3 > 1)

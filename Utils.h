@@ -21,6 +21,13 @@ public:
     static void SafeDel(void * pointer);
 
     static QVector3D GetPointAtDistance(const CRay &ray, float fDistance);
+
+    static float Dot(QVector3D vec1, QVector3D vec2);
+    static QVector3D Cross(QVector3D vec1, QVector3D vec2);
+    static float Triple(QVector3D vec1, QVector3D vec2, QVector3D vec3);
 };
+
+
+
 
 #endif // UTILS
