@@ -10,7 +10,6 @@ static const float k_fMIN = -k_fMAX;
 static const int k_nTHREADS = 4;
 
 static const bool k_bUSE_KDTREE = false;
-static const bool k_bINTERSECT_BEZIER = true;
 
 //end criteria for kd-tree construction
 static const int k_nMAX_LEVEL_OF_TREE = 32;
@@ -24,6 +23,11 @@ class CSettings : public QObject
 public:
     explicit CSettings(QObject *parent = 0);
     
+    void SetIntersectBezier(bool bIntersect);
+    bool GetIntersectBezier();
+
+private:
+    bool m_bINTERSECT_BEZIER;
 signals:
     
 public slots:

@@ -82,7 +82,7 @@ void CMesh::Load(const QString& strInputFileName)
 
 			for ( int i = 2; i < temp.size(); ++i)
 			{
-				m_aTriangles.append(CTriangle(m_aVertices, temp[0], temp[i-1], temp[i]));
+				m_aTriangles.append(new CTriangle(m_aVertices, temp[0], temp[i-1], temp[i]));
 			}
 		}
 	}
@@ -91,9 +91,9 @@ void CMesh::Load(const QString& strInputFileName)
 	mBoundingBox.Reset();
 	for (int i = 0; i < m_aTriangles.size(); ++i)
 	{
-		m_aTriangles[i].MakeBoundingBox();
-		mBoundingBox.AddPoint(m_aTriangles[i].GetBoundingBox().GetMinVertex());
-		mBoundingBox.AddPoint(m_aTriangles[i].GetBoundingBox().GetMaxVertex());
+		m_aTriangles[i]->MakeBoundingBox();
+		mBoundingBox.AddPoint(m_aTriangles[i]->GetBoundingBox().GetMinVertex());
+		mBoundingBox.AddPoint(m_aTriangles[i]->GetBoundingBox().GetMaxVertex());
 	}
 
 	GenerateKDTree();
@@ -125,9 +125,9 @@ bool CMesh::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo, cons
 
 	for (int i = 0; i < aTriangles.size(); ++i)
 	{
-		CTriangle& Triangle = GetPrimitive(aTriangles[i]);
+		CPrimitive* Triangle = GetPrimitive(aTriangles[i]);
 		CIntersactionInfo LastIntersection;
-		if ( Triangle.Intersect(ray, LastIntersection) )
+		if ( Triangle->Intersect(ray, LastIntersection) )
 		{
 			if (pBBox) // if bounding box is supplied, discard all intersection outside it
 			{
@@ -159,9 +159,9 @@ bool CMesh::IntersectKDTree(const CRay &ray, CIntersactionInfo &intersectionInfo
 	return m_pRoot->Intersect(ray, intersectionInfo);
 }
 
-QVector<CTriangle> *CMesh::GetPrimitives()
+QVector<CPrimitive*> *CMesh::GetPrimitives()
 {
-    if (k_bINTERSECT_BEZIER)
+    if (GetSettings()->GetIntersectBezier())
     {
 	    return &m_aBezierTriangles;
     }
@@ -171,14 +171,14 @@ QVector<CTriangle> *CMesh::GetPrimitives()
     }
 }
 
-QVector<CTriangle> &CMesh::GetTriangles()
+QVector<CPrimitive *> &CMesh::GetTriangles()
 {
     return m_aTriangles;
 }
 
-CTriangle &CMesh::GetPrimitive(int n)
+CPrimitive *CMesh::GetPrimitive(int n)
 {
-	QVector<CTriangle>& tmpVector = *GetPrimitives();
+	QVector<CPrimitive*>& tmpVector = *GetPrimitives();
 	return tmpVector[n];
 }
 
@@ -194,7 +194,7 @@ const SAdjacencyOfTriangle &CMesh::GetAdjacentTriangles(int n)
 
 CBezierTriangle *CMesh::GetBezierTriangle(int n)
 {
-	return static_cast<CBezierTriangle*>(&m_aBezierTriangles[n]);
+	return static_cast<CBezierTriangle*>(m_aBezierTriangles[n]);
 }
 
 void CMesh::GenerateKDTree()
@@ -212,11 +212,11 @@ void CMesh::GenerateKDTree()
 
 bool CMesh::CompareBB(const CSortedBBEntry &s1, const CSortedBBEntry &s2)
 {
-	const CAABox& BB1 = m_aTriangles[s1.m_nTriangleId].GetBoundingBox();
+	const CAABox& BB1 = m_aTriangles[s1.m_nTriangleId]->GetBoundingBox();
 	const QVector3D& vBB1( s1.m_bStart ? BB1.GetMinVertex() : BB1.GetMaxVertex() );
 	float fValue1 = CUtils::GetDimension(vBB1, m_eSortingDimention);
 
-	const CAABox& BB2 = m_aTriangles[s2.m_nTriangleId].GetBoundingBox();
+	const CAABox& BB2 = m_aTriangles[s2.m_nTriangleId]->GetBoundingBox();
 	const QVector3D& vBB2( s2.m_bStart ? BB2.GetMinVertex() : BB2.GetMaxVertex() );
 	float fValue2 = CUtils::GetDimension(vBB2, m_eSortingDimention);
 
@@ -266,11 +266,11 @@ bool CSortedBBEntry::compare(const CSortedBBEntry &that, const CSortedBBEntry &o
 {
 	CMesh& mesh = GetRaytracer()->GetMesh();
 
-	const CAABox& BB1 = mesh.GetPrimitive(that.m_nTriangleId).GetBoundingBox();
+	const CAABox& BB1 = mesh.GetPrimitive(that.m_nTriangleId)->GetBoundingBox();
 	const QVector3D& vBB1( that.m_bStart ? BB1.GetMinVertex() : BB1.GetMaxVertex() );
 	float fValue1 = CUtils::GetDimension(vBB1, eSortingDimention);
 
-	const CAABox& BB2 = mesh.GetPrimitive(other.m_nTriangleId).GetBoundingBox();
+	const CAABox& BB2 = mesh.GetPrimitive(other.m_nTriangleId)->GetBoundingBox();
 	const QVector3D& vBB2( other.m_bStart ? BB2.GetMinVertex() : BB2.GetMaxVertex() );
 	float fValue2 = CUtils::GetDimension(vBB2, eSortingDimention);
 
@@ -301,8 +301,8 @@ void CMesh::BuildAdjacency()
 
 int CMesh::FindAdjacentTriangle(int nTriangleID, int nSide)
 {
-	int nP1 = m_aTriangles[nTriangleID].Vertices()[nSide];
-	int nP2 = m_aTriangles[nTriangleID].Vertices()[(nSide+1)%3];
+	int nP1 = m_aTriangles[nTriangleID]->Vertices()[nSide];
+	int nP2 = m_aTriangles[nTriangleID]->Vertices()[(nSide+1)%3];
 
 	for (int i = 0; i < m_aTriangles.size(); ++i)
 	{
@@ -315,22 +315,22 @@ int CMesh::FindAdjacentTriangle(int nTriangleID, int nSide)
 		bool bHasP2 = false;
 		int nOther = -1;
 
-		bHasP1 = (m_aTriangles[i].Vertices().contains(nP1));
-		bHasP2 = (m_aTriangles[i].Vertices().contains(nP2));
+		bHasP1 = (m_aTriangles[i]->Vertices().contains(nP1));
+		bHasP2 = (m_aTriangles[i]->Vertices().contains(nP2));
 
 		if (bHasP1 && bHasP2)
 		{
 			for (int j = 0; j < 3; ++j)
 			{
-				if (m_aTriangles[i].Vertices()[j] != nP1
-					&& m_aTriangles[i].Vertices()[j] != nP2)
+				if (m_aTriangles[i]->Vertices()[j] != nP1
+					&& m_aTriangles[i]->Vertices()[j] != nP2)
 				{
 					nOther = j;
 				}
 			}
 
 			m_aAdjacentTriangles[nTriangleID].aAdjacentTriangles[nSide] = i;
-			m_aAdjacentTriangles[nTriangleID].aAdjacentVertices[nSide] = m_aTriangles[i].Vertices()[nOther];
+			m_aAdjacentTriangles[nTriangleID].aAdjacentVertices[nSide] = m_aTriangles[i]->Vertices()[nOther];
 			//	    m_aAdjacentTriangles[i].aAdjacentTriangles[nSide] = nTriangleID;
 			//	    m_aAdjacentTriangles[i].aAdjacentVertices[nSide] = m_aTriangles[i].Vertices()[nOther];
 			return i;
@@ -357,7 +357,7 @@ void CMesh::BuildBezierTriangles()
 	{
 		if (m_aAdjacentTriangles[i].Complete())
 		{
-			m_aBezierTriangles.append(CBezierTriangle(i));
+			m_aBezierTriangles.append(new CBezierTriangle(i));
 		}
 	}
 }

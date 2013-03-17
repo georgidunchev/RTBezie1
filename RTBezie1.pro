@@ -28,7 +28,8 @@ SOURCES += main.cpp\
     lightpoint.cpp \
     shader.cpp \
     color.cpp \
-    beziertriangle.cpp
+    beziertriangle.cpp \
+    primitive.cpp
 
 HEADERS  += mainwindow.h \
     raytracer.h \
@@ -48,7 +49,8 @@ HEADERS  += mainwindow.h \
     lightpoint.h \
     shader.h \
     color.h \
-    beziertriangle.h
+    beziertriangle.h \
+    primitive.h
 
 FORMS    += mainwindow.ui
 

@@ -15,13 +15,15 @@ public:
     CBezierTriangle();
     CBezierTriangle(int nMainTriangleID);
 
-    bool Intersect(const CRay& ray, CIntersactionInfo& intersectionInfo ) const;
-    bool Intersect(const QVector3D& vStart, const QVector3D& vEnd) const;
+    virtual bool Intersect(const CRay& ray, CIntersactionInfo& intersectionInfo ) const;
+    virtual bool Intersect(const QVector3D& vStart, const QVector3D& vEnd) const;
 
 //    void MakeBoundingBox();
-//    const CAABox& GetBoundingBox();
-
+    //    const CAABox& GetBoundingBox();
 private:
+    bool intersectSimpleBezierTriangle(const CRay &ray, CIntersactionInfo &info, QVector3D &barCoord, unsigned int iterations) const;
+    QVector3D Q20, Q02, Q11, Q10, Q01, Q00;
+
 //    QVector<int> m_aVertIndices;
 //    QVector<QVector3D> m_aVertecis;
 

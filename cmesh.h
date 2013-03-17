@@ -9,6 +9,7 @@
 #include <beziertriangle.h>
 #include <Utils.h>
 #include <vector>
+#include <primitive.h>
 
 class CKDTreeNode;
 
@@ -47,9 +48,9 @@ public:
     bool Intersect(const CRay& ray, CIntersactionInfo& intersectionInfo );
     bool Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo, const QVector<int>& aTriangles, CAABox *pBBox = NULL);
 
-    QVector<CTriangle> *GetPrimitives();
-    CTriangle& GetPrimitive(int n);
-    QVector<CTriangle> &GetTriangles();
+    QVector<CPrimitive*> *GetPrimitives();
+    CPrimitive* GetPrimitive(int n);
+    QVector<CPrimitive *> &GetTriangles();
     const QVector<QVector3D>& GetVertices();
 
     const SAdjacencyOfTriangle& GetAdjacentTriangles(int n);
@@ -76,10 +77,10 @@ private:
     void BuildBezierTriangles();
 
     QVector<QVector3D> m_aVertices;
-    QVector<CTriangle> m_aTriangles;
+    QVector<CPrimitive*> m_aTriangles;
     std::vector< SAdjacencyOfTriangle > m_aAdjacentTriangles;
     int m_nTrianglesWithCompleteAdjacency;
-    QVector<CTriangle> m_aBezierTriangles;
+    QVector<CPrimitive*> m_aBezierTriangles;
 
     CAABox mBoundingBox;
 

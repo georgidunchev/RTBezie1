@@ -74,8 +74,8 @@ bool CKDTreeNode::Separate(QVector<int> &AllTriangles, QVector<int> *pLeftTriang
 
 	for(int j = 0; j < AllTriangles.size(); ++j)
 	{
-	    float fLeft =  CUtils::GetDimension( GetMesh().GetPrimitive(AllTriangles[j]).GetBoundingBox().GetMinVertex() , eDimension);
-	    float fRight =  CUtils::GetDimension( GetMesh().GetPrimitive(AllTriangles[j]).GetBoundingBox().GetMaxVertex() , eDimension);
+	    float fLeft =  CUtils::GetDimension( GetMesh().GetPrimitive(AllTriangles[j])->GetBoundingBox().GetMinVertex() , eDimension);
+	    float fRight =  CUtils::GetDimension( GetMesh().GetPrimitive(AllTriangles[j])->GetBoundingBox().GetMaxVertex() , eDimension);
 	    if (fLeft <= fDivide)
 	    {
 		nTrianglesLeft++;
@@ -101,8 +101,8 @@ bool CKDTreeNode::Separate(QVector<int> &AllTriangles, QVector<int> *pLeftTriang
 	pRightTriangleIndeces->reserve(nBestTrianglesRight);
 	for (int j = 0; j < AllTriangles.size(); ++j)
 	{
-	    float fLeft =  CUtils::GetDimension( GetMesh().GetPrimitive(AllTriangles[j]).GetBoundingBox().GetMinVertex() , eDimension);
-	    float fRight =  CUtils::GetDimension( GetMesh().GetPrimitive(AllTriangles[j]).GetBoundingBox().GetMaxVertex() , eDimension);
+	    float fLeft =  CUtils::GetDimension( GetMesh().GetPrimitive(AllTriangles[j])->GetBoundingBox().GetMinVertex() , eDimension);
+	    float fRight =  CUtils::GetDimension( GetMesh().GetPrimitive(AllTriangles[j])->GetBoundingBox().GetMaxVertex() , eDimension);
 	    if (fLeft <= fBestDivide)
 	    {
 		pLeftTriangleIndeces->push_back(AllTriangles[j]);

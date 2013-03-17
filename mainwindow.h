@@ -27,6 +27,8 @@ private slots:
     void on_StartRender_clicked();
     void slotRenderFinished();
 
+    void on_RenderBezierCheckBox_toggled(bool checked);
+
 private:
     Ui::MainWindow *ui;
     QProgressDialog progress;

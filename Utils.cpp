@@ -77,3 +77,12 @@ float CUtils::Triple(QVector3D vec1, QVector3D vec2, QVector3D vec3)
 {
     return Dot(vec1, Cross(vec2, vec3) );
 }
+
+QVector3D CUtils::VertexMatrixMultiply(const QVector3D& v, const Matrix& m)
+{
+	return QVector3D(
+		v.x() * m[0][0] + v.y() * m[1][0] + v.z() * m[2][0],
+		v.x() * m[0][1] + v.y() * m[1][1] + v.z() * m[2][1],
+		v.x() * m[0][2] + v.y() * m[1][2] + v.z() * m[2][2]
+	);
+}

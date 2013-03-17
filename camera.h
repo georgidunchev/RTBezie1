@@ -11,7 +11,7 @@ class Camera : public QObject
 public:
     explicit Camera(QObject *parent = 0);
     
-    void SetCameraPos(QVector3D vPos, QVector3D vDir, QVector3D vUp);
+    void SetCameraPos(QVector3D vPos, QVector3D vTarget, QVector3D vUp);
     CRay GetScreenRay(int x, int y);
     void SetAspectRatio(qreal fAspectRatio);
     void SetCameraResolution(qreal fWidth, qreal fHeight);
@@ -24,7 +24,7 @@ public slots:
     
 private:
     QVector3D m_vPos;
-    QVector3D m_vDir;
+    QVector3D m_vTarget;
     QVector3D m_vUp;
     qreal m_fAspectRatio;
     qreal m_fWidth;

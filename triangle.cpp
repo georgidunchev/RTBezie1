@@ -9,8 +9,7 @@
 
 
 CTriangle::CTriangle( const QVector<QVector3D> & aVertecis, int v1, int v2, int v3)
-    :m_aVertecis(aVertecis)
-    , m_bHasBoundingBox(false)
+    :CPrimitive(aVertecis)
 {
     m_aVertIndices << v1 << v2 << v3;
     m_vAB = B() - A();
@@ -93,55 +92,4 @@ bool CTriangle::Intersect(const QVector3D &vStart, const QVector3D &vEnd) const
 	return true;
     }
     return false;
-}
-
-const QVector<int> &CTriangle::Vertices() const
-{
-    return m_aVertIndices;
-}
-
-const QVector3D &CTriangle::AB() const
-{
-    return m_vAB;
-}
-
-const QVector3D &CTriangle::AC() const
-{
-    return m_vAC;
-}
-
-const QVector3D &CTriangle::Normal() const
-{
-    return m_vNormal;
-}
-
-const QVector3D &CTriangle::A() const
-{
-    return m_aVertecis[m_aVertIndices[0]];
-}
-
-const QVector3D &CTriangle::B() const
-{
-    return m_aVertecis[m_aVertIndices[1]];
-}
-
-const QVector3D &CTriangle::C() const
-{
-    return m_aVertecis[m_aVertIndices[2]];
-}
-
-void CTriangle::MakeBoundingBox()
-{
-    for(int i = 0; i < m_aVertIndices.size(); ++i)
-    {
-	m_BoundingBox.AddPoint(m_aVertecis[m_aVertIndices[i]]);
-	qDebug()<<m_aVertecis[m_aVertIndices[i]];
-    }
-    qDebug()<<"min"<<m_BoundingBox.GetMinVertex()<<"max"<<m_BoundingBox.GetMaxVertex();
-    m_bHasBoundingBox = true;
-}
-
-const CAABox& CTriangle::GetBoundingBox()
-{
-    return m_BoundingBox;
 }

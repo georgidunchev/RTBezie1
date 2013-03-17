@@ -93,13 +93,227 @@
           <property name="geometry">
            <rect>
             <x>170</x>
-            <y>70</y>
+            <y>200</y>
             <width>75</width>
             <height>23</height>
            </rect>
           </property>
           <property name="text">
            <string>Start</string>
+          </property>
+         </widget>
+         <widget class="QGroupBox" name="groupBox">
+          <property name="geometry">
+           <rect>
+            <x>20</x>
+            <y>20</y>
+            <width>221</width>
+            <height>51</height>
+           </rect>
+          </property>
+          <property name="title">
+           <string>Position</string>
+          </property>
+          <widget class="QDoubleSpinBox" name="PosX">
+           <property name="geometry">
+            <rect>
+             <x>10</x>
+             <y>20</y>
+             <width>62</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <property name="minimum">
+            <double>-100.000000000000000</double>
+           </property>
+           <property name="singleStep">
+            <double>0.010000000000000</double>
+           </property>
+          </widget>
+          <widget class="QDoubleSpinBox" name="PosY">
+           <property name="geometry">
+            <rect>
+             <x>80</x>
+             <y>20</y>
+             <width>62</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <property name="minimum">
+            <double>-100.000000000000000</double>
+           </property>
+           <property name="singleStep">
+            <double>0.010000000000000</double>
+           </property>
+           <property name="value">
+            <double>0.200000000000000</double>
+           </property>
+          </widget>
+          <widget class="QDoubleSpinBox" name="PosZ">
+           <property name="geometry">
+            <rect>
+             <x>150</x>
+             <y>20</y>
+             <width>62</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <property name="minimum">
+            <double>-100.000000000000000</double>
+           </property>
+           <property name="maximum">
+            <double>98.989999999999995</double>
+           </property>
+           <property name="singleStep">
+            <double>0.010000000000000</double>
+           </property>
+           <property name="value">
+            <double>-0.400000000000000</double>
+           </property>
+          </widget>
+         </widget>
+         <widget class="QGroupBox" name="groupBox_2">
+          <property name="geometry">
+           <rect>
+            <x>20</x>
+            <y>70</y>
+            <width>221</width>
+            <height>51</height>
+           </rect>
+          </property>
+          <property name="title">
+           <string>Direction</string>
+          </property>
+          <widget class="QDoubleSpinBox" name="DirX">
+           <property name="geometry">
+            <rect>
+             <x>10</x>
+             <y>20</y>
+             <width>62</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <property name="minimum">
+            <double>-100.000000000000000</double>
+           </property>
+           <property name="singleStep">
+            <double>0.010000000000000</double>
+           </property>
+          </widget>
+          <widget class="QDoubleSpinBox" name="DirY">
+           <property name="geometry">
+            <rect>
+             <x>80</x>
+             <y>20</y>
+             <width>62</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <property name="minimum">
+            <double>-100.000000000000000</double>
+           </property>
+           <property name="singleStep">
+            <double>0.010000000000000</double>
+           </property>
+          </widget>
+          <widget class="QDoubleSpinBox" name="DirZ">
+           <property name="geometry">
+            <rect>
+             <x>150</x>
+             <y>20</y>
+             <width>62</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <property name="minimum">
+            <double>-100.000000000000000</double>
+           </property>
+           <property name="singleStep">
+            <double>0.010000000000000</double>
+           </property>
+           <property name="value">
+            <double>1.000000000000000</double>
+           </property>
+          </widget>
+         </widget>
+         <widget class="QGroupBox" name="groupBox_3">
+          <property name="geometry">
+           <rect>
+            <x>20</x>
+            <y>120</y>
+            <width>221</width>
+            <height>51</height>
+           </rect>
+          </property>
+          <property name="title">
+           <string>Up</string>
+          </property>
+          <widget class="QDoubleSpinBox" name="UpX">
+           <property name="geometry">
+            <rect>
+             <x>10</x>
+             <y>20</y>
+             <width>62</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <property name="minimum">
+            <double>-100.000000000000000</double>
+           </property>
+           <property name="singleStep">
+            <double>0.010000000000000</double>
+           </property>
+          </widget>
+          <widget class="QDoubleSpinBox" name="UpY">
+           <property name="geometry">
+            <rect>
+             <x>80</x>
+             <y>20</y>
+             <width>62</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <property name="minimum">
+            <double>-100.000000000000000</double>
+           </property>
+           <property name="singleStep">
+            <double>0.010000000000000</double>
+           </property>
+           <property name="value">
+            <double>-1.000000000000000</double>
+           </property>
+          </widget>
+          <widget class="QDoubleSpinBox" name="UpZ">
+           <property name="geometry">
+            <rect>
+             <x>150</x>
+             <y>20</y>
+             <width>62</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <property name="minimum">
+            <double>-100.000000000000000</double>
+           </property>
+           <property name="singleStep">
+            <double>0.010000000000000</double>
+           </property>
+           <property name="value">
+            <double>0.000000000000000</double>
+           </property>
+          </widget>
+         </widget>
+         <widget class="QCheckBox" name="RenderBezierCheckBox">
+          <property name="geometry">
+           <rect>
+            <x>20</x>
+            <y>180</y>
+            <width>71</width>
+            <height>18</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Bezier</string>
           </property>
          </widget>
         </widget>

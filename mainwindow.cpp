@@ -6,6 +6,7 @@
 #include <QDebug>
 #include <QFileDialog>
 #include <QProgressDialog>
+#include <settings.h>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -16,8 +17,11 @@ MainWindow::MainWindow(QWidget *parent)
     QGraphicsScene* scene = new QGraphicsScene(this);
     ui->graphicsView->setScene(scene);
 
-    GetRaytracer()->GetCamera().SetCameraPos(QVector3D(0, 0.2, -0.4), QVector3D(0, 0, 1), QVector3D(0, -1, 0) );
+//    GetRaytracer()->GetCamera().SetCameraPos(QVector3D(0, 0.2, -0.4), QVector3D(0, 0, 1), QVector3D(0, -1, 0) );
+//    GetRaytracer()->GetCamera().SetCameraPos(QVector3D(0, 1, -10), QVector3D(0, 0, 1), QVector3D(0, -1, 0) );
     GetRaytracer()->SetCanvas(500,500);
+
+//    GetRaytracer()->LoadNewMesh("SimpleBezierTriangle2.obj");
 
     progress.setLabelText("Rendering");
     progress.setWindowModality(Qt::WindowModal);
@@ -49,7 +53,16 @@ void MainWindow::on_openMeshButton_clicked()
 }
 
 void MainWindow::on_StartRender_clicked()
-{
+{   
+    QVector3D vPos(ui->PosX->value(), ui->PosY->value(), ui->PosZ->value());
+    QVector3D vTarget(ui->DirX->value(), ui->DirY->value(), ui->DirZ->value());
+    QVector3D vUp(ui->UpX->value(), ui->UpY->value(), ui->UpZ->value());
+
+    GetRaytracer()->GetCamera().SetCameraPos(vPos, vTarget, vUp);
+//    GetRaytracer()->SetCanvas(500,500);
+
+    GetRaytracer()->GetCamera().BeginFrame();
+
     progress.setMaximum( GetRaytracer()->GetBucketsCount() );
 
     QObject::connect(GetRaytracer(), SIGNAL(sigBucketDone(int)), &progress, SLOT(setValue(int)));
@@ -71,4 +84,9 @@ void MainWindow::slotRenderFinished()
 	qDebug()<<"Render Finished in"<<GetRaytracer()->GetTimer().elapsed()/1000.f;
 	GetRaytracer()->GetTimer().invalidate();
     }
+}
+
+void MainWindow::on_RenderBezierCheckBox_toggled(bool checked)
+{
+    GetSettings()->SetIntersectBezier(checked);
 }

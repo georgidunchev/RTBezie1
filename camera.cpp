@@ -8,11 +8,11 @@ Camera::Camera(QObject *parent) :
     m_fFov = 90.f;
 }
 
-void Camera::SetCameraPos(QVector3D vPos, QVector3D vDir, QVector3D vUp)
+void Camera::SetCameraPos(QVector3D vPos, QVector3D vTarget, QVector3D vUp)
 {
     m_vPos = vPos;
-    m_vDir = vDir;
-    m_vDir.normalize();
+    m_vTarget = vTarget;
+    m_vTarget.normalize();
     m_vUp = vUp;
     m_vUp.normalize();
 
@@ -44,15 +44,17 @@ void Camera::BeginFrame()
     fFovMultiplierX *= fFactor;
     fFovMultiplierY *= fFactor;
 
-    QVector3D vCameraCentre = m_vPos + m_vDir;
+//    QVector3D vCameraCentre = m_vPos + m_vTarget;
+    QVector3D vDir = m_vTarget - m_vPos;
+
     //find new up dir
 
-    QVector3D vRight = QVector3D::normal(m_vDir, m_vUp);
-    QVector3D vTrueUp = QVector3D::normal(m_vDir, vRight);
+    QVector3D vRight = QVector3D::normal(vDir, m_vUp);
+    QVector3D vTrueUp = QVector3D::normal(vDir, vRight);
 
-    vUpLeftCorner = vCameraCentre + fFovMultiplierY * vTrueUp / 2 - fFovMultiplierX * vRight / 2;
-    QVector3D vUpRightCorner = vCameraCentre + fFovMultiplierY * vTrueUp / 2 + fFovMultiplierX * vRight / 2;
-    QVector3D vDownLeftCorner = vCameraCentre - fFovMultiplierY * vTrueUp / 2 - fFovMultiplierX * vRight / 2;
+    vUpLeftCorner = m_vTarget + fFovMultiplierY * vTrueUp / 2 - fFovMultiplierX * vRight / 2;
+    QVector3D vUpRightCorner = m_vTarget + fFovMultiplierY * vTrueUp / 2 + fFovMultiplierX * vRight / 2;
+    QVector3D vDownLeftCorner = m_vTarget - fFovMultiplierY * vTrueUp / 2 - fFovMultiplierX * vRight / 2;
     vHorizontal = vUpRightCorner - vUpLeftCorner;
     vVertical = vDownLeftCorner - vUpLeftCorner;
 }
