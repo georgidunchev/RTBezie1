@@ -3,6 +3,7 @@
 CSettings::CSettings(QObject *parent) :
     QObject(parent)
   , m_bINTERSECT_BEZIER(false)
+  , m_bNormalSmoothing(false)
 {
 }
 
@@ -14,6 +15,16 @@ void CSettings::SetIntersectBezier(bool bIntersect)
 bool CSettings::GetIntersectBezier()
 {
     return m_bINTERSECT_BEZIER;
+}
+
+void CSettings::SetNormalSmoothing(bool bSmooth)
+{
+    m_bNormalSmoothing = bSmooth;
+}
+
+bool CSettings::GetNormalSmoothing()
+{
+    return m_bNormalSmoothing;
 }
 
 

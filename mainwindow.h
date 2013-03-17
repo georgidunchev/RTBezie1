@@ -29,6 +29,8 @@ private slots:
 
     void on_RenderBezierCheckBox_toggled(bool checked);
 
+    void on_NormalSmoothingCheckBox_toggled(bool checked);
+
 private:
     Ui::MainWindow *ui;
     QProgressDialog progress;

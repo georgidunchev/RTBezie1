@@ -316,6 +316,19 @@
            <string>Bezier</string>
           </property>
          </widget>
+         <widget class="QCheckBox" name="NormalSmoothingCheckBox">
+          <property name="geometry">
+           <rect>
+            <x>20</x>
+            <y>200</y>
+            <width>121</width>
+            <height>18</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Normal Smoothing</string>
+          </property>
+         </widget>
         </widget>
         <widget class="QWidget" name="page_2">
          <property name="geometry">

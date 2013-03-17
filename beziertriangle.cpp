@@ -42,8 +42,8 @@ CBezierTriangle::CBezierTriangle(int nMainTriangleID)
     Q10 = 2 * ( P101 - P002 );
     Q01 = 2 * ( P011 - P002 );
     Q00 = P002;
-//    //
-//    // create the normals[] array - if needed:
+
+    // create the normals[] array - if needed:
 //    if (!hasNormals && autoSmooth ) {
 //	    hasNormals = true;
 //	    normals.resize(vertices.size(), Vector(0, 0, 0)); // extend the normals[] array, and fill with zeros
@@ -64,11 +64,11 @@ bool CBezierTriangle::Intersect(const CRay &ray, CIntersactionInfo &intersection
     float closestdist = k_fMAX;
     intersectionInfo.m_fDistance = k_fMAX;
 
-    bool bezierFast = true;
+    bool bezierFast = false;
     if(!bezierFast)
     {
 	QVector3D res = QVector3D(1.0/3.0, 1.0/3.0, 0);
-	if(intersectSimpleBezierTriangle(ray, intersectionInfo, res, 5 ))
+	if(intersectSimpleBezierTriangle(ray, intersectionInfo, res, 50 ))
 	{
 	    closestdist = intersectionInfo.m_fDistance;
 	}

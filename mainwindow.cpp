@@ -90,3 +90,8 @@ void MainWindow::on_RenderBezierCheckBox_toggled(bool checked)
 {
     GetSettings()->SetIntersectBezier(checked);
 }
+
+void MainWindow::on_NormalSmoothingCheckBox_toggled(bool checked)
+{
+
+}

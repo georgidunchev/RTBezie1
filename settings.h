@@ -7,7 +7,7 @@ static const float k_fSMALL = 1e-9;
 static const float k_fMIN = -k_fMAX;
 
 //number of threads
-static const int k_nTHREADS = 4;
+static const int k_nTHREADS = 8;
 
 static const bool k_bUSE_KDTREE = false;
 
@@ -26,8 +26,12 @@ public:
     void SetIntersectBezier(bool bIntersect);
     bool GetIntersectBezier();
 
+    void SetNormalSmoothing(bool bSmooth);
+    bool GetNormalSmoothing();
+
 private:
     bool m_bINTERSECT_BEZIER;
+    bool m_bNormalSmoothing;
 signals:
     
 public slots:
