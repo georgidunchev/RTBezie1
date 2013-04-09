@@ -29,7 +29,8 @@ SOURCES += main.cpp\
     shader.cpp \
     color.cpp \
     beziertriangle.cpp \
-    primitive.cpp
+    primitive.cpp \
+    vertex.cpp
 
 HEADERS  += mainwindow.h \
     raytracer.h \
@@ -50,7 +51,8 @@ HEADERS  += mainwindow.h \
     shader.h \
     color.h \
     beziertriangle.h \
-    primitive.h
+    primitive.h \
+    vertex.h
 
 FORMS    += mainwindow.ui
 

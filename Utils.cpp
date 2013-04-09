@@ -83,6 +83,21 @@ QVector3D CUtils::VertexMatrixMultiply(const QVector3D& v, const Matrix& m)
 	return QVector3D(
 		v.x() * m[0][0] + v.y() * m[1][0] + v.z() * m[2][0],
 		v.x() * m[0][1] + v.y() * m[1][1] + v.z() * m[2][1],
-		v.x() * m[0][2] + v.y() * m[1][2] + v.z() * m[2][2]
-	);
+		v.x() * m[0][2] + v.y() * m[1][2] + v.z() * m[2][2] );
+}
+
+float CUtils::Cos(QVector3D vec1, QVector3D vec2)
+{
+    vec1.normalize();
+    vec2.normalize();
+    return Dot(vec1, vec2);
+}
+
+QVector3D CUtils::ProjectionOfVectorInPlane(QVector3D vVector, QVector3D vNormalOfPlane)
+{
+    QVector3D vHelper = Cross(vVector, vNormalOfPlane);
+    QVector3D vProjection = Cross(vNormalOfPlane, vHelper);
+    vProjection.normalize();
+    double fLen = Dot(vVector, vProjection);
+    return vProjection*fLen;
 }

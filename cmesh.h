@@ -10,6 +10,7 @@
 #include <Utils.h>
 #include <vector>
 #include <primitive.h>
+#include <vertex.h>
 
 class CKDTreeNode;
 
@@ -51,7 +52,7 @@ public:
     QVector<CPrimitive*> *GetPrimitives();
     CPrimitive* GetPrimitive(int n);
     QVector<CPrimitive *> &GetTriangles();
-    const QVector<QVector3D>& GetVertices();
+    const QVector<CVertex> &GetVertices();
 
     const SAdjacencyOfTriangle& GetAdjacentTriangles(int n);
 
@@ -71,12 +72,14 @@ public slots:
 private:
     void SortBBoxes();
 
+    void BuildVertexData();
+
     void BuildAdjacency();
     int FindAdjacentTriangle(int nTriangleID, int nSide);
 
     void BuildBezierTriangles();
 
-    QVector<QVector3D> m_aVertices;
+    QVector<CVertex> m_aVertices;
     QVector<CPrimitive*> m_aTriangles;
     std::vector< SAdjacencyOfTriangle > m_aAdjacentTriangles;
     int m_nTrianglesWithCompleteAdjacency;

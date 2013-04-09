@@ -27,7 +27,7 @@ void CMesh::Load(const QString& strInputFileName)
     QTextStream inputStream(&file);
     QString strLine;
 
-    m_aVertices.append(QVector3D(0.f, 0.f, 0.f));
+    m_aVertices.append( CVertex( QVector3D(0.f, 0.f, 0.f) ) );
 
     QString strMarker;
     while(!inputStream.atEnd())
@@ -97,6 +97,9 @@ void CMesh::Load(const QString& strInputFileName)
     }
 
     GenerateKDTree();
+
+    BuildVertexData();
+
     m_nTrianglesWithCompleteAdjacency = 0;
     BuildAdjacency();
     BuildBezierTriangles();
@@ -182,7 +185,7 @@ CPrimitive *CMesh::GetPrimitive(int n)
     return tmpVector[n];
 }
 
-const QVector<QVector3D> &CMesh::GetVertices()
+const QVector<CVertex> &CMesh::GetVertices()
 {
     return m_aVertices;
 }
@@ -277,6 +280,21 @@ bool CSortedBBEntry::compare(const CSortedBBEntry &that, const CSortedBBEntry &o
     return fValue1 < fValue2;
 }
 
+void CMesh::BuildVertexData()
+{
+    for (int i = 0; i < m_aTriangles.size(); ++i)
+    {
+	for (int j = 0; j < 3; ++j)
+	{
+	    m_aTriangles[i]->GetVertex(i).Normal_AddNormal(m_aTriangles[i]->Normal());
+	}
+    }
+    for (int i = 0; i < m_aVertices.size(); ++i)
+    {
+	m_aVertices[i].Normal_Normalize();
+    }
+}
+
 void CMesh::BuildAdjacency()
 {
     m_aAdjacentTriangles.resize(m_aTriangles.size());
@@ -352,14 +370,18 @@ int CMesh::FindAdjacentTriangle(int nTriangleID, int nSide)
 
 void CMesh::BuildBezierTriangles()
 {
-    m_aBezierTriangles.reserve(m_nTrianglesWithCompleteAdjacency);
     for (int i = 0; i < m_aTriangles.size(); ++i)
     {
-	if (m_aAdjacentTriangles[i].Complete())
-	{
-	    m_aBezierTriangles.append(new CBezierTriangle(i));
-	}
+	m_aTriangles[i]->BuilBezierPoints();
     }
+//    m_aBezierTriangles.reserve(m_nTrianglesWithCompleteAdjacency);
+//    for (int i = 0; i < m_aTriangles.size(); ++i)
+//    {
+//	if (m_aAdjacentTriangles[i].Complete())
+//	{
+//	    m_aBezierTriangles.append(new CBezierTriangle(i));
+//	}
+//    }
 }
 
 bool SAdjacencyOfTriangle::Complete(int nSide) const

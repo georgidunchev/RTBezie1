@@ -1,6 +1,7 @@
 #include "camera.h"
 #include "qmath.h"
 #include <QDebug>
+#include <Utils.h>
 
 Camera::Camera(QObject *parent) :
     QObject(parent)
@@ -32,15 +33,13 @@ void Camera::SetCameraResolution(qreal fWidth, qreal fHeight)
 
 void Camera::BeginFrame()
 {
-    qreal fFovMultiplierX, fFovMultiplierY;
+    double fFovMultiplierX, fFovMultiplierY;
     fFovMultiplierX = m_fAspectRatio;
     fFovMultiplierY = 1;
 
-    const qreal Pi = 3.14159f;
-    const qreal fDegreesToRadians = Pi/180.f;
-    qreal fCurDiagonal = qSqrt(fFovMultiplierX*fFovMultiplierX + fFovMultiplierY*fFovMultiplierY);
-    qreal fTargetDiagonal = qTan( (m_fFov / 2.f) * fDegreesToRadians ) * 2;
-    qreal fFactor = fTargetDiagonal / fCurDiagonal;
+    double fCurDiagonal = qSqrt(fFovMultiplierX*fFovMultiplierX + fFovMultiplierY*fFovMultiplierY);
+    double fTargetDiagonal = qTan( (m_fFov / 2.f) * k_fDegreesToRadians) * 2;
+    double fFactor = fTargetDiagonal / fCurDiagonal;
     fFovMultiplierX *= fFactor;
     fFovMultiplierY *= fFactor;
 

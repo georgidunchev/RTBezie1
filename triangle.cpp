@@ -8,12 +8,12 @@
 #include <Utils.h>
 
 
-CTriangle::CTriangle( const QVector<QVector3D> & aVertecis, int v1, int v2, int v3)
+CTriangle::CTriangle( const QVector<CVertex> &aVertecis, int v1, int v2, int v3)
     :CPrimitive(aVertecis)
 {
     m_aVertIndices << v1 << v2 << v3;
-    m_vAB = B() - A();
-    m_vAC = C() - A();
+    m_vAB = B().GetPos() - A().GetPos();
+    m_vAC = C().GetPos() - A().GetPos();
     m_vNormal = CUtils::Cross(AB(), AC()).normalized();
 }
 
@@ -30,7 +30,7 @@ bool CTriangle::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo) 
 //    const Vector& a = AB();
 //    const Vector& b = AC();
     QVector3D c = - (ray.Direction());
-    QVector3D h = ray.StartPoint() - A();
+    QVector3D h = ray.StartPoint() - A().GetPos();
     /* 2. Solve the equation:
 	     *
 	     * A + lambda2 * AB + lambda3 * AC = ray.start + gamma * ray.dir

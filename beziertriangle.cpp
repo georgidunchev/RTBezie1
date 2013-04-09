@@ -12,7 +12,7 @@ CBezierTriangle::CBezierTriangle()
 
 CBezierTriangle::CBezierTriangle(int nMainTriangleID)
 {
-    m_aVertecis = GetRaytracer()->GetMesh().GetVertices();
+//    m_aVertecis = GetRaytracer()->GetMesh().GetVertices();
     CPrimitive* Triangle = GetRaytracer()->GetMesh().GetTriangles()[nMainTriangleID];
     const SAdjacencyOfTriangle& AdjTriangles = GetRaytracer()->GetMesh().GetAdjacentTriangles(nMainTriangleID);
 
@@ -25,16 +25,16 @@ CBezierTriangle::CBezierTriangle(int nMainTriangleID)
 
 
     m_bHasBoundingBox = false;
-    m_vAB = B() - A();
-    m_vAC = C() - A();
+    m_vAB = B().GetPos() - A().GetPos();
+    m_vAC = C().GetPos() - A().GetPos();
     m_vNormal = CUtils::Cross(AB(), AC()).normalized();
 
-    const QVector3D &P110 = m_aVertecis[m_aVertIndices[0]];
-    const QVector3D &P011 = m_aVertecis[m_aVertIndices[1]];
-    const QVector3D &P101 = m_aVertecis[m_aVertIndices[2]];
-    const QVector3D &P020 = m_aVertecis[m_aVertIndices[3]];
-    const QVector3D &P002 = m_aVertecis[m_aVertIndices[4]];
-    const QVector3D &P200 = m_aVertecis[m_aVertIndices[5]];
+    const QVector3D &P110 = m_aVertecis[m_aVertIndices[0]].GetPos();
+    const QVector3D &P011 = m_aVertecis[m_aVertIndices[1]].GetPos();
+    const QVector3D &P101 = m_aVertecis[m_aVertIndices[2]].GetPos();
+    const QVector3D &P020 = m_aVertecis[m_aVertIndices[3]].GetPos();
+    const QVector3D &P002 = m_aVertecis[m_aVertIndices[4]].GetPos();
+    const QVector3D &P200 = m_aVertecis[m_aVertIndices[5]].GetPos();
 
     Q20 = P200 + P002 - 2*P101;
     Q02 = P020 + P002 - 2*P011;

@@ -7,7 +7,7 @@
 #include <QDebug>
 #include <Utils.h>
 
-CPrimitive::CPrimitive(const QVector<QVector3D> &aVertecis)
+CPrimitive::CPrimitive(const QVector<CVertex> &aVertecis)
     :m_aVertecis(aVertecis)
     , m_bHasBoundingBox(false)
 {
@@ -16,6 +16,11 @@ CPrimitive::CPrimitive(const QVector<QVector3D> &aVertecis)
 const QVector<int> &CPrimitive::Vertices() const
 {
     return m_aVertIndices;
+}
+
+CVertex& CPrimitive::GetVertex(int i)
+{
+    return m_aVertecis[Vertices()[i]];
 }
 
 const QVector3D &CPrimitive::AB() const
@@ -33,17 +38,17 @@ const QVector3D &CPrimitive::Normal() const
     return m_vNormal;
 }
 
-const QVector3D &CPrimitive::A() const
+const CVertex &CPrimitive::A() const
 {
     return m_aVertecis[m_aVertIndices[0]];
 }
 
-const QVector3D &CPrimitive::B() const
+const CVertex &CPrimitive::B() const
 {
     return m_aVertecis[m_aVertIndices[1]];
 }
 
-const QVector3D &CPrimitive::C() const
+const CVertex &CPrimitive::C() const
 {
     return m_aVertecis[m_aVertIndices[2]];
 }

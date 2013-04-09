@@ -3,6 +3,7 @@
 
 #include <QVector3D>
 #include <Utils.h>
+#include <vertex.h>
 
 class CRay;
 
@@ -12,12 +13,13 @@ public:
     explicit CAABox();
     explicit CAABox(const QVector3D & vMinVertex,const QVector3D & vMaxVertex);
 
-    void AddPoint(const QVector3D& vPoint);
+    void AddPoint(const CVertex &vPoint);
 
     void Set(const QVector3D & vMinVertex,const QVector3D & vMaxVertex);
     void Reset();
 
     bool IsInside(const QVector3D& vPoint) const;
+    bool IsInside(const CVertex& vPoint) const;
 
     bool Intersect(const CRay& ray) const;
 

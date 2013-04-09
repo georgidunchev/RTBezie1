@@ -5,6 +5,7 @@
 #include <QVector>
 #include <AABox.h>
 #include <primitive.h>
+#include <vertex.h>
 
 class CRay;
 class CIntersactionInfo;
@@ -13,24 +14,25 @@ class CPrimitive
 {
 public:
     CPrimitive() {}
-    CPrimitive(const QVector<QVector3D> & aVertecis);
+    CPrimitive(const QVector<CVertex> & aVertecis);
 
     virtual bool Intersect(const CRay& ray, CIntersactionInfo& intersectionInfo ) const = 0;
     virtual bool Intersect(const QVector3D& vStart, const QVector3D& vEnd) const = 0;
     const QVector<int>& Vertices() const;
+    CVertex& GetVertex(int i);
     const QVector3D& AB() const;
     const QVector3D& AC() const;
     const QVector3D& Normal() const;
-    const QVector3D& A() const;
-    const QVector3D& B() const;
-    const QVector3D& C() const;
+    const CVertex &A() const;
+    const CVertex &B() const;
+    const CVertex &C() const;
 
     void MakeBoundingBox();
     const CAABox& GetBoundingBox();
 
 protected:
     QVector<int> m_aVertIndices;
-    QVector<QVector3D> m_aVertecis;
+    QVector<CVertex> m_aVertecis;
 
     //bounding box
     bool m_bHasBoundingBox;

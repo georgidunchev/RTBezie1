@@ -6,6 +6,7 @@
 #include <QDebug>
 #include <Utils.h>
 #include <settings.h>
+#include <vertex.h>
 
 CAABox::CAABox()
     : m_vMaxVertex(QVector3D(k_fMIN,k_fMIN,k_fMIN))
@@ -39,14 +40,19 @@ bool CAABox::IsInside(const QVector3D& vPoint) const
     bool bZ = m_vMinVertex.z() - k_fSMALL  <= vPoint.z() && vPoint.z() <= m_vMaxVertex.z() + k_fSMALL;
     return (bX && bY && bZ);
 }
+/// Checks if a point is inside the bounding box (borders-inclusive)
+bool CAABox::IsInside(const CVertex& vPoint) const
+{
+    return IsInside(vPoint.GetPos());
+}
 
-void CAABox::AddPoint(const QVector3D& vPoint)
+void CAABox::AddPoint(const CVertex& vPoint)
 {
     for(EDimiensions i = e_Dimension_X; i < e_Dimension_MAX; i = (EDimiensions)((int)i + 1) )
     {
 	const float fMinVDir( CUtils::GetDimension(m_vMinVertex, i) );
 	const float fMaxVDir( CUtils::GetDimension(m_vMaxVertex, i) );
-	const float fPointDir( CUtils::GetDimension(vPoint, i) );
+	const float fPointDir( CUtils::GetDimension(vPoint.GetPos(), i) );
 
 	if(fMinVDir > fPointDir)
 	{
