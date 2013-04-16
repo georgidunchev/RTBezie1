@@ -14,6 +14,9 @@ public:
 
     void Normal_Normalize();
 
+    const QVector3D &Normal_Get() const;
+    bool IsSmoothGeometryOn();
+
 private:
     void ConstructorInit();
     QVector3D m_vPos;

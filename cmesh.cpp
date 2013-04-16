@@ -128,7 +128,7 @@ bool CMesh::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo, cons
 
     for (int i = 0; i < aTriangles.size(); ++i)
     {
-	CPrimitive* Triangle = GetPrimitive(aTriangles[i]);
+	CTriangle* Triangle = GetPrimitive(aTriangles[i]);
 	CIntersactionInfo LastIntersection;
 	if ( Triangle->Intersect(ray, LastIntersection) )
 	{
@@ -162,7 +162,7 @@ bool CMesh::IntersectKDTree(const CRay &ray, CIntersactionInfo &intersectionInfo
     return m_pRoot->Intersect(ray, intersectionInfo);
 }
 
-QVector<CPrimitive*> *CMesh::GetPrimitives()
+QVector<CTriangle*> *CMesh::GetPrimitives()
 {
     if (GetSettings()->GetIntersectBezier())
     {
@@ -174,14 +174,14 @@ QVector<CPrimitive*> *CMesh::GetPrimitives()
     }
 }
 
-QVector<CPrimitive *> &CMesh::GetTriangles()
+QVector<CTriangle *> &CMesh::GetTriangles()
 {
     return m_aTriangles;
 }
 
-CPrimitive *CMesh::GetPrimitive(int n)
+CTriangle *CMesh::GetPrimitive(int n)
 {
-    QVector<CPrimitive*>& tmpVector = *GetPrimitives();
+    QVector<CTriangle*>& tmpVector = *GetPrimitives();
     return tmpVector[n];
 }
 
@@ -297,10 +297,11 @@ void CMesh::BuildVertexData()
 
 void CMesh::BuildAdjacency()
 {
-    m_aAdjacentTriangles.resize(m_aTriangles.size());
-    for (int i = 0; i < m_aAdjacentTriangles.size(); ++i)
+    unsigned int nSize = m_aTriangles.size();
+    m_aAdjacentTriangles.resize(nSize);
+    for (unsigned int i = 0; i < nSize; ++i)
     {
-	for (int j = 0; j < 3; ++j)
+	for (unsigned int j = 0; j < 3; ++j)
 	{
 	    //if (!m_aAdjacentTriangles[i].Complete(j))
 	    {
@@ -372,7 +373,7 @@ void CMesh::BuildBezierTriangles()
 {
     for (int i = 0; i < m_aTriangles.size(); ++i)
     {
-	m_aTriangles[i]->BuilBezierPoints();
+	m_aTriangles[i]->BuildBezierPoints();
     }
 //    m_aBezierTriangles.reserve(m_nTrianglesWithCompleteAdjacency);
 //    for (int i = 0; i < m_aTriangles.size(); ++i)

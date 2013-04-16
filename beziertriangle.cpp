@@ -13,7 +13,7 @@ CBezierTriangle::CBezierTriangle()
 CBezierTriangle::CBezierTriangle(int nMainTriangleID)
 {
 //    m_aVertecis = GetRaytracer()->GetMesh().GetVertices();
-    CPrimitive* Triangle = GetRaytracer()->GetMesh().GetTriangles()[nMainTriangleID];
+    CTriangle* Triangle = GetRaytracer()->GetMesh().GetTriangles()[nMainTriangleID];
     const SAdjacencyOfTriangle& AdjTriangles = GetRaytracer()->GetMesh().GetAdjacentTriangles(nMainTriangleID);
 
     m_aVertIndices.append(Triangle->Vertices()[0]);

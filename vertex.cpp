@@ -42,3 +42,14 @@ void CVertex::Normal_Normalize()
     m_vNormal.normalize();
 }
 
+const QVector3D &CVertex::Normal_Get() const
+{
+    return m_vNormal;
+}
+
+bool CVertex::IsSmoothGeometryOn()
+{
+    return m_bSmoothGeometry;
+}
+
+
