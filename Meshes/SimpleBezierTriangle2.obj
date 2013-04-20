@@ -1,0 +1,18 @@
+# composed by Georgi Dunchev using left.arm and right.arm
+
+#begin 6 vertices
+v 0.00000 20.00000 0.00000
+v 0.00000 20.0000 20.00000
+v 20.00000 20.00000 20.0000
+v 0.00000 0.00000 0.00000
+v 20.00000 0.0000 20.00000
+v 20.00000 0.0000 0.00000
+
+#end 6 vertices
+
+#begin 4 faces
+f 1 2 4
+f 3 5 2
+f 6 4 5
+f 2 5 4
+#end 4 faces
