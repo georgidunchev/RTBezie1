@@ -96,21 +96,21 @@ void CTriangle::BuildBezierPoints()
 				    Point(0,0), Point(2,0),
 				    A().Normal_Get()));
 
-    aVertices.append(CVertexInfo(Point(0,3),
-				    Point(0,0), Point(0,2),
-				    Point(3,0), Point(1,2),
-				    B().Normal_Get()));
+//    aVertices.append(CVertexInfo(Point(0,3),
+//				    Point(0,0), Point(0,2),
+//				    Point(3,0), Point(1,2),
+//				    B().Normal_Get()));
 
-    aVertices.append(CVertexInfo(Point(0,0),
-				    Point(3,0), Point(1,0),
-				    Point(0,3), Point(0,1),
-				    C().Normal_Get()));
+//    aVertices.append(CVertexInfo(Point(0,0),
+//				    Point(3,0), Point(1,0),
+//				    Point(0,3), Point(0,1),
+//				    C().Normal_Get()));
 
-//	Point(0,2) = Point(0,3);
-//    	Point(1,2) = Point(0,3);
+	Point(0,2) = Point(0,3);
+    	Point(1,2) = Point(0,3);
 
-//	Point(1,0) = Point(0,0);
-//	Point(0,1) = Point(0,0);
+	Point(1,0) = Point(0,0);
+	Point(0,1) = Point(0,0);
 
     //Generate the new bezier points
     unsigned int nSize = aVertices.size();
@@ -137,7 +137,7 @@ void CTriangle::BuildBezierPoint(QVector3D &o_vNew,
 {
     o_vNew = i_vEnd - i_vMain;
     o_vNew *= 0.25f;
-    CUtils::ProjectionOfVectorInPlane(o_vNew, i_vNormal);
+    o_vNew = CUtils::ProjectionOfVectorInPlane(o_vNew, i_vNormal);
 }
 
 int CTriangle::GetIndex(int a, int b) const
@@ -197,10 +197,10 @@ const QVector3D &CTriangle::GetPoint(int a, int b) const
 bool CTriangle::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo) const
 {
     if ( CUtils::IntersectTriangle(ray, intersectionInfo, GetPoint(3,0), GetPoint(2,1), GetPoint(2,0))
-//	 || CUtils::IntersectTriangle(ray, intersectionInfo, GetPoint(2,1), GetPoint(1,2), GetPoint(1,1))
+	 || CUtils::IntersectTriangle(ray, intersectionInfo, GetPoint(2,1), GetPoint(1,2), GetPoint(1,1))
 	 || CUtils::IntersectTriangle(ray, intersectionInfo, GetPoint(1,2), GetPoint(0,3), GetPoint(0,2))
-//	 || CUtils::IntersectTriangle(ray, intersectionInfo, GetPoint(2,0), GetPoint(1,1), GetPoint(1,0))
-//	 || CUtils::IntersectTriangle(ray, intersectionInfo, GetPoint(1,1), GetPoint(0,2), GetPoint(0,1))
+	 || CUtils::IntersectTriangle(ray, intersectionInfo, GetPoint(2,0), GetPoint(1,1), GetPoint(1,0))
+	 || CUtils::IntersectTriangle(ray, intersectionInfo, GetPoint(1,1), GetPoint(0,2), GetPoint(0,1))
 	 || CUtils::IntersectTriangle(ray, intersectionInfo, GetPoint(1,0), GetPoint(0,1), GetPoint(0,0)) )
 //    if ( CUtils::IntersectTriangle(ray, intersectionInfo, GetPoint(3,0), GetPoint(0,3), GetPoint(0,0)))
     {
