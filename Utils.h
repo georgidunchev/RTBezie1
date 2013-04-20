@@ -2,7 +2,8 @@
 #define UTILS
 
 #include <QVector3D>
-class  CRay;
+class CRay;
+class CIntersactionInfo;
 
 enum EDimiensions
 {
@@ -34,6 +35,21 @@ public:
 
     static float Cos(QVector3D vec1, QVector3D vec2);
     static QVector3D ProjectionOfVectorInPlane(QVector3D vVector, QVector3D vNormalOfPlane);
+
+    static void Normal(QVector3D &o_vNormal,
+		       const QVector3D& i_vAB,
+		       const QVector3D& i_vAC);
+
+    static void TriangleCentre( QVector3D &o_vCentre,
+				const QVector3D& i_vA,
+				const QVector3D& i_vB,
+				const QVector3D& i_vC);
+
+    static bool IntersectTriangle( const CRay &i_Ray,
+				   CIntersactionInfo& io_IntersectionInfo,
+				   const QVector3D& i_vA,
+				   const QVector3D& i_vB,
+				   const QVector3D& i_vC);
 };
 
 

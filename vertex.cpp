@@ -4,12 +4,14 @@
 
 CVertex::CVertex()
     :m_vPos(QVector3D(0.f,0.f,0.f))
+    ,m_nId(-1)
 {
     ConstructorInit();
 }
 
-CVertex::CVertex(QVector3D vPos)
+CVertex::CVertex(QVector3D vPos, int nId)
     :m_vPos(vPos)
+    ,m_nId(nId)
 {
     ConstructorInit();
 }
@@ -29,11 +31,11 @@ void CVertex::Normal_AddNormal(const QVector3D &vNormal)
 {
     if (CUtils::Cos(m_vNormal, vNormal) < 0)
     {
-	m_vNormal -= vNormal;
+	m_vNormal = m_vNormal - vNormal;
     }
     else
     {
-	m_vNormal += vNormal;
+	m_vNormal = m_vNormal + vNormal;
     }
 }
 

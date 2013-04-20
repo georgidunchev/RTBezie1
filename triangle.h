@@ -17,8 +17,8 @@ struct CVertexInfo
     QVector3D* vNew1;
     QVector3D* vNew2;
     const QVector3D* vNormal;
-//    CVertexInfo()
-//    {};
+    CVertexInfo()
+    {};
     CVertexInfo(QVector3D& pMain,
 		QVector3D& pEnd1,
 		QVector3D& pNew1,
@@ -37,7 +37,7 @@ struct CVertexInfo
 class CTriangle
 {
 public:
-    CTriangle() {}
+    CTriangle();
 
     CTriangle( const QVector<CVertex> & aVertecis, int v1, int v2, int v3);
     virtual bool Intersect(const CRay& ray, CIntersactionInfo& intersectionInfo ) const;
@@ -59,9 +59,11 @@ public:
 
 protected:
     QVector<int> m_aVertIndices;
-    QVector<CVertex> m_aVertecis;
+    QVector<CVertex>& m_aVertecis;
 
+    int GetIndex(int a, int b) const;
     QVector3D &Point(int a, int b);
+    const QVector3D &GetPoint(int a, int b) const;
 
     void BuildBezierPoint(CVertexInfo& o_Info);
     void BuildBezierPoint(QVector3D& o_vNew,

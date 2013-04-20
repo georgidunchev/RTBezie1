@@ -14,6 +14,7 @@ public:
     explicit CAABox(const QVector3D & vMinVertex,const QVector3D & vMaxVertex);
 
     void AddPoint(const CVertex &vPoint);
+    void AddPoint(const QVector3D& vPoint);
 
     void Set(const QVector3D & vMinVertex,const QVector3D & vMaxVertex);
     void Reset();

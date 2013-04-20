@@ -7,7 +7,7 @@ class CVertex
 {
 public:
     CVertex();
-    CVertex(QVector3D vPos);
+    CVertex(QVector3D vPos, int nId);
     const QVector3D &GetPos() const;
 
     void Normal_AddNormal(const QVector3D& vNormal);
@@ -22,6 +22,7 @@ private:
     QVector3D m_vPos;
     bool m_bSmoothGeometry;
     QVector3D m_vNormal;
+    int m_nId;
 };
 
 #endif // VERTEX_H

@@ -48,11 +48,16 @@ bool CAABox::IsInside(const CVertex& vPoint) const
 
 void CAABox::AddPoint(const CVertex& vPoint)
 {
+    AddPoint(vPoint.GetPos());
+}
+
+void CAABox::AddPoint(const QVector3D& vPoint)
+{
     for(EDimiensions i = e_Dimension_X; i < e_Dimension_MAX; i = (EDimiensions)((int)i + 1) )
     {
 	const float fMinVDir( CUtils::GetDimension(m_vMinVertex, i) );
 	const float fMaxVDir( CUtils::GetDimension(m_vMaxVertex, i) );
-	const float fPointDir( CUtils::GetDimension(vPoint.GetPos(), i) );
+	const float fPointDir( CUtils::GetDimension(vPoint, i) );
 
 	if(fMinVDir > fPointDir)
 	{
@@ -65,6 +70,7 @@ void CAABox::AddPoint(const CVertex& vPoint)
 	}
     }
 }
+
 
 bool CAABox::Intersect(const CRay &ray) const
 {

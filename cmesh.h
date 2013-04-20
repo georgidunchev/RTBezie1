@@ -51,7 +51,8 @@ public:
     QVector<CTriangle*> *GetPrimitives();
     CTriangle* GetPrimitive(int n);
     QVector<CTriangle *> &GetTriangles();
-    const QVector<CVertex> &GetVertices();
+    const QVector<CVertex> &GetVertices() const;
+    QVector<CVertex> &Vertices();
 
     const SAdjacencyOfTriangle& GetAdjacentTriangles(int n);
 

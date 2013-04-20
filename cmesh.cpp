@@ -27,7 +27,7 @@ void CMesh::Load(const QString& strInputFileName)
     QTextStream inputStream(&file);
     QString strLine;
 
-    m_aVertices.append( CVertex( QVector3D(0.f, 0.f, 0.f) ) );
+    m_aVertices.append( CVertex() );
 
     QString strMarker;
     while(!inputStream.atEnd())
@@ -54,7 +54,8 @@ void CMesh::Load(const QString& strInputFileName)
 
 		temp.append(strMarker.toDouble());
 	    }
-	    m_aVertices.append(QVector3D(temp[0], temp[1], temp[2]));
+
+	    m_aVertices.append(CVertex(QVector3D(temp[0], temp[1], temp[2]), m_aVertices.size()));
 	}
 	else if (strMarker == "f" )
 	{
@@ -101,7 +102,7 @@ void CMesh::Load(const QString& strInputFileName)
     BuildVertexData();
 
     m_nTrianglesWithCompleteAdjacency = 0;
-    BuildAdjacency();
+//    BuildAdjacency();
     BuildBezierTriangles();
 }
 
@@ -114,7 +115,7 @@ bool CMesh::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo)
     else
     {
 	QVector<int> aTriangles(GetPrimitives()->size());
-	for (int i = 0; i < aTriangles.size(); ++i)
+	for (int i = 0; i <1 /*aTriangles.size()*/; ++i)
 	{
 	    aTriangles[i] = i;
 	}
@@ -185,7 +186,12 @@ CTriangle *CMesh::GetPrimitive(int n)
     return tmpVector[n];
 }
 
-const QVector<CVertex> &CMesh::GetVertices()
+const QVector<CVertex> &CMesh::GetVertices() const
+{
+    return m_aVertices;
+}
+
+QVector<CVertex> &CMesh::Vertices()
 {
     return m_aVertices;
 }
@@ -286,7 +292,7 @@ void CMesh::BuildVertexData()
     {
 	for (int j = 0; j < 3; ++j)
 	{
-	    m_aTriangles[i]->GetVertex(i).Normal_AddNormal(m_aTriangles[i]->Normal());
+	   m_aTriangles[i]->GetVertex(j).Normal_AddNormal(m_aTriangles[i]->Normal());
 	}
     }
     for (int i = 0; i < m_aVertices.size(); ++i)

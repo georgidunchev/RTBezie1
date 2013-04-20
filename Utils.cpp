@@ -1,5 +1,7 @@
 #include <Utils.h>
 #include <ray.h>
+#include <intersactioninfo.h>
+#include <qmath.h>
 
 CUtils::CUtils()
 {
@@ -100,4 +102,81 @@ QVector3D CUtils::ProjectionOfVectorInPlane(QVector3D vVector, QVector3D vNormal
     vProjection.normalize();
     double fLen = Dot(vVector, vProjection);
     return vProjection*fLen;
+}
+
+void CUtils::Normal(QVector3D &o_vNormal, const QVector3D &i_vAB, const QVector3D &i_vAC)
+{
+    o_vNormal = CUtils::Cross(i_vAB, i_vAC).normalized();
+}
+
+void CUtils::TriangleCentre(QVector3D &o_vCentre,
+			    const QVector3D &i_vA,
+			    const QVector3D &i_vB,
+			    const QVector3D &i_vC)
+{
+    o_vCentre = i_vA + i_vB + i_vC;
+    o_vCentre /= 3;
+}
+
+bool CUtils::IntersectTriangle(const CRay &i_Ray,
+			       CIntersactionInfo &io_IntersectionInfo,
+			       const QVector3D &i_vA,
+			       const QVector3D &i_vB,
+			       const QVector3D &i_vC)
+{
+
+    //intersect stuff
+    double lambda2;
+    double lambda3;
+    double closestdist = io_IntersectionInfo.m_fDistance;
+
+    const QVector3D a = i_vB - i_vA;
+    const QVector3D b = i_vC - i_vA;
+
+    QVector3D c = - (i_Ray.Direction());
+    QVector3D h = i_Ray.StartPoint() - i_vA;
+    /* 2. Solve the equation:
+	     *
+	     * A + lambda2 * AB + lambda3 * AC = ray.start + gamma * ray.dir
+	     *
+	     * which can be rearranged as:
+	     * lambda2 * AB + lambda3 * AC - gamma * ray.dir = ray.start - A
+	     *
+	     * Which is a linear system of three rows and three unknowns, which we solve using Carmer's rule
+	     */
+    //
+    // Find the determinant of the left part of the equation
+    double Dcr = CUtils::Triple(a, b, c);
+    // check for zero; if it is zero, then the triangle and the ray are parallel
+    if (fabs(Dcr) < 1e-9)
+	return false;
+    // find the reciprocal of the determinant. We would use this quantity later in order
+    // to multiply by rDcr instead of divide by Dcr (division is much slower)
+    double rDcr = 1.0 / Dcr;
+    // calculate `gamma' by substituting the right part of the equation in the third column of the matrix,
+    // getting the determinant, and dividing by Dcr)
+    double gamma = CUtils::Triple(a, b, h) * rDcr;
+    // Is the intersection point behind us?  Is the intersection point worse than what we currently have?
+    if (gamma <= 0 || gamma > closestdist)
+	return false;
+    lambda2 = CUtils::Triple(h, b, c) * rDcr;
+    // Check if it is in range (barycentric coordinates)
+    if (lambda2 < 0 || lambda2 > 1)
+	return false;
+    lambda3 = CUtils::Triple(a, h, c) * rDcr;
+
+    // Calculate lambda3 and check if it is in range as well
+    if (lambda3 < 0 || lambda3 > 1)
+	return false;
+    if (lambda2 + lambda3 > 1)
+	return false;
+
+    closestdist = gamma;
+    io_IntersectionInfo.m_fDistance = closestdist;
+    Normal(io_IntersectionInfo.m_vNormal, a, c);
+    io_IntersectionInfo.m_vIntersectionPoint = CUtils::GetPointAtDistance(i_Ray, closestdist);
+    return true;
+
+    io_IntersectionInfo.m_fDistance = 1.f;
+    return true;
 }
