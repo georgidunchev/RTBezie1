@@ -115,7 +115,7 @@ bool CMesh::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo)
     else
     {
 	QVector<int> aTriangles(GetPrimitives()->size());
-	for (int i = 0; i <1 /*aTriangles.size()*/; ++i)
+	for (int i = 0; i < aTriangles.size(); ++i)
 	{
 	    aTriangles[i] = i;
 	}

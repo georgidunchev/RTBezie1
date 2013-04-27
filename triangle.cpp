@@ -96,21 +96,21 @@ void CTriangle::BuildBezierPoints()
 				    Point(0,0), Point(2,0),
 				    A().Normal_Get()));
 
-//    aVertices.append(CVertexInfo(Point(0,3),
-//				    Point(0,0), Point(0,2),
-//				    Point(3,0), Point(1,2),
-//				    B().Normal_Get()));
+    aVertices.append(CVertexInfo(Point(0,3),
+				    Point(0,0), Point(0,2),
+				    Point(3,0), Point(1,2),
+				    B().Normal_Get()));
 
-//    aVertices.append(CVertexInfo(Point(0,0),
-//				    Point(3,0), Point(1,0),
-//				    Point(0,3), Point(0,1),
-//				    C().Normal_Get()));
+    aVertices.append(CVertexInfo(Point(0,0),
+				    Point(3,0), Point(1,0),
+				    Point(0,3), Point(0,1),
+				    C().Normal_Get()));
 
-	Point(0,2) = Point(0,3);
-    	Point(1,2) = Point(0,3);
+//	Point(0,2) = Point(0,3);
+//    	Point(1,2) = Point(0,3);
 
-	Point(1,0) = Point(0,0);
-	Point(0,1) = Point(0,0);
+//	Point(1,0) = Point(0,0);
+//	Point(0,1) = Point(0,0);
 
     //Generate the new bezier points
     unsigned int nSize = aVertices.size();
@@ -138,6 +138,7 @@ void CTriangle::BuildBezierPoint(QVector3D &o_vNew,
     o_vNew = i_vEnd - i_vMain;
     o_vNew *= 0.25f;
     o_vNew = CUtils::ProjectionOfVectorInPlane(o_vNew, i_vNormal);
+    o_vNew += i_vMain;
 }
 
 int CTriangle::GetIndex(int a, int b) const
