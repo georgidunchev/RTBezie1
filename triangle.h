@@ -77,6 +77,9 @@ protected:
 
     QVector3D m_vAB, m_vAC, m_vNormal;
     QVector<QVector3D> m_aAdditionalPoints;
+
+    bool intersectSimpleBezierTriangle(const CRay &ray, CIntersactionInfo &info, QVector3D &barCoord, unsigned int iterations) const;
+    QVector3D Q30, Q03, Q21, Q12, Q20, Q02, Q11, Q10, Q01, Q00;
 };
 
 

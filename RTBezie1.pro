@@ -57,4 +57,5 @@ HEADERS  += mainwindow.h \
 FORMS    += mainwindow.ui
 
 OTHER_FILES += \
-    ToDo.txt
+    ToDo.txt \
+    Notes.txt

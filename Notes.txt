@@ -1,0 +1,17 @@
+Quadratic Triangle:
+Calculate intersection between planes:
+trinagle ABC
+Normals N1, N2
+
+AC _|_ N1
+BC _|_ N2
+D e BC
+AD _|_ N2
+
+|AD| = ( N2 dot AB.normalized ) * |AB|
+|AC| = |AD| / |N1 cross N2|
+N = N1 cross ( N2 cross (-AB.normalized) )
+C = A + N * |AC|
+
+Problem, if angle between N1 and AB or N2 and AB is bigger than 90 => additional bezier point is non existent
+
