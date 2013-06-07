@@ -30,7 +30,9 @@ void RayTracer::SetCanvas(qreal fWidth, qreal fHeight)
 
 //    LoadNewMesh("Triangle.obj");
 //    LoadNewMesh("bunny_200.obj");
-    LoadNewMesh("SimpleBezierTriangle1.obj");
+//    LoadNewMesh("SimpleBezierTriangle1.obj");
+    LoadNewMesh("triangle2.obj");
+
 
 
     GetCamera().SetCameraResolution(m_nWidth, m_nHeight);
