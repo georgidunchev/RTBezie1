@@ -18,6 +18,8 @@ public:
     //calculate camera properties based on previous set up
     void BeginFrame();
 
+    void Rotate(float fX, float fY);
+
 signals:
     
 public slots:

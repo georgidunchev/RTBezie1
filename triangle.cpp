@@ -252,7 +252,7 @@ bool CTriangle::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo) 
     }
     else
     {
-	int iterations = 15;
+	int iterations = 4;
 	QVector3D res = QVector3D(1.0/3.0, 1.0/3.0, 0);
 	intersectSimpleBezierTriangle(ray, intersectionInfo, res, iterations );
 	res = QVector3D(1.0/6.0, 1.0/6.0, 0);

@@ -2,6 +2,7 @@
 #include "qmath.h"
 #include <QDebug>
 #include <Utils.h>
+#include <QQuaternion>
 
 Camera::Camera(QObject *parent) :
     QObject(parent)
@@ -56,6 +57,23 @@ void Camera::BeginFrame()
     QVector3D vDownLeftCorner = m_vTarget - fFovMultiplierY * vTrueUp / 2 - fFovMultiplierX * vRight / 2;
     vHorizontal = vUpRightCorner - vUpLeftCorner;
     vVertical = vDownLeftCorner - vUpLeftCorner;
+}
+
+void Camera::Rotate(float fX, float fY)
+{
+    //Get Vector from LookAt to camera, thats what i want to rotate.
+    QVector3D vCamera = -m_vTarget + m_vPos;
+
+    //do rotation
+    QQuaternion qLocalX = QQuaternion::fromAxisAndAngle(0.0,1.0,0.0,fX/100.0f);
+    QQuaternion qLocalY = QQuaternion::fromAxisAndAngle(1.0,0.0,0.0,fY/100.0f);
+
+    QQuaternion qLocal = qLocalX * qLocalY;
+
+    vCamera = qLocal.rotatedVector(vCamera);
+
+    //Set new position
+    m_vPos = m_vTarget + vCamera;
 }
 
 CRay Camera::GetScreenRay(int x, int y)
