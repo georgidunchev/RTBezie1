@@ -7,6 +7,7 @@
 #include <QAtomicInt>
 #include <QElapsedTimer>
 #include <QProgressDialog>
+#include <qmutex.h>
 
 #include <lightsscene.h>
 #include <camera.h>
@@ -24,7 +25,7 @@ public:
 
     void SetCanvas(qreal fWidth, qreal fHeight);
     void Render();
-    void RenderThreaded();
+    void RenderThreaded(bool bHighQuality = true);
 
     QImage &GetImage();
 
@@ -63,15 +64,20 @@ private:
     QAtomicInt m_nNextBucket;
     int m_nHorizontalBuckets;
     int m_nVerticalBuckets;
-    QVector<CRaytracerThread*> m_arrThreads;
+    std::vector<CRaytracerThread*> m_arrThreads;
 
     QProgressDialog* progress;
 
     int m_nRunningThreads;
 
+    int m_nBucketId;
+
+	QMutex mutex;
+
 signals:
     void sigBucketDone(int value);
     void sigThreadsFinished();
+
 public slots:
     void slotThreadStarted(int nId);
     void slotThreadEnded(int nId);

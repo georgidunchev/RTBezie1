@@ -2,7 +2,7 @@
 #define BEZIERTRIANGLE_H
 
 #include <QVector3D>
-#include <QVector>
+//#include <vector>
 #include <AABox.h>
 #include <triangle.h>
 
@@ -24,8 +24,8 @@ private:
     bool intersectSimpleBezierTriangle(const CRay &ray, CIntersactionInfo &info, QVector3D &barCoord, unsigned int iterations) const;
     QVector3D Q20, Q02, Q11, Q10, Q01, Q00;
 
-//    QVector<int> m_aVertIndices;
-//    QVector<QVector3D> m_aVertecis;
+//    std::vector<int> m_aVertIndices;
+//    std::vector<QVector3D> m_aVertecis;
 
 //    //bounding box
 //    bool m_bHasBoundingBox;

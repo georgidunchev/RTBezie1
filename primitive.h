@@ -2,7 +2,7 @@
 #define PRIMITIVE_H
 
 #include <QVector3D>
-#include <QVector>
+#include <vector>
 #include <AABox.h>
 #include <primitive.h>
 #include <vertex.h>
@@ -14,11 +14,11 @@ class CPrimitive
 {
 public:
     CPrimitive() {}
-    CPrimitive(const QVector<CVertex> & aVertecis);
+    CPrimitive(const std::vector<CVertex> & aVertecis);
 
     virtual bool Intersect(const CRay& ray, CIntersactionInfo& intersectionInfo ) const = 0;
     virtual bool Intersect(const QVector3D& vStart, const QVector3D& vEnd) const = 0;
-    const QVector<int>& Vertices() const;
+    const std::vector<int>& Vertices() const;
     CVertex& GetVertex(int i);
     const QVector3D& AB() const;
     const QVector3D& AC() const;
@@ -31,8 +31,8 @@ public:
     const CAABox& GetBoundingBox();
 
 protected:
-    QVector<int> m_aVertIndices;
-    QVector<CVertex> m_aVertecis;
+    std::vector<int> m_aVertIndices;
+    std::vector<CVertex> m_aVertecis;
 
     //bounding box
     bool m_bHasBoundingBox;

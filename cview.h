@@ -1,9 +1,9 @@
 #ifndef CVIEW_H
 #define CVIEW_H
 
-#include <QGraphicsView>
+#include <QLabel>
 
-class CView : public QGraphicsView
+class CView : public QLabel
 {
 public:
     CView();

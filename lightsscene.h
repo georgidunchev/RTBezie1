@@ -1,7 +1,7 @@
 #ifndef SCENELIGHTS_H
 #define SCENELIGHTS_H
 
-#include <QVector>
+//#include <vector>
 
 #include <light.h>
 #include <cmesh.h>
@@ -17,7 +17,7 @@ public:
     const int GetLightsNumber();
 private:
     CMesh &GetMesh();
-    QVector<ILight> m_aLights;
+    std::vector<ILight> m_aLights;
 };
 
 #endif // SCENELIGHTS_H

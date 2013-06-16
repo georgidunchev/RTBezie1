@@ -1,7 +1,6 @@
 #include "AABox.h"
 #include <ray.h>
 #include <QVector3D>
-#include <QVector>
 #include <qmath.h>
 #include <QDebug>
 #include <Utils.h>

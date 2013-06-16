@@ -9,93 +9,132 @@
 #include <settings.h>
 
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
-    , ui(new Ui::MainWindow)
-//    , progress("Rendering", "Abort")
+	: QMainWindow(parent)
+	, ui(new Ui::MainWindow)
+	, m_bAutoRendering(false)
+	, m_bStartNormalRender(false)
+	, m_bShouldRefreshView(false)
 {
-    ui->setupUi(this);
-    QGraphicsScene* scene = new QGraphicsScene(this);
-    ui->graphicsView->setScene(scene);
+	ui->setupUi(this);
+	GetRaytracer()->GetCamera().SetCameraPos(QVector3D(0, 0.2, -0.4), QVector3D(0, 0, 1), QVector3D(0, -1, 0) );
+	GetRaytracer()->SetCanvas(250,250);
 
-    GetRaytracer()->GetCamera().SetCameraPos(QVector3D(0, 0.2, -0.4), QVector3D(0, 0, 1), QVector3D(0, -1, 0) );
-//    GetRaytracer()->GetCamera().SetCameraPos(QVector3D(0, 1, -10), QVector3D(0, 0, 1), QVector3D(0, -1, 0) );
-    GetRaytracer()->SetCanvas(250,250);
+	//    GetRaytracer()->LoadNewMesh("SimpleBezierTriangle2.obj");
 
-//    GetRaytracer()->LoadNewMesh("SimpleBezierTriangle2.obj");
-
-    progress.setLabelText("Rendering");
-    progress.setWindowModality(Qt::WindowModal);
+	progress.setLabelText("Rendering");
+	progress.setWindowModality(Qt::WindowModal);
 }
 
 void MainWindow::paintEvent(QPaintEvent *pe)
 {
-//    ui->graphicsView->scene()->clear();
+	//    ui->graphicsView->scene()->clear();
 
-    ui->graphicsView->setDisabled(false);
+	ui->Image->setDisabled(false);
 
-    QMainWindow::paintEvent(pe);
+	if (m_bShouldRefreshView)
+	{
+		QMainWindow::paintEvent(pe);
+
+		if (m_bAutoRendering)
+		{
+			StartRender(false);
+		}
+		else if (m_bStartNormalRender)
+		{
+			m_bStartNormalRender = false;
+			StartRender();
+		}
+	}
 }
 
 MainWindow::~MainWindow()
 {
-    delete ui;
+	delete ui;
 }
 
 void MainWindow::on_openMeshButton_clicked()
 {
-    QString strFileName;
-    strFileName = QFileDialog::getOpenFileName(this,
-	tr("Open Model"), "", tr("Image Files (*.obj)"));
+	QString strFileName;
+	strFileName = QFileDialog::getOpenFileName(this,
+		tr("Open Model"), "", tr("Image Files (*.obj)"));
 
-    GetRaytracer()->LoadNewMesh(strFileName);
+	GetRaytracer()->LoadNewMesh(strFileName);
 
-    emit EnableRenderButton(true);
+	emit EnableRenderButton(true);
 }
 
 void MainWindow::on_StartRender_clicked()
-{   
-//    QVector3D vPos(ui->PosX->value(), ui->PosY->value(), ui->PosZ->value());
-//    QVector3D vTarget(ui->DirX->value(), ui->DirY->value(), ui->DirZ->value());
-//    QVector3D vUp(ui->UpX->value(), ui->UpY->value(), ui->UpZ->value());
+{ 
+	if (m_bAutoRendering)
+	{
+		m_bStartNormalRender = true;
+	}
 
-//    GetRaytracer()->GetCamera().SetCameraPos(vPos, vTarget, vUp);
-//    GetRaytracer()->SetCanvas(500,500);
+	m_bAutoRendering = false;
+	ui->AutoRender->setEnabled(false);
+	ui->AutoRender->setChecked(false);
 
-    GetRaytracer()->GetCamera().BeginFrame();
+	progress.setMaximum( GetRaytracer()->GetBucketsCount() );
 
-    progress.setMaximum( GetRaytracer()->GetBucketsCount() );
+	QObject::connect(GetRaytracer(), SIGNAL(sigBucketDone(int)), &progress, SLOT(setValue(int)));
+	QObject::connect(GetRaytracer(), SIGNAL(sigThreadsFinished()), this, SLOT(slotRenderFinished()));
 
-    QObject::connect(GetRaytracer(), SIGNAL(sigBucketDone(int)), &progress, SLOT(setValue(int)));
-    QObject::connect(GetRaytracer(), SIGNAL(sigThreadsFinished()), this, SLOT(slotRenderFinished()));
-
-    GetRaytracer()->GetTimer().start();
-
-    GetRaytracer()->RenderThreaded();
+	StartRender();
 }
+
+void MainWindow::on_AutoRender_clicked(bool checked)
+{
+	m_bAutoRendering = checked;
+
+	if (m_bAutoRendering)
+	{
+		progress.setMaximum( GetRaytracer()->GetBucketsCount() );
+
+		QObject::connect(GetRaytracer(), SIGNAL(sigBucketDone(int)), &progress, SLOT(setValue(int)));
+		QObject::connect(GetRaytracer(), SIGNAL(sigThreadsFinished()), this, SLOT(slotRenderFinished()));
+
+		StartRender(false);
+	}
+}
+
 
 void MainWindow::slotRenderFinished()
 {
-    progress.reset();
+	progress.reset();
 
-    ui->graphicsView->scene()->addPixmap(QPixmap::fromImage(GetRaytracer()->GetImage()));
+	ui->Image->setPixmap(QPixmap::fromImage(GetRaytracer()->GetImage()));
 
-    if (GetRaytracer()->GetTimer().isValid())
-    {
-	qDebug()<<"Render Finished in"<<GetRaytracer()->GetTimer().elapsed()/1000.f;
-	GetRaytracer()->GetTimer().invalidate();
-    }
+	if (GetRaytracer()->GetTimer().isValid())
+	{
+		qDebug() << "Render Finished in" << GetRaytracer()->GetTimer().elapsed() / 1000.f;
+		GetRaytracer()->GetTimer().invalidate();
+	}
 
-    GetRaytracer()->GetTimer().start();
-
-    GetRaytracer()->RenderThreaded();
+	ui->AutoRender->setEnabled(true);
+	m_bShouldRefreshView = true;
 }
 
 void MainWindow::on_RenderBezierCheckBox_toggled(bool checked)
 {
-    GetSettings()->SetIntersectBezier(checked);
+	GetSettings()->SetIntersectBezier(checked);
 }
 
 void MainWindow::on_NormalSmoothingCheckBox_toggled(bool checked)
 {
 
+}
+
+void MainWindow::StartRender(bool bHighQuality)
+{
+	//    QVector3D vPos(ui->PosX->value(), ui->PosY->value(), ui->PosZ->value());
+	//    QVector3D vTarget(ui->DirX->value(), ui->DirY->value(), ui->DirZ->value());
+	//    QVector3D vUp(ui->UpX->value(), ui->UpY->value(), ui->UpZ->value());
+
+	//    GetRaytracer()->GetCamera().SetCameraPos(vPos, vTarget, vUp);
+	//    GetRaytracer()->SetCanvas(500,500);
+
+	GetRaytracer()->GetCamera().BeginFrame();
+	GetRaytracer()->GetTimer().start();
+	GetRaytracer()->RenderThreaded(bHighQuality);
+	//GetRaytracer()->Render();
 }

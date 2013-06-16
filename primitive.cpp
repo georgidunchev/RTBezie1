@@ -2,18 +2,18 @@
 #include <intersactioninfo.h>
 #include <ray.h>
 #include <QVector3D>
-#include <QVector>
+#include <vector>
 #include <qmath.h>
 #include <QDebug>
 #include <Utils.h>
 
-CPrimitive::CPrimitive(const QVector<CVertex> &aVertecis)
+CPrimitive::CPrimitive(const std::vector<CVertex> &aVertecis)
     :m_aVertecis(aVertecis)
     , m_bHasBoundingBox(false)
 {
 }
 
-const QVector<int> &CPrimitive::Vertices() const
+const std::vector<int> &CPrimitive::Vertices() const
 {
     return m_aVertIndices;
 }

@@ -1,5 +1,5 @@
 #include "kdtreenode.h"
-#include <QVector>
+#include <vector>
 #include "Utils.h"
 #include "settings.h"
 #include <cmesh.h>
@@ -7,7 +7,7 @@
 #include <raytracer.h>
 #include "AABox.h"
 
-CKDTreeNode::CKDTreeNode(QVector<int> *pTriangles, int nLevel, const CAABox &BoundingBox)
+CKDTreeNode::CKDTreeNode(std::vector<int> *pTriangles, int nLevel, const CAABox &BoundingBox)
     : m_pTriangles(pTriangles)
     , m_nLevel(nLevel)
     , m_pLeftNode(NULL)
@@ -34,8 +34,8 @@ void CKDTreeNode::Process()
 	return;
     }
 
-    QVector<int>* pLeftTriangleIndeces = new QVector<int>();
-    QVector<int>* pRightTriangleIndeces = new QVector<int>();
+    std::vector<int>* pLeftTriangleIndeces = new std::vector<int>();
+    std::vector<int>* pRightTriangleIndeces = new std::vector<int>();
 
     float fWhere;
     EDimiensions eDimention = static_cast<EDimiensions>(static_cast<int>(m_nLevel) % e_Dimension_MAX);
@@ -56,7 +56,7 @@ void CKDTreeNode::Process()
     m_pTriangles->clear();
 }
 
-bool CKDTreeNode::Separate(QVector<int> &AllTriangles, QVector<int> *pLeftTriangleIndeces, QVector<int> *pRightTriangleIndeces, EDimiensions eDimension, float &fBestDivide)
+bool CKDTreeNode::Separate(std::vector<int> &AllTriangles, std::vector<int> *pLeftTriangleIndeces, std::vector<int> *pRightTriangleIndeces, EDimiensions eDimension, float &fBestDivide)
 {
     float fPortion;
     int nMaxMinDistance = 0;

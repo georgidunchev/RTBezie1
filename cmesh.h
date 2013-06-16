@@ -2,7 +2,6 @@
 #define CMESH_H
 
 #include <QObject>
-#include <QVector>
 #include <ray.h>
 #include <intersactioninfo.h>
 #include <triangle.h>
@@ -16,8 +15,8 @@ class CKDTreeNode;
 struct CSortedBBEntry;
 struct SAdjacencyOfTriangle
 {
-    QVector<int> aAdjacentTriangles;
-    QVector<int> aAdjacentVertices;
+    std::vector<int> aAdjacentTriangles;
+    std::vector<int> aAdjacentVertices;
     enum EAdjTrianglesFlags
     {
 	k_AdjTriangles_Has_A = 0x01,    //0001
@@ -46,13 +45,13 @@ public:
     void Load(const QString &strInputFileName);
 
     bool Intersect(const CRay& ray, CIntersactionInfo& intersectionInfo );
-    bool Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo, const QVector<int>& aTriangles, CAABox *pBBox = NULL);
+    bool Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo, const std::vector<int>& aTriangles, CAABox *pBBox = NULL);
 
-    QVector<CTriangle*> *GetPrimitives();
+    std::vector<CTriangle*> *GetPrimitives();
     CTriangle* GetPrimitive(int n);
-    QVector<CTriangle *> &GetTriangles();
-    const QVector<CVertex> &GetVertices() const;
-    QVector<CVertex> &Vertices();
+    std::vector<CTriangle *> &GetTriangles();
+    const std::vector<CVertex> &GetVertices() const;
+    std::vector<CVertex> &Vertices();
 
     const SAdjacencyOfTriangle& GetAdjacentTriangles(int n);
 
@@ -79,16 +78,16 @@ private:
 
     void BuildBezierTriangles();
 
-    QVector<CVertex> m_aVertices;
-    QVector<CTriangle*> m_aTriangles;
+    std::vector<CVertex> m_aVertices;
+    std::vector<CTriangle*> m_aTriangles;
     std::vector< SAdjacencyOfTriangle > m_aAdjacentTriangles;
     int m_nTrianglesWithCompleteAdjacency;
-    QVector<CTriangle*> m_aBezierTriangles;
+    std::vector<CTriangle*> m_aBezierTriangles;
 
     CAABox mBoundingBox;
 
     CKDTreeNode * m_pRoot;
-    QVector<CSortedBBEntry> m_aSortedBBoxes[3];
+    std::vector<CSortedBBEntry> m_aSortedBBoxes[3];
     EDimiensions m_eSortingDimention;
 };
 

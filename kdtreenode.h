@@ -6,22 +6,23 @@
 #include <AABox.h>
 #include <ray.h>
 #include <intersactioninfo.h>
+#include <vector>
 
 class CMesh;
 
 class CKDTreeNode
 {
 public:
-    CKDTreeNode(QVector<int>* pTriangles, int nLevel, const CAABox& BoundingBox);
+    CKDTreeNode(std::vector<int>* pTriangles, int nLevel, const CAABox& BoundingBox);
     ~CKDTreeNode();
 
     void Process();
-    bool Separate(QVector<int>& AllTriangles,  QVector<int>* pLeftTriangleIndeces,  QVector<int>* pRightTriangleIndeces, EDimiensions eDimension, float& fBestDivide);
+    bool Separate(std::vector<int>& AllTriangles,  std::vector<int>* pLeftTriangleIndeces,  std::vector<int>* pRightTriangleIndeces, EDimiensions eDimension, float& fBestDivide);
 
     bool Intersect(const CRay& ray, CIntersactionInfo& intersectionInfo );
 private:
     CMesh &GetMesh();
-    QVector<int>* m_pTriangles;
+    std::vector<int>* m_pTriangles;
     int m_nLevel;
     CKDTreeNode * m_pLeftNode;
     CKDTreeNode * m_pRightNode;

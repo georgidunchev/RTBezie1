@@ -9,7 +9,7 @@ CView::CView()
 }
 
 CView::CView(QWidget *widget)
-    : QGraphicsView(widget)
+    : QLabel(widget)
 {
 
 }
@@ -26,8 +26,12 @@ void CView::mouseMoveEvent(QMouseEvent *event)
 
     if (event->buttons() & Qt::LeftButton)
     {
-	GetRaytracer()->GetCamera().Rotate(dx, dy);
+		GetRaytracer()->GetCamera().Rotate(dx, dy);
     }
+	//else if (event->buttons() & Qt::LeftButton)
+	//{
+	//	GetRaytracer()->GetCamera().MoveTarget(dx, dy);
+	//}
     lastPos = event->pos();
 }
 

@@ -16,12 +16,12 @@ CBezierTriangle::CBezierTriangle(int nMainTriangleID)
     CTriangle* Triangle = GetRaytracer()->GetMesh().GetTriangles()[nMainTriangleID];
     const SAdjacencyOfTriangle& AdjTriangles = GetRaytracer()->GetMesh().GetAdjacentTriangles(nMainTriangleID);
 
-    m_aVertIndices.append(Triangle->Vertices()[0]);
-    m_aVertIndices.append(Triangle->Vertices()[1]);
-    m_aVertIndices.append(Triangle->Vertices()[2]);
-    m_aVertIndices.append(AdjTriangles.aAdjacentVertices[0]);
-    m_aVertIndices.append(AdjTriangles.aAdjacentVertices[1]);
-    m_aVertIndices.append(AdjTriangles.aAdjacentVertices[2]);
+    m_aVertIndices.push_back(Triangle->Vertices()[0]);
+    m_aVertIndices.push_back(Triangle->Vertices()[1]);
+    m_aVertIndices.push_back(Triangle->Vertices()[2]);
+    m_aVertIndices.push_back(AdjTriangles.aAdjacentVertices[0]);
+    m_aVertIndices.push_back(AdjTriangles.aAdjacentVertices[1]);
+    m_aVertIndices.push_back(AdjTriangles.aAdjacentVertices[2]);
 
 
     m_bHasBoundingBox = false;

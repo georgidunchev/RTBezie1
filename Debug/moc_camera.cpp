@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'camera.h'
 **
-** Created: Sun 10. Mar 20:20:45 2013
+** Created: Sat 15. Jun 14:42:34 2013
 **      by: The Qt Meta Object Compiler version 63 (Qt 4.8.0)
 **
 ** WARNING! All changes made in this file will be lost!

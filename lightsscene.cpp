@@ -23,7 +23,7 @@ CMesh &CLightsScene::GetMesh()
 
 void CLightsScene::AddLight(const ILight &Light)
 {
-    m_aLights.append(Light);
+    m_aLights.push_back(Light);
 }
 
 const ILight &CLightsScene::GetLight(int n)

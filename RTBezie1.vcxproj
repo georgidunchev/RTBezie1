@@ -176,6 +176,7 @@
     <ClCompile Include="camera.cpp" />
     <ClCompile Include="cmesh.cpp" />
     <ClCompile Include="color.cpp" />
+    <ClCompile Include="cview.cpp" />
     <ClCompile Include="intersactioninfo.cpp" />
     <ClCompile Include="kdtreenode.cpp" />
     <ClCompile Include="light.cpp" />
@@ -183,12 +184,14 @@
     <ClCompile Include="lightsscene.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="mainwindow.cpp" />
+    <ClCompile Include="primitive.cpp" />
     <ClCompile Include="ray.cpp" />
     <ClCompile Include="raytracer.cpp" />
     <ClCompile Include="raytracerthread.cpp" />
     <ClCompile Include="settings.cpp" />
     <ClCompile Include="shader.cpp" />
     <ClCompile Include="triangle.cpp" />
+    <ClCompile Include="vertex.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AABox.h" />
@@ -216,6 +219,7 @@
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ConfigurationName)\moc_%(Filename).cpp;%(Outputs)</Outputs>
     </CustomBuild>
     <ClInclude Include="color.h" />
+    <ClInclude Include="cview.h" />
     <ClInclude Include="intersactioninfo.h" />
     <ClInclude Include="kdtreenode.h" />
     <ClInclude Include="light.h" />
@@ -232,6 +236,7 @@
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing mainwindow.h...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ConfigurationName)\moc_%(Filename).cpp;%(Outputs)</Outputs>
     </CustomBuild>
+    <ClInclude Include="primitive.h" />
     <ClInclude Include="ray.h" />
     <CustomBuild Include="raytracer.h">
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
@@ -265,6 +270,7 @@
     </CustomBuild>
     <ClInclude Include="shader.h" />
     <ClInclude Include="triangle.h" />
+    <ClInclude Include="vertex.h" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="mainwindow.ui">

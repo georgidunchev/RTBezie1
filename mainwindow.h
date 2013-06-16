@@ -31,9 +31,16 @@ private slots:
 
     void on_NormalSmoothingCheckBox_toggled(bool checked);
 
+    void on_AutoRender_clicked(bool checked);
+
 private:
+    void StartRender(bool bHighQuality = true);
     Ui::MainWindow *ui;
     QProgressDialog progress;
+
+    bool m_bAutoRendering;
+	bool m_bStartNormalRender;
+	bool m_bShouldRefreshView;
 };
 
 #endif // MAINWINDOW_H

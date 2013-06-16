@@ -36,12 +36,12 @@
       <Extensions>cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
     <Filter Include="Generated Files\Debug">
-      <UniqueIdentifier>{18f092d9-ddb1-4865-ba1b-0c206386858f}</UniqueIdentifier>
+      <UniqueIdentifier>{c23f6443-60a5-46fc-b768-48a400bcb389}</UniqueIdentifier>
       <Extensions>cpp;moc</Extensions>
       <SourceControlFiles>False</SourceControlFiles>
     </Filter>
     <Filter Include="Generated Files\Release">
-      <UniqueIdentifier>{09330140-4c8d-4292-a4ac-4bd565ba5de0}</UniqueIdentifier>
+      <UniqueIdentifier>{a8a39f2b-2f08-41f5-807d-8cdb6e66babf}</UniqueIdentifier>
       <Extensions>cpp;moc</Extensions>
       <SourceControlFiles>False</SourceControlFiles>
     </Filter>
@@ -65,6 +65,9 @@
     <ClCompile Include="color.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="cview.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="intersactioninfo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -86,6 +89,9 @@
     <ClCompile Include="mainwindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="primitive.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="ray.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -102,6 +108,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="triangle.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="vertex.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Debug\moc_camera.cpp">
@@ -160,6 +169,9 @@
     <ClInclude Include="color.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="cview.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="intersactioninfo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -181,6 +193,9 @@
     <CustomBuild Include="mainwindow.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
+    <ClInclude Include="primitive.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="ray.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -197,6 +212,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="triangle.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="vertex.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GeneratedFiles\ui_mainwindow.h">
