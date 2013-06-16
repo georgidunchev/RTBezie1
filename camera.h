@@ -19,16 +19,19 @@ public:
     void BeginFrame();
 
     void Rotate(float fX, float fY);
+	void MoveTarget(float fX, float fY);	
+	void Zoom(float fZoom);
 
 signals:
     
 public slots:
     
 private:
-    QVector3D m_vPos;
-    QVector3D m_vTarget;
+    QVector3D m_vPos, m_vTempPos;
+    QVector3D m_vTarget, m_vTempTarget;
     QVector3D m_vUp;
-    qreal m_fAspectRatio;
+
+	qreal m_fAspectRatio;
     qreal m_fWidth;
     qreal m_fHeight;
     qreal m_fFov; // in degrees

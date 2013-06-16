@@ -12,13 +12,14 @@ Camera::Camera(QObject *parent) :
 
 void Camera::SetCameraPos(QVector3D vPos, QVector3D vTarget, QVector3D vUp)
 {
-    m_vPos = vPos;
-    m_vTarget = vTarget;
+    m_vPos = m_vTempPos = vPos;
+    m_vTarget = m_vTempTarget = vTarget;
     m_vTarget.normalize();
     m_vUp = vUp;
     m_vUp.normalize();
 
-
+	m_vTarget = m_vTempTarget;
+	m_vPos = m_vTempPos;
 }
 void Camera::SetAspectRatio(qreal fAspectRatio)
 {
@@ -34,6 +35,9 @@ void Camera::SetCameraResolution(qreal fWidth, qreal fHeight)
 
 void Camera::BeginFrame()
 {
+	m_vTarget = m_vTempTarget;
+	m_vPos = m_vTempPos;
+
     double fFovMultiplierX, fFovMultiplierY;
     fFovMultiplierX = m_fAspectRatio;
     fFovMultiplierY = 1;
@@ -59,10 +63,20 @@ void Camera::BeginFrame()
     vVertical = vDownLeftCorner - vUpLeftCorner;
 }
 
+CRay Camera::GetScreenRay(int x, int y)
+{
+    QVector3D vDest = vUpLeftCorner + vHorizontal * (x / m_fWidth)
+			 + vVertical * (y / m_fHeight);
+//    qDebug()<<vDest - m_vPos;
+    CRay rResult(m_vPos, vDest - m_vPos);
+//    CRay rResult(m_vPos, m_vDir);
+    return rResult;
+}
+
 void Camera::Rotate(float fX, float fY)
 {
     //Get Vector from LookAt to camera, thats what i want to rotate.
-    QVector3D vCamera = -m_vTarget + m_vPos;
+	QVector3D vCamera = -m_vTempTarget + m_vTempPos;
     float fDistance = vCamera.length();
 
     //do rotation
@@ -76,15 +90,33 @@ void Camera::Rotate(float fX, float fY)
     vCamera = vCamera.normalized() * fDistance;
 
     //Set new position
-    m_vPos = m_vTarget + vCamera;
+    m_vTempPos = m_vTempTarget + vCamera;
 }
 
-CRay Camera::GetScreenRay(int x, int y)
+void Camera::MoveTarget(float fX, float fY)
 {
-    QVector3D vDest = vUpLeftCorner + vHorizontal * (x / m_fWidth)
-			 + vVertical * (y / m_fHeight);
-//    qDebug()<<vDest - m_vPos;
-    CRay rResult(m_vPos, vDest - m_vPos);
-//    CRay rResult(m_vPos, m_vDir);
-    return rResult;
+	QVector3D vCamera = -m_vTempTarget + m_vTempPos;
+	QVector3D vRight =  QVector3D::crossProduct(vCamera, m_vUp);
+	vRight.normalize();
+
+	m_vTempTarget += -vRight * fX * 0.001f + m_vUp * fY * 0.001f;
+}
+
+void Camera::Zoom(float fZoom)
+{
+   	QVector3D vCamera = -m_vTempTarget + m_vTempPos;
+    float fDistance = vCamera.length();
+
+	if (fZoom < 0)
+	{
+		fDistance *= 1.1f;
+	}
+	else
+	{
+		fDistance *= 0.9f;
+	}
+
+    vCamera = vCamera.normalized() * fDistance;
+
+    m_vTempPos = m_vTempTarget + vCamera;
 }
