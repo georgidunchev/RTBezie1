@@ -9,7 +9,6 @@
 
 CRaytracerThread::CRaytracerThread(int nThreadID)
 	: m_nThreadID(nThreadID)
-	, m_bHighQuality(true)
 {
 
 }
@@ -54,9 +53,4 @@ void CRaytracerThread::run()
 			//	qDebug()<<"Thread"<<m_nThreadID<<"Rendered Bucket"<<m_nBucketId;
 	}    
 	emit sigThreadEnded(m_nThreadID);
-}
-
-void CRaytracerThread::SetHighQuality(bool bHighQuality)
-{
-	m_bHighQuality = bHighQuality;
 }

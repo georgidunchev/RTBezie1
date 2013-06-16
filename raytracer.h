@@ -23,9 +23,10 @@ public:
     explicit RayTracer(QObject *parent = 0);
     ~RayTracer();
 
-    void SetCanvas(qreal fWidth, qreal fHeight);
+    void BeginFrame(bool bHighQuality);
+	void SetCanvas(int fWidth, int fHeight);
     void Render();
-    void RenderThreaded(bool bHighQuality = true);
+    void RenderThreaded();
 
     QImage &GetImage();
 
@@ -53,8 +54,14 @@ private:
     CShader m_Shader;
 
     QImage * m_pImage;
+	int m_nCanvasWidth;
+	int m_nCanvasHeight;
     int m_nWidth;
     int m_nHeight;
+	int m_nSmallWidth;
+	int m_nSmallHeight;
+	int m_nCrntWidth;
+    int m_nCrntHeight;
 
     CMesh* m_pMesh;
 

@@ -36,8 +36,8 @@ private:
     qreal m_fHeight;
     qreal m_fFov; // in degrees
 
-    QVector3D vUpLeftCorner;
-    QVector3D vDownRightCorner;
+    QVector3D m_vUpLeftCorner;
+    QVector3D m_vDownRightCorner;
     QVector3D vHorizontal;
     QVector3D vVertical;
 };

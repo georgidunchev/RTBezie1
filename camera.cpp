@@ -38,15 +38,15 @@ void Camera::BeginFrame()
 	m_vTarget = m_vTempTarget;
 	m_vPos = m_vTempPos;
 
-    double fFovMultiplierX, fFovMultiplierY;
-    fFovMultiplierX = m_fAspectRatio;
-    fFovMultiplierY = 1;
+    double m_fFovMultiplierX, m_fFovMultiplierY;
+    m_fFovMultiplierX = m_fAspectRatio;
+    m_fFovMultiplierY = 1;
 
-    double fCurDiagonal = qSqrt(fFovMultiplierX*fFovMultiplierX + fFovMultiplierY*fFovMultiplierY);
+    double fCurDiagonal = qSqrt(m_fFovMultiplierX*m_fFovMultiplierX + m_fFovMultiplierY*m_fFovMultiplierY);
     double fTargetDiagonal = qTan( (m_fFov / 2.f) * k_fDegreesToRadians) * 2;
     double fFactor = fTargetDiagonal / fCurDiagonal;
-    fFovMultiplierX *= fFactor;
-    fFovMultiplierY *= fFactor;
+    m_fFovMultiplierX *= fFactor;
+    m_fFovMultiplierY *= fFactor;
 
 //    QVector3D vCameraCentre = m_vPos + m_vTarget;
     QVector3D vDir = m_vTarget - m_vPos;
@@ -56,16 +56,16 @@ void Camera::BeginFrame()
     QVector3D vRight = QVector3D::normal(vDir, m_vUp);
     QVector3D vTrueUp = QVector3D::normal(vDir, vRight);
 
-    vUpLeftCorner = m_vTarget + fFovMultiplierY * vTrueUp / 2 - fFovMultiplierX * vRight / 2;
-    QVector3D vUpRightCorner = m_vTarget + fFovMultiplierY * vTrueUp / 2 + fFovMultiplierX * vRight / 2;
-    QVector3D vDownLeftCorner = m_vTarget - fFovMultiplierY * vTrueUp / 2 - fFovMultiplierX * vRight / 2;
-    vHorizontal = vUpRightCorner - vUpLeftCorner;
-    vVertical = vDownLeftCorner - vUpLeftCorner;
+    m_vUpLeftCorner = m_vTarget + m_fFovMultiplierY * vTrueUp / 2 - m_fFovMultiplierX * vRight / 2;
+    QVector3D vUpRightCorner = m_vTarget + m_fFovMultiplierY * vTrueUp / 2 + m_fFovMultiplierX * vRight / 2;
+    QVector3D vDownLeftCorner = m_vTarget - m_fFovMultiplierY * vTrueUp / 2 - m_fFovMultiplierX * vRight / 2;
+    vHorizontal = vUpRightCorner - m_vUpLeftCorner;
+    vVertical = vDownLeftCorner - m_vUpLeftCorner;
 }
 
 CRay Camera::GetScreenRay(int x, int y)
 {
-    QVector3D vDest = vUpLeftCorner + vHorizontal * (x / m_fWidth)
+    QVector3D vDest = m_vUpLeftCorner + vHorizontal * (x / m_fWidth)
 			 + vVertical * (y / m_fHeight);
 //    qDebug()<<vDest - m_vPos;
     CRay rResult(m_vPos, vDest - m_vPos);

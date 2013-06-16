@@ -23,20 +23,41 @@ RayTracer::~RayTracer()
 {
 	delete m_pImage;
 }
-
-void RayTracer::SetCanvas(qreal fWidth, qreal fHeight)
+  
+void RayTracer::BeginFrame(bool bHighQuality)
 {
-	m_nWidth = fWidth;
-	m_nHeight = fHeight;
+	if (bHighQuality)
+	{
+		m_nCrntWidth = m_nWidth;
+		m_nCrntHeight = m_nHeight;
+	}
+	else
+	{
+		m_nCrntWidth = m_nSmallWidth;
+		m_nCrntHeight = m_nSmallHeight;
+	}
+			
+	GetCamera().SetCameraResolution(m_nCrntWidth, m_nCrntHeight);
 
-	//    LoadNewMesh("Triangle.obj");
-	//    LoadNewMesh("bunny_200.obj");
-	//    LoadNewMesh("SimpleBezierTriangle1.obj");
-	LoadNewMesh("triangle2.obj");
+	QImage* pNewImage = new QImage(m_pImage->scaledToHeight(m_nCrntHeight));
+	delete m_pImage;
+	m_pImage = pNewImage;
+	
+	GetCamera().BeginFrame();
+}
 
-	GetCamera().SetCameraResolution(m_nWidth, m_nHeight);
+void RayTracer::SetCanvas(int fWidth, int fHeight)
+{
+	m_nCanvasWidth = fWidth;
+	m_nCanvasHeight = fHeight;
+	
+	m_nWidth = m_nCanvasWidth;
+	m_nHeight = m_nCanvasHeight;
+ 
+	m_nSmallWidth = m_nCanvasWidth / 2;
+	m_nSmallHeight = m_nCanvasHeight / 2;
 
-	m_pImage = new QImage(m_nWidth, m_nHeight, QImage::Format_ARGB32);
+	m_pImage = new QImage(m_nCanvasWidth, m_nCanvasHeight, QImage::Format_ARGB32);
 }
 
 void RayTracer::Render()
@@ -70,7 +91,7 @@ void RayTracer::Render()
 	ThreadsFinished();
 }
 
-void RayTracer::RenderThreaded(bool bHighQuality)
+void RayTracer::RenderThreaded()
 {
 	m_nNextBucket = 0;
 
@@ -156,8 +177,8 @@ void RayTracer::GetBucketRectById(int nBucketId, QRect &rect) const
 	int nCol = nBucketId % m_nHorizontalBuckets;
 	int nRow = nBucketId / m_nVerticalBuckets;
 
-	int nBucketWidth = m_nWidth / m_nHorizontalBuckets;
-	int nBucketHeight = m_nHeight / m_nVerticalBuckets;
+	int nBucketWidth = m_nCrntWidth / m_nHorizontalBuckets;
+	int nBucketHeight = m_nCrntHeight / m_nVerticalBuckets;
 
 	rect.setLeft(nBucketWidth * nCol);
 	rect.setTop(nBucketHeight * nRow);
@@ -165,20 +186,24 @@ void RayTracer::GetBucketRectById(int nBucketId, QRect &rect) const
 	if (nCol == m_nHorizontalBuckets-1)
 	{
 		//last bucket of the row
-		nBucketWidth += m_nWidth - m_nHorizontalBuckets * nBucketWidth;
+		nBucketWidth += m_nCrntWidth - m_nHorizontalBuckets * nBucketWidth;
 	}
 	rect.setWidth(nBucketWidth);
 
 	if (nRow == m_nVerticalBuckets-1)
 	{
 		//last bucket of the row
-		nBucketHeight += m_nHeight - m_nVerticalBuckets * nBucketHeight;
+		nBucketHeight += m_nCrntHeight - m_nVerticalBuckets * nBucketHeight;
 	}
 	rect.setHeight(nBucketHeight);
 }
 
 void RayTracer::ThreadsFinished()
 {
+	QImage* pNewImage = new QImage(m_pImage->scaledToHeight(m_nCanvasHeight));
+	delete m_pImage;
+	m_pImage = pNewImage;
+
 	emit sigThreadsFinished();
 }
 

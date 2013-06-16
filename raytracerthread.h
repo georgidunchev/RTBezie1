@@ -9,11 +9,11 @@ public:
     CRaytracerThread(int nThreadID);
     virtual ~CRaytracerThread();
     void run();
-	void SetHighQuality(bool bHighQuality = true);
+
 private:
     int m_nBucketId;
     int m_nThreadID;
-	bool m_bHighQuality;
+
 signals:
     void sigThreadStarted(int nId);
     void sigThreadEnded(int nId);

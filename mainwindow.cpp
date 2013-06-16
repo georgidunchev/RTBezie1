@@ -17,7 +17,12 @@ MainWindow::MainWindow(QWidget *parent)
 {
 	ui->setupUi(this);
 	GetRaytracer()->GetCamera().SetCameraPos(QVector3D(0, 0.2, -0.4), QVector3D(0, 0, 1), QVector3D(0, -1, 0) );
-	GetRaytracer()->SetCanvas(250,250);
+	GetRaytracer()->SetCanvas(500,500);
+	
+	//    LoadNewMesh("Triangle.obj");
+	//    LoadNewMesh("bunny_200.obj");
+	//    LoadNewMesh("SimpleBezierTriangle1.obj");
+	GetRaytracer()->LoadNewMesh("triangle2.obj");
 
 	//    GetRaytracer()->LoadNewMesh("SimpleBezierTriangle2.obj");
 
@@ -133,8 +138,8 @@ void MainWindow::StartRender(bool bHighQuality)
 	//    GetRaytracer()->GetCamera().SetCameraPos(vPos, vTarget, vUp);
 	//    GetRaytracer()->SetCanvas(500,500);
 
-	GetRaytracer()->GetCamera().BeginFrame();
 	GetRaytracer()->GetTimer().start();
-	GetRaytracer()->RenderThreaded(bHighQuality);
+	GetRaytracer()->BeginFrame(bHighQuality);
+	GetRaytracer()->RenderThreaded();
 	//GetRaytracer()->Render();
 }
