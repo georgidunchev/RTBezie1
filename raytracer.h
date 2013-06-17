@@ -48,6 +48,7 @@ public:
     //KD tree
     void GenerateKDTree();
 
+	bool IsHighQuality() const;
 private:
     Camera m_Camera;
     CLightsScene m_LightScene;
@@ -78,6 +79,8 @@ private:
     int m_nRunningThreads;
 
     int m_nBucketId;
+
+	bool m_bHighQuality;
 
 	QMutex mutex;
 

@@ -26,6 +26,8 @@ RayTracer::~RayTracer()
   
 void RayTracer::BeginFrame(bool bHighQuality)
 {
+	m_bHighQuality = bHighQuality;
+
 	if (bHighQuality)
 	{
 		m_nCrntWidth = m_nWidth;
@@ -123,6 +125,10 @@ QImage& RayTracer::GetImage()
 CMesh& RayTracer::GetMesh()
 {
 	return *m_pMesh;
+}
+bool RayTracer::IsHighQuality() const
+{
+	return m_bHighQuality;
 }
 
 void RayTracer::LoadNewMesh(const QString& strInputFileName)

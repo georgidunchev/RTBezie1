@@ -221,21 +221,17 @@ const QVector3D &CTriangle::GetPoint(int a, int b) const
 
 bool CTriangle::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo) const
 {
-	if ( CUtils::IntersectTriangle(ray, intersectionInfo, GetPoint(3,0), GetPoint(2,1), GetPoint(2,0))
-		|| CUtils::IntersectTriangle(ray, intersectionInfo, GetPoint(2,1), GetPoint(1,2), GetPoint(1,1))
-		|| CUtils::IntersectTriangle(ray, intersectionInfo, GetPoint(1,2), GetPoint(0,3), GetPoint(0,2))
-		|| CUtils::IntersectTriangle(ray, intersectionInfo, GetPoint(2,0), GetPoint(1,1), GetPoint(1,0))
-		|| CUtils::IntersectTriangle(ray, intersectionInfo, GetPoint(1,1), GetPoint(0,2), GetPoint(0,1))
-		|| CUtils::IntersectTriangle(ray, intersectionInfo, GetPoint(1,0), GetPoint(0,1), GetPoint(0,0)) )
-		//    if ( CUtils::IntersectTriangle(ray, intersectionInfo, GetPoint(3,0), GetPoint(0,3), GetPoint(0,0)))
+	if (GetRaytracer()->IsHighQuality())
 	{
-		return true;
+		return IntersectHighQuality(ray, intersectionInfo);
 	}
 	else
 	{
-		return false;
+		return IntersectFast(ray, intersectionInfo);
 	}
-
+}
+bool CTriangle::IntersectHighQuality(const CRay &ray, CIntersactionInfo &intersectionInfo) const
+{
 	float closestdist = k_fMAX;
 	intersectionInfo.m_fDistance = k_fMAX;
 
@@ -269,6 +265,23 @@ bool CTriangle::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo) 
 	}
 
 	return fabs(closestdist - k_fMAX) > k_fMIN;
+}
+bool CTriangle::IntersectFast(const CRay &ray, CIntersactionInfo &intersectionInfo) const
+{
+	if ( CUtils::IntersectTriangle(ray, intersectionInfo, GetPoint(3,0), GetPoint(2,1), GetPoint(2,0))
+		|| CUtils::IntersectTriangle(ray, intersectionInfo, GetPoint(2,1), GetPoint(1,2), GetPoint(1,1))
+		|| CUtils::IntersectTriangle(ray, intersectionInfo, GetPoint(1,2), GetPoint(0,3), GetPoint(0,2))
+		|| CUtils::IntersectTriangle(ray, intersectionInfo, GetPoint(2,0), GetPoint(1,1), GetPoint(1,0))
+		|| CUtils::IntersectTriangle(ray, intersectionInfo, GetPoint(1,1), GetPoint(0,2), GetPoint(0,1))
+		|| CUtils::IntersectTriangle(ray, intersectionInfo, GetPoint(1,0), GetPoint(0,1), GetPoint(0,0)) )
+		//    if ( CUtils::IntersectTriangle(ray, intersectionInfo, GetPoint(3,0), GetPoint(0,3), GetPoint(0,0)))
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 
 bool CTriangle::Intersect(const QVector3D &vStart, const QVector3D &vEnd) const
