@@ -36,12 +36,12 @@
       <Extensions>cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
     <Filter Include="Generated Files\Debug">
-      <UniqueIdentifier>{c23f6443-60a5-46fc-b768-48a400bcb389}</UniqueIdentifier>
+      <UniqueIdentifier>{1a687c25-4354-4b2b-99bd-dedc78a855a5}</UniqueIdentifier>
       <Extensions>cpp;moc</Extensions>
       <SourceControlFiles>False</SourceControlFiles>
     </Filter>
     <Filter Include="Generated Files\Release">
-      <UniqueIdentifier>{a8a39f2b-2f08-41f5-807d-8cdb6e66babf}</UniqueIdentifier>
+      <UniqueIdentifier>{ebd91efc-ea59-4c19-8fe0-04e9423c9c2c}</UniqueIdentifier>
       <Extensions>cpp;moc</Extensions>
       <SourceControlFiles>False</SourceControlFiles>
     </Filter>
@@ -113,6 +113,12 @@
     <ClCompile Include="vertex.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Debug\moc_Utils.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="Release\moc_Utils.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
     <ClCompile Include="Debug\moc_camera.cpp">
       <Filter>Generated Files\Debug</Filter>
     </ClCompile>
@@ -154,9 +160,9 @@
     <ClInclude Include="AABox.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Utils.h">
+    <CustomBuild Include="Utils.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
+    </CustomBuild>
     <ClInclude Include="beziertriangle.h">
       <Filter>Header Files</Filter>
     </ClInclude>

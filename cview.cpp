@@ -18,6 +18,10 @@ CView::CView(QWidget *widget)
 void CView::mousePressEvent(QMouseEvent *event)
 {
     lastPos = event->pos();
+	if (event->buttons() & Qt::MiddleButton)
+	{
+		GetRaytracer()->RenderPixel(lastPos.x(), lastPos.y(), true);
+	}
 }
 
 void CView::mouseMoveEvent(QMouseEvent *event)

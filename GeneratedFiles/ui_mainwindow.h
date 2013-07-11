@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'mainwindow.ui'
 **
-** Created: Sun 16. Jun 18:39:09 2013
+** Created: Wed 26. Jun 23:29:15 2013
 **      by: Qt User Interface Compiler version 4.8.0
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -24,6 +24,7 @@
 #include <QtGui/QMenuBar>
 #include <QtGui/QPushButton>
 #include <QtGui/QStatusBar>
+#include <QtGui/QTextBrowser>
 #include <QtGui/QToolBar>
 #include <QtGui/QToolBox>
 #include <QtGui/QVBoxLayout>
@@ -58,6 +59,7 @@ public:
     QCheckBox *RenderBezierCheckBox;
     QCheckBox *NormalSmoothingCheckBox;
     QPushButton *AutoRender;
+    QTextBrowser *Output;
     QWidget *page_2;
     QMenuBar *menuBar;
     QMenu *menuFiles;
@@ -88,6 +90,8 @@ public:
         horizontalLayout->setObjectName(QString::fromUtf8("horizontalLayout"));
         Image = new CView(centralWidget);
         Image->setObjectName(QString::fromUtf8("Image"));
+        sizePolicy.setHeightForWidth(Image->sizePolicy().hasHeightForWidth());
+        Image->setSizePolicy(sizePolicy);
 
         horizontalLayout->addWidget(Image);
 
@@ -181,6 +185,9 @@ public:
         AutoRender->setEnabled(true);
         AutoRender->setGeometry(QRect(170, 180, 75, 23));
         AutoRender->setCheckable(true);
+        Output = new QTextBrowser(page);
+        Output->setObjectName(QString::fromUtf8("Output"));
+        Output->setGeometry(QRect(20, 240, 221, 231));
         toolBox->addItem(page, QString::fromUtf8("Page 1"));
         page_2 = new QWidget();
         page_2->setObjectName(QString::fromUtf8("page_2"));

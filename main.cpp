@@ -2,24 +2,41 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
+#include <windows.h>
 
 #include "mainwindow.h"
 #include "main.h"
 #include "raytracer.h"
 #include <settings.h>
+#include "Utils.h"
 
 RayTracer * raytracer_instace;
 CSettings * m_pSettingsInstance;
+CUtils * m_pUtilsInstance;
 
 void myMessageOutput(QtMsgType type, const char *msg)
 {
-    const char symbols[] = { 'I', 'E', '!', 'X' };
-    QString output = QString("[%1] %2").arg( symbols[type] ).arg( msg );
-    std::cerr << output.toStdString() << std::endl;
-    if( type == QtFatalMsg )
-    {
-	abort();
-    }
+	if (type == QtDebugMsg)
+	{
+		static std::string strMsg(msg);
+		strMsg.push_back('\n');
+        strMsg.push_back(0); // we must null-terminate for WINAPI
+        OutputDebugStringA(&strMsg[0]);
+		//GetUtils()->AddDebugString( msg );
+	}
+	else
+	{
+		const char symbols[] = { 'I', 'E', '!', 'X' };
+		QString output = QString("[%1] %2").arg( symbols[type] ).arg( msg );
+		std::cerr << output.toStdString() << std::endl;
+
+
+
+		if( type == QtFatalMsg )
+		{
+			abort();
+		}
+	}
 
 //    switch (type) {
 //    case QtDebugMsg:
@@ -44,6 +61,7 @@ int main(int argc, char *argv[])
 
     raytracer_instace = new RayTracer();
     m_pSettingsInstance = new CSettings();
+	m_pUtilsInstance = new CUtils();
 
     MainWindow w;
     w.show();
@@ -59,4 +77,9 @@ RayTracer* GetRaytracer()
 CSettings* GetSettings()
 {
     return m_pSettingsInstance;
+}
+
+CUtils* GetUtils()
+{
+	return m_pUtilsInstance;
 }

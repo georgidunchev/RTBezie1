@@ -77,11 +77,13 @@ void Camera::Rotate(float fX, float fY)
 {
     //Get Vector from LookAt to camera, thats what i want to rotate.
 	QVector3D vCamera = -m_vTempTarget + m_vTempPos;
+	QVector3D vRight =  QVector3D::crossProduct(vCamera, m_vUp);
+	vRight.normalize();
     float fDistance = vCamera.length();
 
     //do rotation
-    QQuaternion qLocalX = QQuaternion::fromAxisAndAngle(0.0,1.0,0.0,fX/100.0f);
-    QQuaternion qLocalY = QQuaternion::fromAxisAndAngle(1.0,0.0,0.0,fY/100.0f);
+    QQuaternion qLocalX = QQuaternion::fromAxisAndAngle(0.0, 1.0, 0.0, fX / 100.0f);
+    QQuaternion qLocalY = QQuaternion::fromAxisAndAngle(vRight, -fY / 100.0f);
 
     QQuaternion qLocal = qLocalX * qLocalY;
 

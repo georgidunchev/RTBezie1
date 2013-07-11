@@ -1,6 +1,7 @@
 #ifndef UTILS
 #define UTILS
 
+#include <QObject>
 #include <QVector3D>
 class CRay;
 class CIntersactionInfo;
@@ -15,13 +16,15 @@ enum EDimiensions
 
 static const double k_fPI = 3.14159;
 static const double k_fDegreesToRadians = k_fPI/180.0;
+static const float	k_fOneThird = 1.0f/3.0f;
 
 typedef float Matrix [3][3];
 
-class CUtils
+class CUtils: public QObject
 {
+    Q_OBJECT
 public:
-    CUtils();
+    CUtils(QObject *parent = 0);
     static float GetDimension(const QVector3D& pVector, EDimiensions eDimension);
     static void SetDimension(QVector3D& pVector, EDimiensions eDimension, const float fValue);
     static void SafeDel(void * pointer);
@@ -50,6 +53,15 @@ public:
 				   const QVector3D& i_vA,
 				   const QVector3D& i_vB,
 				   const QVector3D& i_vC);
+	//std::stringstream& DebugOut();
+
+	void AddDebugString(const char* str);
+
+//private:
+	QString strDebugOut;
+//
+//signals:
+//	void DebugOutChanged(const QString& str);
 };
 
 

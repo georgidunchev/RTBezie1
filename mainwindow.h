@@ -18,9 +18,11 @@ public:
     ~MainWindow();
     
     void paintEvent(QPaintEvent * pe);
+    void DisplayText(const std::string& strOutput);
 
 signals:
     void EnableRenderButton(bool bEnable);
+	void DebugOutChanged(const QString& str);
 
 private slots:
     void on_openMeshButton_clicked();
@@ -41,6 +43,8 @@ private:
     bool m_bAutoRendering;
 	bool m_bStartNormalRender;
 	bool m_bShouldRefreshView;
+
+	std::string m_strOutput;
 };
 
 #endif // MAINWINDOW_H

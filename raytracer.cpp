@@ -53,11 +53,11 @@ void RayTracer::SetCanvas(int fWidth, int fHeight)
 	m_nCanvasWidth = fWidth;
 	m_nCanvasHeight = fHeight;
 	
-	m_nWidth = m_nCanvasWidth;
-	m_nHeight = m_nCanvasHeight;
+	m_nWidth = m_nCanvasWidth / 4;
+	m_nHeight = m_nCanvasHeight / 4;
  
-	m_nSmallWidth = m_nCanvasWidth / 2;
-	m_nSmallHeight = m_nCanvasHeight / 2;
+	m_nSmallWidth = m_nCanvasWidth / 8;
+	m_nSmallHeight = m_nCanvasHeight / 8;
 
 	m_pImage = new QImage(m_nCanvasWidth, m_nCanvasHeight, QImage::Format_ARGB32);
 }
@@ -79,18 +79,38 @@ void RayTracer::Render()
 		for( int j = bucketRect.top(); j <= bucketRect.bottom(); ++j)
 			for (int i = bucketRect.left(); i <= bucketRect.right(); ++i )
 			{
-				QRgb value = qRgb(0,0,0);
-				CIntersactionInfo intersectionInfo;
-
-				CRay Ray = GetCamera().GetScreenRay(i, j);
-				if ( GetMesh().Intersect(Ray, intersectionInfo) )
-				{
-					value = GetShader().Shade(Ray, intersectionInfo);
-				}
-				GetImage().setPixel(i, j, value);
+				GetImage().setPixel(i, j, RenderPixel(i, j));
 			}
 	}
 	ThreadsFinished();
+}
+
+QRgb RayTracer::RenderPixel(const int x, const int y, bool bDebug)
+{
+	QRgb value = qRgb(0,0,0);
+	float dX = m_nCanvasWidth / m_nCrntWidth;
+	float dY = m_nCanvasHeight / m_nCrntHeight;
+
+	if (x < 0
+		|| x >= m_nCanvasWidth
+		|| y < 0
+		|| y >= m_nCanvasHeight)
+	{
+		return value;
+	}
+
+	int nScaledX = dX * x;
+	int nScaledY = dY * y;
+
+	CIntersactionInfo intersectionInfo;
+
+	CRay Ray = GetCamera().GetScreenRay(nScaledX, nScaledY);
+	if ( GetMesh().Intersect(Ray, intersectionInfo, bDebug) )
+	{
+		value = GetShader().Shade(Ray, intersectionInfo);
+	}
+
+	return value;
 }
 
 void RayTracer::RenderThreaded()

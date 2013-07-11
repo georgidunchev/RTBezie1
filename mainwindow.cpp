@@ -26,6 +26,8 @@ MainWindow::MainWindow(QWidget *parent)
 
 	//    GetRaytracer()->LoadNewMesh("SimpleBezierTriangle2.obj");
 
+	QObject::connect(this, SIGNAL(DebugOutChanged(const QString &)), ui->Output, SLOT(setText(QString)));
+
 	progress.setLabelText("Rendering");
 	progress.setWindowModality(Qt::WindowModal);
 }
@@ -39,6 +41,7 @@ void MainWindow::paintEvent(QPaintEvent *pe)
 	if (m_bShouldRefreshView)
 	{
 		QMainWindow::paintEvent(pe);
+		emit DebugOutChanged(GetUtils()->strDebugOut);
 
 		if (m_bAutoRendering)
 		{
@@ -79,9 +82,9 @@ void MainWindow::on_StartRender_clicked()
 	ui->AutoRender->setEnabled(false);
 	ui->AutoRender->setChecked(false);
 
-	progress.setMaximum( GetRaytracer()->GetBucketsCount() );
+	//progress.setMaximum( GetRaytracer()->GetBucketsCount() );
 
-	QObject::connect(GetRaytracer(), SIGNAL(sigBucketDone(int)), &progress, SLOT(setValue(int)));
+	//QObject::connect(GetRaytracer(), SIGNAL(sigBucketDone(int)), &progress, SLOT(setValue(int)));
 	QObject::connect(GetRaytracer(), SIGNAL(sigThreadsFinished()), this, SLOT(slotRenderFinished()));
 
 	StartRender();
@@ -93,9 +96,9 @@ void MainWindow::on_AutoRender_clicked(bool checked)
 
 	if (m_bAutoRendering)
 	{
-		progress.setMaximum( GetRaytracer()->GetBucketsCount() );
+		//progress.setMaximum( GetRaytracer()->GetBucketsCount() );
 
-		QObject::connect(GetRaytracer(), SIGNAL(sigBucketDone(int)), &progress, SLOT(setValue(int)));
+		//QObject::connect(GetRaytracer(), SIGNAL(sigBucketDone(int)), &progress, SLOT(setValue(int)));
 		QObject::connect(GetRaytracer(), SIGNAL(sigThreadsFinished()), this, SLOT(slotRenderFinished()));
 
 		StartRender(false);
@@ -105,7 +108,7 @@ void MainWindow::on_AutoRender_clicked(bool checked)
 
 void MainWindow::slotRenderFinished()
 {
-	progress.reset();
+	//progress.reset();
 
 	ui->Image->setPixmap(QPixmap::fromImage(GetRaytracer()->GetImage()));
 
@@ -142,4 +145,10 @@ void MainWindow::StartRender(bool bHighQuality)
 	GetRaytracer()->BeginFrame(bHighQuality);
 	GetRaytracer()->RenderThreaded();
 	//GetRaytracer()->Render();
+}
+
+void MainWindow::DisplayText(const std::string& strOutput)
+{
+    m_strOutput += strOutput;
+    ui->Output->setText(m_strOutput.c_str());
 }

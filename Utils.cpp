@@ -3,7 +3,8 @@
 #include <intersactioninfo.h>
 #include <qmath.h>
 
-CUtils::CUtils()
+CUtils::CUtils(QObject *parent)
+	: QObject(parent)
 {
 }
 
@@ -167,16 +168,27 @@ bool CUtils::IntersectTriangle(const CRay &i_Ray,
 
     // Calculate lambda3 and check if it is in range as well
     if (lambda3 < 0 || lambda3 > 1)
-	return false;
+	{
+		return false;
+	}
     if (lambda2 + lambda3 > 1)
-	return false;
+	{
+		return false;
+	}
 
     closestdist = gamma;
     io_IntersectionInfo.m_fDistance = closestdist;
     Normal(io_IntersectionInfo.m_vNormal, a, c);
     io_IntersectionInfo.m_vIntersectionPoint = CUtils::GetPointAtDistance(i_Ray, closestdist);
+	io_IntersectionInfo.u = 1.0f - lambda2 - lambda3;
+	io_IntersectionInfo.v = lambda3;
+	io_IntersectionInfo.w = lambda2;
     return true;
+}
 
-    io_IntersectionInfo.m_fDistance = 1.f;
-    return true;
+void CUtils::AddDebugString(const char* str)
+{
+	strDebugOut.append( QString(str) );
+	strDebugOut.append( "\n");
+	//emit DebugOutChanged(strDebugOut);
 }

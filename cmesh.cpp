@@ -106,7 +106,7 @@ void CMesh::Load(const QString& strInputFileName)
 	BuildBezierTriangles();
 }
 
-bool CMesh::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo)
+bool CMesh::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo, bool bDebug)
 {
 	if (k_bUSE_KDTREE)
 	{
@@ -119,11 +119,11 @@ bool CMesh::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo)
 		{
 			aTriangles[i] = i;
 		}
-		return Intersect(ray, intersectionInfo, aTriangles);
+		return Intersect(ray, intersectionInfo, aTriangles, NULL, bDebug);
 	}
 }
 
-bool CMesh::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo, const std::vector<int>& aTriangles, CAABox* pBBox)
+bool CMesh::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo, const std::vector<int>& aTriangles, CAABox* pBBox, bool bDebug)
 {
 	bool bIntersected = false;
 
@@ -131,7 +131,13 @@ bool CMesh::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo, cons
 	{
 		CTriangle* Triangle = GetPrimitive(aTriangles[i]);
 		CIntersactionInfo LastIntersection;
-		if ( Triangle->Intersect(ray, LastIntersection) )
+
+		if (bDebug)
+		{
+			qDebug() << "Intersecting Triangle: " << i;
+		}
+
+		if ( Triangle->Intersect(ray, LastIntersection, bDebug) )
 		{
 			if (pBBox) // if bounding box is supplied, discard all intersection outside it
 			{

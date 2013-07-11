@@ -10,6 +10,7 @@ public:
     qreal m_fDistance;
     QVector3D m_vIntersectionPoint;
     QVector3D m_vNormal;
+	float u, v, w;
 
 };
 

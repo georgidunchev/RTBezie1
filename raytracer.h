@@ -27,6 +27,7 @@ public:
 	void SetCanvas(int fWidth, int fHeight);
     void Render();
     void RenderThreaded();
+	QRgb RenderPixel(const int x, const int y, bool bDebug = false);
 
     QImage &GetImage();
 

@@ -44,8 +44,8 @@ public:
     
     void Load(const QString &strInputFileName);
 
-    bool Intersect(const CRay& ray, CIntersactionInfo& intersectionInfo );
-    bool Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo, const std::vector<int>& aTriangles, CAABox *pBBox = NULL);
+    bool Intersect(const CRay& ray, CIntersactionInfo& intersectionInfo, bool bDebug = false);
+    bool Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo, const std::vector<int>& aTriangles, CAABox *pBBox = NULL, bool bDebug = false);
 
     std::vector<CTriangle*> *GetPrimitives();
     CTriangle* GetPrimitive(int n);

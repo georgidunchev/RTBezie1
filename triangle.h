@@ -40,9 +40,14 @@ public:
     CTriangle();
 
     CTriangle( const std::vector<CVertex> & aVertecis, int v1, int v2, int v3);
-	virtual bool Intersect(const CRay& ray, CIntersactionInfo& intersectionInfo ) const;
-	virtual bool IntersectFast(const CRay& ray, CIntersactionInfo& intersectionInfo ) const;
-    virtual bool IntersectHighQuality(const CRay& ray, CIntersactionInfo& intersectionInfo ) const;
+	virtual bool Intersect(const CRay& ray, CIntersactionInfo& intersectionInfo, bool bDebug = false) const;
+	virtual bool IntersectSubTriangle(const CRay& ray, CIntersactionInfo& intersectionInfo, 
+								QVector3D i_vA,
+								QVector3D i_vB,
+								QVector3D i_vC,
+								bool bDebug = false) const;
+	virtual bool IntersectFast(const CRay& ray, CIntersactionInfo& intersectionInfo, bool bDebug = false) const;
+    virtual bool IntersectHighQuality(const CRay& ray, CIntersactionInfo& intersectionInfo, bool bDebug = false) const;
     virtual bool Intersect(const QVector3D& vStart, const QVector3D& vEnd) const;
 
     const std::vector<int>& Vertices() const;
@@ -80,7 +85,7 @@ protected:
     QVector3D m_vAB, m_vAC, m_vNormal;
     std::vector<QVector3D> m_aAdditionalPoints;
 
-    bool intersectSimpleBezierTriangle(const CRay &ray, CIntersactionInfo &info, QVector3D &barCoord, unsigned int iterations) const;
+    bool intersectSimpleBezierTriangle(const CRay &ray, CIntersactionInfo &info, QVector3D &barCoord, unsigned int iterations, bool bDebug = false) const;
     QVector3D Q30, Q03, Q21, Q12, Q20, Q02, Q11, Q10, Q01, Q00;
 };
 

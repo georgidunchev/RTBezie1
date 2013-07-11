@@ -156,7 +156,7 @@ void CTriangle::BuildBezierPoint(QVector3D &o_vNew,
 	const QVector3D &i_vNormal)
 {
 	o_vNew = i_vEnd - i_vMain;
-	o_vNew *= 0.3333f;
+	o_vNew *= k_fOneThird;
 	o_vNew = CUtils::ProjectionOfVectorInPlane(o_vNew, i_vNormal);
 	o_vNew += i_vMain;
 	//    o_vNew = (i_vEnd - i_vMain);
@@ -219,27 +219,36 @@ const QVector3D &CTriangle::GetPoint(int a, int b) const
 	return m_aAdditionalPoints[GetIndex(a,b)];
 }
 
-bool CTriangle::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo) const
+bool CTriangle::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo, bool bDebug) const
 {
 	if (GetRaytracer()->IsHighQuality())
 	{
-		return IntersectHighQuality(ray, intersectionInfo);
+		return IntersectHighQuality(ray, intersectionInfo, bDebug);
 	}
 	else
 	{
 		return IntersectFast(ray, intersectionInfo);
 	}
 }
-bool CTriangle::IntersectHighQuality(const CRay &ray, CIntersactionInfo &intersectionInfo) const
+bool CTriangle::IntersectHighQuality(const CRay &ray, CIntersactionInfo &intersectionInfo, bool bDebug) const
 {
 	float closestdist = k_fMAX;
 	intersectionInfo.m_fDistance = k_fMAX;
+	
+	float fU = k_fOneThird;
+	float fV = k_fOneThird;
+
+	if (IntersectFast(ray, intersectionInfo))
+	{
+		fU = intersectionInfo.u;
+		fV = intersectionInfo.v;
+	}
 
 	bool bezierFast = false;
 	if(!bezierFast)
 	{
-		QVector3D res = QVector3D(1.0/3.0, 1.0/3.0, 0);
-		if(intersectSimpleBezierTriangle(ray, intersectionInfo, res, 5 ))
+		QVector3D res = QVector3D(fU, fV, 0);
+		if(intersectSimpleBezierTriangle(ray, intersectionInfo, res, 500, bDebug))
 		{
 			closestdist = intersectionInfo.m_fDistance;
 			return true;
@@ -251,30 +260,61 @@ bool CTriangle::IntersectHighQuality(const CRay &ray, CIntersactionInfo &interse
 	}
 	else
 	{
-		int iterations = 4;
+		int iterations = 5;
 		QVector3D res = QVector3D(1.0/3.0, 1.0/3.0, 0);
-		intersectSimpleBezierTriangle(ray, intersectionInfo, res, iterations );
+		intersectSimpleBezierTriangle(ray, intersectionInfo, res, iterations, bDebug );
 		res = QVector3D(1.0/6.0, 1.0/6.0, 0);
-		intersectSimpleBezierTriangle(ray, intersectionInfo, res, iterations );
+		intersectSimpleBezierTriangle(ray, intersectionInfo, res, iterations, bDebug );
 		res = QVector3D(2.0/3.0, 1.0/6.0, 0);
-		intersectSimpleBezierTriangle(ray, intersectionInfo, res, iterations );
+		intersectSimpleBezierTriangle(ray, intersectionInfo, res, iterations, bDebug );
 		res = QVector3D(1.0/6.0, 2.0/3.0 ,0);
-		intersectSimpleBezierTriangle(ray, intersectionInfo, res, iterations );
+		intersectSimpleBezierTriangle(ray, intersectionInfo, res, iterations, bDebug );
 
 		closestdist = intersectionInfo.m_fDistance;
 	}
 
 	return fabs(closestdist - k_fMAX) > k_fMIN;
 }
-bool CTriangle::IntersectFast(const CRay &ray, CIntersactionInfo &intersectionInfo) const
+
+bool CTriangle::IntersectSubTriangle(const CRay &ray, CIntersactionInfo &intersectionInfo,
+									 QVector3D i_vA,
+									 QVector3D i_vB,
+									 QVector3D i_vC,
+									 bool bDebug) const
 {
-	if ( CUtils::IntersectTriangle(ray, intersectionInfo, GetPoint(3,0), GetPoint(2,1), GetPoint(2,0))
-		|| CUtils::IntersectTriangle(ray, intersectionInfo, GetPoint(2,1), GetPoint(1,2), GetPoint(1,1))
-		|| CUtils::IntersectTriangle(ray, intersectionInfo, GetPoint(1,2), GetPoint(0,3), GetPoint(0,2))
-		|| CUtils::IntersectTriangle(ray, intersectionInfo, GetPoint(2,0), GetPoint(1,1), GetPoint(1,0))
-		|| CUtils::IntersectTriangle(ray, intersectionInfo, GetPoint(1,1), GetPoint(0,2), GetPoint(0,1))
-		|| CUtils::IntersectTriangle(ray, intersectionInfo, GetPoint(1,0), GetPoint(0,1), GetPoint(0,0)) )
-		//    if ( CUtils::IntersectTriangle(ray, intersectionInfo, GetPoint(3,0), GetPoint(0,3), GetPoint(0,0)))
+	if ( CUtils::IntersectTriangle(ray, intersectionInfo, i_vA, i_vB, i_vC ) )
+	{
+		i_vA *= k_fOneThird * intersectionInfo.u;
+		i_vB *= k_fOneThird * intersectionInfo.v;
+		i_vC *= k_fOneThird * intersectionInfo.w;
+
+		const QVector3D vBCoords = i_vA + i_vB + i_vC;
+
+		intersectionInfo.u = vBCoords.x();
+		intersectionInfo.v = vBCoords.y();
+		intersectionInfo.w = vBCoords.z();
+	
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+bool CTriangle::IntersectFast(const CRay &ray, CIntersactionInfo &intersectionInfo, bool bDebug) const
+{
+	// should itterate through those and modify the output u,v coords
+	if ( IntersectSubTriangle(ray, intersectionInfo, GetPoint(3,0), GetPoint(2,1), GetPoint(2,0), bDebug)
+		|| IntersectSubTriangle(ray, intersectionInfo, GetPoint(2,0), GetPoint(2,1), GetPoint(1,1), bDebug)
+		|| IntersectSubTriangle(ray, intersectionInfo, GetPoint(2,1), GetPoint(1,2), GetPoint(1,1), bDebug)
+		|| IntersectSubTriangle(ray, intersectionInfo, GetPoint(1,1), GetPoint(1,2), GetPoint(0,2), bDebug)
+		|| IntersectSubTriangle(ray, intersectionInfo, GetPoint(1,2), GetPoint(0,3), GetPoint(0,2), bDebug)
+		|| IntersectSubTriangle(ray, intersectionInfo, GetPoint(2,0), GetPoint(1,1), GetPoint(1,0), bDebug)
+		|| IntersectSubTriangle(ray, intersectionInfo, GetPoint(1,1), GetPoint(0,2), GetPoint(0,1), bDebug)
+		|| IntersectSubTriangle(ray, intersectionInfo, GetPoint(1,0), GetPoint(1,1), GetPoint(0,1), bDebug)
+		|| IntersectSubTriangle(ray, intersectionInfo, GetPoint(1,0), GetPoint(0,1), GetPoint(0,0), bDebug) )
+		    //if ( CUtils::IntersectTriangle(ray, intersectionInfo, GetPoint(3,0), GetPoint(0,3), GetPoint(0,0)))
 	{
 		return true;
 	}
@@ -301,7 +341,7 @@ bool CTriangle::Intersect(const QVector3D &vStart, const QVector3D &vEnd) const
 	return false;
 }
 
-bool CTriangle::intersectSimpleBezierTriangle(const CRay &ray, CIntersactionInfo &info, QVector3D &barCoord, unsigned int iterations) const
+bool CTriangle::intersectSimpleBezierTriangle(const CRay &ray, CIntersactionInfo &info, QVector3D &barCoord, unsigned int iterations, bool bDebug) const
 {
 
 	//    return CTriangle::Intersect(ray, info);
@@ -356,7 +396,9 @@ bool CTriangle::intersectSimpleBezierTriangle(const CRay &ray, CIntersactionInfo
 		R.setY(CUtils::Dot(N2, B) + d2);
 		if( ( fabs(R.x()) < 1e-6 ) &&
 			( fabs(R.y()) < 1e-6 ) )
+		{
 			break;
+		}
 
 		//Inverse Jacobian
 		float fN1dotdBu = CUtils::Dot(N1, dBu);
@@ -379,11 +421,18 @@ bool CTriangle::intersectSimpleBezierTriangle(const CRay &ray, CIntersactionInfo
 		//Newton Iteration
 
 		barCoord = barCoord - CUtils::VertexMatrixMultiply(R, inverseJacobian);
+
+		if (bDebug)
+		{
+			char str[100];
+			sprintf( str, "u: %4.2f v: %4.2f w: %4.2f", u, v, 1.0-u-v);
+			qDebug() << str;
+		}
 	}
 
 	const double &u(barCoord.x());
 	const double &v(barCoord.y());
-	const double &w(1.0 - u - v);
+	const double w(1.0 - u - v);
 	barCoord.setZ(w);
 
 	if(u<0.0 || u>1.0 || v<0.0 || v>1.0 || w<0.0 || w>1.0)
