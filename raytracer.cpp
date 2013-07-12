@@ -88,19 +88,19 @@ void RayTracer::Render()
 QRgb RayTracer::RenderPixel(const int x, const int y, bool bDebug)
 {
 	QRgb value = qRgb(0,0,0);
-	float dX = m_nCanvasWidth / m_nCrntWidth;
-	float dY = m_nCanvasHeight / m_nCrntHeight;
+	const float dX = m_nCanvasWidth / m_nCrntWidth;
+	const float dY = m_nCanvasHeight / m_nCrntHeight;
 
-	if (x < 0
-		|| x >= m_nCanvasWidth
-		|| y < 0
-		|| y >= m_nCanvasHeight)
+	const int nScaledX = dX * x;
+	const int nScaledY = dY * y;
+
+	if (nScaledX < 0
+		|| nScaledX >= m_nCanvasWidth
+		|| nScaledY < 0
+		|| nScaledY >= m_nCanvasHeight)
 	{
 		return value;
 	}
-
-	int nScaledX = dX * x;
-	int nScaledY = dY * y;
 
 	CIntersactionInfo intersectionInfo;
 
@@ -111,6 +111,15 @@ QRgb RayTracer::RenderPixel(const int x, const int y, bool bDebug)
 	}
 
 	return value;
+}
+
+QRgb RayTracer::RenderPixelFromScreen(const int x, const int y, bool bDebug)
+{
+	m_nCrntWidth = m_nCanvasWidth;
+	m_nCrntHeight = m_nCanvasHeight;
+	GetCamera().SetCameraResolution(m_nCrntWidth, m_nCrntHeight);
+
+	return RenderPixel(x, y, bDebug);
 }
 
 void RayTracer::RenderThreaded()

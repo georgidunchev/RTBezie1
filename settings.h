@@ -2,9 +2,6 @@
 #define SETTINGS_H
 
 #include <QObject>
-static const float k_fMAX = 1e9;
-static const float k_fSMALL = 1e-9;
-static const float k_fMIN = -k_fMAX;
 
 //number of threads
 static const int k_nTHREADS = 4;

@@ -20,7 +20,7 @@ void CView::mousePressEvent(QMouseEvent *event)
     lastPos = event->pos();
 	if (event->buttons() & Qt::MiddleButton)
 	{
-		GetRaytracer()->RenderPixel(lastPos.x(), lastPos.y(), true);
+		GetRaytracer()->RenderPixelFromScreen(lastPos.x(), lastPos.y(), true);
 	}
 }
 

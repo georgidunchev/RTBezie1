@@ -147,23 +147,29 @@ bool CUtils::IntersectTriangle(const CRay &i_Ray,
 	     */
     //
     // Find the determinant of the left part of the equation
-    double Dcr = CUtils::Triple(a, b, c);
+    const float Dcr = CUtils::Triple(a, b, c);
     // check for zero; if it is zero, then the triangle and the ray are parallel
-    if (fabs(Dcr) < 1e-9)
-	return false;
+    if (fabs(Dcr) < k_fSMALL)
+	{
+		return false;
+	}
     // find the reciprocal of the determinant. We would use this quantity later in order
     // to multiply by rDcr instead of divide by Dcr (division is much slower)
     double rDcr = 1.0 / Dcr;
     // calculate `gamma' by substituting the right part of the equation in the third column of the matrix,
     // getting the determinant, and dividing by Dcr)
-    double gamma = CUtils::Triple(a, b, h) * rDcr;
+    const double gamma = CUtils::Triple(a, b, h) * rDcr;
     // Is the intersection point behind us?  Is the intersection point worse than what we currently have?
     if (gamma <= 0 || gamma > closestdist)
-	return false;
+	{
+		return false;
+	}
     lambda2 = CUtils::Triple(h, b, c) * rDcr;
     // Check if it is in range (barycentric coordinates)
     if (lambda2 < 0 || lambda2 > 1)
-	return false;
+	{
+		return false;
+	}
     lambda3 = CUtils::Triple(a, h, c) * rDcr;
 
     // Calculate lambda3 and check if it is in range as well

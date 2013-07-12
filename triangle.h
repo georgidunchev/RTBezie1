@@ -41,11 +41,7 @@ public:
 
     CTriangle( const std::vector<CVertex> & aVertecis, int v1, int v2, int v3);
 	virtual bool Intersect(const CRay& ray, CIntersactionInfo& intersectionInfo, bool bDebug = false) const;
-	virtual bool IntersectSubTriangle(const CRay& ray, CIntersactionInfo& intersectionInfo, 
-								QVector3D i_vA,
-								QVector3D i_vB,
-								QVector3D i_vC,
-								bool bDebug = false) const;
+	virtual bool IntersectSubTriangle(const CRay& ray, CIntersactionInfo& intersectionInfo, int i_nTriangleId, bool bDebug = false) const;
 	virtual bool IntersectFast(const CRay& ray, CIntersactionInfo& intersectionInfo, bool bDebug = false) const;
     virtual bool IntersectHighQuality(const CRay& ray, CIntersactionInfo& intersectionInfo, bool bDebug = false) const;
     virtual bool Intersect(const QVector3D& vStart, const QVector3D& vEnd) const;

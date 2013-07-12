@@ -18,7 +18,8 @@ void myMessageOutput(QtMsgType type, const char *msg)
 {
 	if (type == QtDebugMsg)
 	{
-		static std::string strMsg(msg);
+		static std::string strMsg;
+		strMsg = msg;
 		strMsg.push_back('\n');
         strMsg.push_back(0); // we must null-terminate for WINAPI
         OutputDebugStringA(&strMsg[0]);

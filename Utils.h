@@ -14,8 +14,12 @@ enum EDimiensions
     e_Dimension_MAX
 };
 
-static const double k_fPI = 3.14159;
-static const double k_fDegreesToRadians = k_fPI/180.0;
+static const float k_fMAX = 1e9f;
+static const float k_fSMALL = 1e-9f;
+static const float k_fMIN = -k_fMAX;
+
+static const float k_fPI = 3.14159;
+static const float k_fDegreesToRadians = k_fPI/180.0;
 static const float	k_fOneThird = 1.0f/3.0f;
 
 typedef float Matrix [3][3];

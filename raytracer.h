@@ -28,6 +28,7 @@ public:
     void Render();
     void RenderThreaded();
 	QRgb RenderPixel(const int x, const int y, bool bDebug = false);
+	QRgb RenderPixelFromScreen(const int x, const int y, bool bDebug = false);
 
     QImage &GetImage();
 
