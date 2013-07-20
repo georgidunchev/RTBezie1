@@ -53,11 +53,11 @@ void RayTracer::SetCanvas(int fWidth, int fHeight)
 	m_nCanvasWidth = fWidth;
 	m_nCanvasHeight = fHeight;
 	
-	m_nWidth = m_nCanvasWidth / 4;
-	m_nHeight = m_nCanvasHeight / 4;
+	m_nWidth = m_nCanvasWidth / 1;
+	m_nHeight = m_nCanvasHeight / 1;
  
-	m_nSmallWidth = m_nCanvasWidth / 8;
-	m_nSmallHeight = m_nCanvasHeight / 8;
+	m_nSmallWidth = m_nCanvasWidth / 2;
+	m_nSmallHeight = m_nCanvasHeight / 2;
 
 	m_pImage = new QImage(m_nCanvasWidth, m_nCanvasHeight, QImage::Format_ARGB32);
 }

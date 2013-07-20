@@ -35,10 +35,10 @@ void CRaytracerThread::run()
 		for( int j = bucketRect.top(); j <= bucketRect.bottom(); ++j)
 			for (int i = bucketRect.left(); i <= bucketRect.right(); ++i )
 			{
-				if (j >= 250 || i >=250)
-				{
-					qDebug() << "bucket id " << m_nBucketId;
-				}
+				//if (j >= 250 || i >=250)
+				//{
+				//	qDebug() << "bucket id " << m_nBucketId;
+				//}
 				QRgb value = qRgb(0,0,0);
 				CIntersactionInfo intersectionInfo;
 

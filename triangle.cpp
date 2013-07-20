@@ -232,9 +232,6 @@ bool CTriangle::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo, 
 }
 bool CTriangle::IntersectHighQuality(const CRay &ray, CIntersactionInfo &intersectionInfo, bool bDebug) const
 {
-	float closestdist = k_fMAX;
-	intersectionInfo.m_fDistance = k_fMAX;
-	
 	float fU = k_fOneThird;
 	float fV = k_fOneThird;
 
@@ -243,12 +240,15 @@ bool CTriangle::IntersectHighQuality(const CRay &ray, CIntersactionInfo &interse
 		fU = intersectionInfo.u;
 		fV = intersectionInfo.v;
 	}
+	
+	float closestdist = k_fMAX;
+	intersectionInfo.m_fDistance = k_fMAX;
 
 	bool bezierFast = false;
 	if (!bezierFast)
 	{
 		QVector3D res = QVector3D(fU, fV, 0);
-		if (intersectSimpleBezierTriangle(ray, intersectionInfo, res, 500, bDebug))
+		if (intersectSimpleBezierTriangle(ray, intersectionInfo, res, 5, bDebug))
 		{
 			closestdist = intersectionInfo.m_fDistance;
 			return true;
@@ -449,7 +449,7 @@ bool CTriangle::intersectSimpleBezierTriangle(const CRay &ray, CIntersactionInfo
 	QVector3D dBu;
 	QVector3D dBv;
 
-	for(unsigned int i = 0; i < iterations; i++)
+	for (unsigned int i = 0; i < iterations; i++)
 	{
 		const double &u(barCoord.x());
 		const double &v(barCoord.y());
@@ -484,8 +484,8 @@ bool CTriangle::intersectSimpleBezierTriangle(const CRay &ray, CIntersactionInfo
 
 		R.setX(CUtils::Dot(N1, B) + d1);
 		R.setY(CUtils::Dot(N2, B) + d2);
-		if( ( fabs(R.x()) < 1e-6 ) &&
-			( fabs(R.y()) < 1e-6 ) )
+		if ( ( fabs(R.x()) < 1e-6 ) &&
+			 ( fabs(R.y()) < 1e-6 ) )
 		{
 			break;
 		}
@@ -525,7 +525,7 @@ bool CTriangle::intersectSimpleBezierTriangle(const CRay &ray, CIntersactionInfo
 	const double w(1.0 - u - v);
 	barCoord.setZ(w);
 
-	if(u<0.0 || u>1.0 || v<0.0 || v>1.0 || w<0.0 || w>1.0)
+	if (u<0.0 || u>1.0 || v<0.0 || v>1.0 || w<0.0 || w>1.0)
 	{
 		return false;
 	}
@@ -542,15 +542,15 @@ bool CTriangle::intersectSimpleBezierTriangle(const CRay &ray, CIntersactionInfo
 		+ Q01 * v
 		+ Q00;
 
-	if( ( fabs(CUtils::Dot(N1, B) + d1) > 1e-2 ) ||
-		( fabs(CUtils::Dot(N2, B) + d2) > 1e-2 ) )
+	if ( ( fabs(CUtils::Dot(N1, B) + d1) > 1e-6 ) ||
+		 ( fabs(CUtils::Dot(N2, B) + d2) > 1e-6 ) )
 	{
 		return false;
 	}
 
 	// calculate the intersection
-	double len = (B-ray.StartPoint()).length();
-	if(len > info.m_fDistance)
+	double len = (B - ray.StartPoint()).length();
+	if (len > info.m_fDistance)
 	{
 		return false;
 	}
