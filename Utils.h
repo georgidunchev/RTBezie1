@@ -57,7 +57,11 @@ public:
 				   const QVector3D& i_vA,
 				   const QVector3D& i_vB,
 				   const QVector3D& i_vC);
+	
+	static int PowerOf2(const int nPow);
+	
 	//std::stringstream& DebugOut();
+
 
 	void AddDebugString(const char* str);
 
