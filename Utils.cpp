@@ -184,11 +184,11 @@ bool CUtils::IntersectTriangle(const CRay &i_Ray,
 
     closestdist = gamma;
     io_IntersectionInfo.m_fDistance = closestdist;
-    Normal(io_IntersectionInfo.m_vNormal, a, c);
+    Normal(io_IntersectionInfo.m_vNormal, a, b);
     io_IntersectionInfo.m_vIntersectionPoint = CUtils::GetPointAtDistance(i_Ray, closestdist);
 	io_IntersectionInfo.u = 1.0f - lambda2 - lambda3;
-	io_IntersectionInfo.v = lambda3;
-	io_IntersectionInfo.w = lambda2;
+	io_IntersectionInfo.v = lambda2;
+	io_IntersectionInfo.w = lambda3;
     return true;
 }
 
@@ -211,8 +211,11 @@ bool CUtils::IntersectTriangle(const CRay &i_Ray,
 	const QVector3D vPB = i_vBBar * io_IntersectionInfo.v;
 	const QVector3D vPC = i_vCBar * io_IntersectionInfo.w;
 
-	io_IntersectionInfo.m_vIntersectionPoint = vPA + vPB + vPC;
+	const QVector3D vBarCoord = vPA + vPB + vPC;
 
+	io_IntersectionInfo.u = vBarCoord.x();
+	io_IntersectionInfo.v = vBarCoord.y();
+	io_IntersectionInfo.w = vBarCoord.z();
     return true;
 }
 
