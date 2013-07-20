@@ -2,6 +2,7 @@
 #include <intersactioninfo.h>
 #include <ray.h>
 #include <QVector3D>
+#include <QVector2D>
 #include <vector>
 #include <qmath.h>
 #include <QDebug>
@@ -11,6 +12,7 @@
 #include <cmesh.h>
 #include <vector>
 #include <settings.h>
+#include <SubTriangle.h>
 
 CTriangle::CTriangle()
 	: m_aVertecis(GetRaytracer()->GetMesh().Vertices())
@@ -33,6 +35,36 @@ CTriangle::CTriangle( const std::vector<CVertex> &aVertecis, int v1, int v2, int
 	CUtils::Normal(m_vNormal, AB(), AC());
 }
 
+CTriangle::~CTriangle()
+{
+	m_aSubTriangles.clear();
+}
+
+const QVector3D CTriangle::GetPointFromBarycentric(const QVector3D& vCoords)
+{
+	return GetPointFromBarycentric(vCoords.x(), vCoords.y());
+}
+
+const QVector3D CTriangle::GetPointFromBarycentric(const QVector2D& vCoords)
+{
+	return GetPointFromBarycentric(vCoords.x(), vCoords.y());
+}
+
+const QVector3D CTriangle::GetPointFromBarycentric(float u, float v)
+{
+	QVector3D B = Q30 * u*u*u
+			+ Q03 * v*v*v
+			+ Q21 * u*u*v
+			+ Q12 * u*v*v
+			+ Q20 * u*u
+			+ Q02 * v*v
+			+ Q11 * u*v
+			+ Q10 * u
+			+ Q01 * v
+			+ Q00;
+	return B;
+}
+
 
 const std::vector<int> &CTriangle::Vertices() const
 {
@@ -44,6 +76,10 @@ CVertex& CTriangle::GetVertex(int i)
 	return m_aVertecis[Vertices()[i]];
 }
 
+CVertex& CTriangle::GetVertex(int i) const
+{
+	return m_aVertecis[Vertices()[i]];
+}
 const QVector3D &CTriangle::AB() const
 {
 	return m_vAB;
@@ -219,6 +255,24 @@ const QVector3D &CTriangle::GetPoint(int a, int b) const
 	return m_aAdditionalPoints[GetIndex(a,b)];
 }
 
+void CTriangle::Subdivide()
+{
+	m_aSubTriangles.resize(2 << (k_nNUMBER_OF_SUBDIVISIONS - 1));
+	m_aSubTriangles[0] = new CSubTriangle(*this);
+	m_aSubTriangles[0]->Subdivide();
+}
+
+void CTriangle::AddSubTriangle(CSubTriangle* subTriangle)
+{
+	int nSavePos = subTriangle->GetSavePos();
+	if (m_aSubTriangles[nSavePos])
+	{
+		delete m_aSubTriangles[nSavePos];
+	}
+	m_aSubTriangles[nSavePos] = subTriangle;
+	m_aSubTriangles[nSavePos]->Subdivide();
+}
+
 bool CTriangle::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo, bool bDebug) const
 {
 	if (GetRaytracer()->IsHighQuality())
@@ -230,8 +284,11 @@ bool CTriangle::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo, 
 		return IntersectFast(ray, intersectionInfo);
 	}
 }
+
 bool CTriangle::IntersectHighQuality(const CRay &ray, CIntersactionInfo &intersectionInfo, bool bDebug) const
 {
+	return IntersectSubdevidedTriangles(ray, intersectionInfo, bDebug);
+		
 	float fU = k_fOneThird;
 	float fV = k_fOneThird;
 
@@ -280,7 +337,7 @@ bool CTriangle::IntersectFast(const CRay &ray, CIntersactionInfo &intersectionIn
 {
 	for (int i = 0; i < 9; i++)
 	{
-		if (IntersectSubTriangle(ray, intersectionInfo, i, bDebug))
+		if (IntersectBezierSubTriangle(ray, intersectionInfo, i, bDebug))
 		{
 			return true;
 		}
@@ -289,7 +346,7 @@ bool CTriangle::IntersectFast(const CRay &ray, CIntersactionInfo &intersectionIn
 	return false;
 }
 
-bool CTriangle::IntersectSubTriangle(const CRay &ray, CIntersactionInfo &intersectionInfo, int i_nTriangleId, bool bDebug) const
+bool CTriangle::IntersectBezierSubTriangle(const CRay &ray, CIntersactionInfo &intersectionInfo, int i_nTriangleId, bool bDebug) const
 {
 	
 
@@ -411,6 +468,15 @@ bool CTriangle::IntersectSubTriangle(const CRay &ray, CIntersactionInfo &interse
 	else
 	{
 		return false;
+	}
+}
+
+bool CTriangle::IntersectSubdevidedTriangles(const CRay &ray, CIntersactionInfo &intersectionInfo, bool bDebug) const
+{
+	for (int i = 0; i < m_aSubTriangles.size(); i++)
+	{
+		if( m_aSubTriangles[i]->Intersect(ray, intersectionInfo,bDebug) )
+			return true;
 	}
 }
 
@@ -579,3 +645,4 @@ bool CTriangle::intersectSimpleBezierTriangle(const CRay &ray, CIntersactionInfo
 
 	return true;
 }
+

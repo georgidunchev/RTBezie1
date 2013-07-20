@@ -178,6 +178,7 @@
     <ClCompile Include="Release\moc_Utils.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="SubTriangle.cpp" />
     <ClCompile Include="Utils.cpp" />
     <ClCompile Include="beziertriangle.cpp" />
     <ClCompile Include="camera.cpp" />
@@ -285,6 +286,7 @@
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ConfigurationName)\moc_%(Filename).cpp;%(Outputs)</Outputs>
     </CustomBuild>
     <ClInclude Include="shader.h" />
+    <ClInclude Include="SubTriangle.h" />
     <ClInclude Include="triangle.h" />
     <ClInclude Include="vertex.h" />
   </ItemGroup>

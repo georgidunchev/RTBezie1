@@ -386,6 +386,7 @@ void CMesh::BuildBezierTriangles()
 	for (int i = 0; i < m_aTriangles.size(); ++i)
 	{
 		m_aTriangles[i]->BuildBezierPoints();
+		m_aTriangles[i]->Subdivide();
 	}
 	//    m_aBezierTriangles.reserve(m_nTrianglesWithCompleteAdjacency);
 	//    for (int i = 0; i < m_aTriangles.size(); ++i)
