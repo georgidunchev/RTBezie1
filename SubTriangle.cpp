@@ -91,6 +91,12 @@ void CSubTriangle::Subdivide()
 {	
 	if (m_nSubdivisionLevel > k_nNUMBER_OF_SUBDIVISIONS)
 	{
+		//qDebug() << m_vABar << m_vBBar << m_vCBar;
+		//qDebug()	<< m_nSavePos
+		//			<< m_vA 
+		//			<< m_vB 
+		//			<< m_vC;
+
 		return;
 	}
 	
@@ -131,7 +137,7 @@ void CSubTriangle::GetDivision(int& o_nStartOfLongest, QVector3D& o_vMidPoint, Q
 		const int j = (i + 1) % 3;
 
 		vMidPointBar = (GetVertBar(i) + GetVertBar(j)) / 2.0f;
-		vMidPoint = m_Parent.GetPointFromBarycentric(vMidPoint);
+		vMidPoint = m_Parent.GetPointFromBarycentric(vMidPointBar);
 
 		const float fNewDistance = (GetVert(i) - vMidPoint).lengthSquared();// this should work with bezier stuff
 
@@ -147,5 +153,5 @@ void CSubTriangle::GetDivision(int& o_nStartOfLongest, QVector3D& o_vMidPoint, Q
 
 bool CSubTriangle::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo, bool bDebug) const
 {
-	return CUtils::IntersectTriangle(ray, intersectionInfo, m_vA, m_vB, m_vC );
+	return CUtils::IntersectTriangle(ray, intersectionInfo, m_vA, m_vB, m_vC, m_vABar, m_vBBar, m_vCBar);
 }

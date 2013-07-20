@@ -44,7 +44,7 @@ public:
 
 	virtual bool Intersect(const CRay& ray, CIntersactionInfo& intersectionInfo, bool bDebug = false) const;
 	virtual bool IntersectBezierSubTriangle(const CRay& ray, CIntersactionInfo& intersectionInfo, int i_nTriangleId, bool bDebug = false) const;
-	virtual bool IntersectSubdevidedTriangles(const CRay &ray, CIntersactionInfo &intersectionInfo, bool bDebug) const;
+	virtual bool IntersectSubdevidedTriangles(const CRay &ray, CIntersactionInfo &intersectionInfo, bool bDebug = false) const;
 	virtual bool IntersectFast(const CRay& ray, CIntersactionInfo& intersectionInfo, bool bDebug = false) const;
     virtual bool IntersectHighQuality(const CRay& ray, CIntersactionInfo& intersectionInfo, bool bDebug = false) const;
     virtual bool Intersect(const QVector3D& vStart, const QVector3D& vEnd) const;

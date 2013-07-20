@@ -26,8 +26,6 @@ CLightsScene &CShader::GetLightScene()
 
 QRgb CShader::ShadeLambert(const CRay &ray, CIntersactionInfo &intersectionInfo)
 {
-    CColor color(0.5, 0.5, 0.5);
-//    CColor LightColor(255, 255, 255);
     float fLightColor = 1.f;
 
     for (int i = 0; i < GetLightScene().GetLightsNumber(); ++i)
@@ -40,7 +38,7 @@ QRgb CShader::ShadeLambert(const CRay &ray, CIntersactionInfo &intersectionInfo)
 	colorForLight *= qAbs(fCos);
 	colorForLight *= fLightColor;
 	colorForLight *= 1.f/GetLightScene().GetLightsNumber();
-	color += colorForLight;
+	intersectionInfo.color+= colorForLight;
 
 	//add specular for each affecting light
 //	if(false)
@@ -61,5 +59,5 @@ QRgb CShader::ShadeLambert(const CRay &ray, CIntersactionInfo &intersectionInfo)
 //	    }
 //	}
     }
-    return color.GetRGB();
+    return intersectionInfo.color.GetRGB();
 }

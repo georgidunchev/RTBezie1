@@ -192,6 +192,31 @@ bool CUtils::IntersectTriangle(const CRay &i_Ray,
     return true;
 }
 
+
+bool CUtils::IntersectTriangle(const CRay &i_Ray,
+			       CIntersactionInfo &io_IntersectionInfo,
+			       const QVector3D& i_vA,
+			       const QVector3D& i_vB,
+				   const QVector3D& i_vC,
+				   const QVector3D& i_vABar,
+				   const QVector3D& i_vBBar,
+				   const QVector3D& i_vCBar)
+{
+	if (!IntersectTriangle(	i_Ray, io_IntersectionInfo, i_vA, i_vB, i_vC))
+	{
+		return false;
+	}
+		
+	const QVector3D vPA = i_vABar * io_IntersectionInfo.u;
+	const QVector3D vPB = i_vBBar * io_IntersectionInfo.v;
+	const QVector3D vPC = i_vCBar * io_IntersectionInfo.w;
+
+	io_IntersectionInfo.m_vIntersectionPoint = vPA + vPB + vPC;
+
+    return true;
+}
+
+
 int CUtils::PowerOf2(const int nPow)
 {
 	if (nPow > 1)

@@ -13,6 +13,8 @@
 #include <vector>
 #include <settings.h>
 #include <SubTriangle.h>
+#include <color.h>
+
 
 CTriangle::CTriangle()
 	: m_aVertecis(GetRaytracer()->GetMesh().Vertices())
@@ -281,18 +283,20 @@ bool CTriangle::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo, 
 	}
 	else
 	{
-		return IntersectFast(ray, intersectionInfo);
+		return IntersectSubdevidedTriangles(ray, intersectionInfo);
+		//return IntersectFast(ray, intersectionInfo);
 	}
 }
 
 bool CTriangle::IntersectHighQuality(const CRay &ray, CIntersactionInfo &intersectionInfo, bool bDebug) const
 {
-	return IntersectSubdevidedTriangles(ray, intersectionInfo, bDebug);
+	//return IntersectSubdevidedTriangles(ray, intersectionInfo, bDebug);
 		
 	float fU = k_fOneThird;
 	float fV = k_fOneThird;
 
-	if (IntersectFast(ray, intersectionInfo, bDebug))
+	//if (IntersectFast(ray, intersectionInfo, bDebug))
+	if (IntersectSubdevidedTriangles(ray, intersectionInfo, bDebug))
 	{
 		fU = intersectionInfo.u;
 		fV = intersectionInfo.v;
@@ -443,19 +447,12 @@ bool CTriangle::IntersectBezierSubTriangle(const CRay &ray, CIntersactionInfo &i
 	QVector3D vPA(u1,v1,w1);
 	QVector3D vPB(u2,v2,w2);
 	QVector3D vPC(u3,v3,w3);
+	vPA *= k_fOneThird;
+	vPB *= k_fOneThird;
+	vPC *= k_fOneThird;
 
-	if ( CUtils::IntersectTriangle(ray, intersectionInfo, i_vA, i_vB, i_vC ) )
-	{
-		vPA *= k_fOneThird * intersectionInfo.u;
-		vPB *= k_fOneThird * intersectionInfo.v;
-		vPC *= k_fOneThird * intersectionInfo.w;
-
-		const QVector3D vBCoords = vPA + vPB + vPC;
-
-		intersectionInfo.u = vBCoords.x();
-		intersectionInfo.v = vBCoords.y();
-		intersectionInfo.w = vBCoords.z();
-			
+	if ( CUtils::IntersectTriangle(ray, intersectionInfo, i_vA, i_vB, i_vC, vPA, vPB, vPC) )
+	{																	   
 		if (bDebug)
 		{
 			char str[100];
@@ -473,10 +470,27 @@ bool CTriangle::IntersectBezierSubTriangle(const CRay &ray, CIntersactionInfo &i
 
 bool CTriangle::IntersectSubdevidedTriangles(const CRay &ray, CIntersactionInfo &intersectionInfo, bool bDebug) const
 {
-	for (int i = 0; i < m_aSubTriangles.size(); i++)
+	int nSize = m_aSubTriangles.size();
+	float fModifier = 8.0f / static_cast<float>(nSize);
+
+	for (int i = 0; i < nSize; i++)
 	{
 		if( m_aSubTriangles[i]->Intersect(ray, intersectionInfo,bDebug) )
+		{
+			if (false)
+			{
+				bool bR = ((i / 4) > 0);
+				bool bG = (((i % 4) / 2) > 0);
+				bool bB = (((i % 4) % 2) > 0);
+			
+				float fR = bR ? fModifier * static_cast<float>(i) * 0.125f : 0.0f;
+				float fG = bG ? fModifier * static_cast<float>(i) * 0.125f : 0.0f;
+				float fB = bB ? fModifier * static_cast<float>(i) * 0.125f : 0.0f;
+
+				intersectionInfo.color = CColor(fR, fG, fB);
+			}
 			return true;
+		}
 	}
 }
 

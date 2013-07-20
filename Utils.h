@@ -57,7 +57,16 @@ public:
 				   const QVector3D& i_vA,
 				   const QVector3D& i_vB,
 				   const QVector3D& i_vC);
-	
+	   
+	static bool IntersectTriangle( const CRay &i_Ray,
+				   CIntersactionInfo& io_IntersectionInfo,
+				   const QVector3D& i_vA,
+				   const QVector3D& i_vB,
+				   const QVector3D& i_vC,
+				   const QVector3D& i_vABar,
+				   const QVector3D& i_vBBar,
+				   const QVector3D& i_vCBar);
+
 	static int PowerOf2(const int nPow);
 	
 	//std::stringstream& DebugOut();
