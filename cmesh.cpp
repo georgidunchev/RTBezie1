@@ -8,6 +8,7 @@
 #include <main.h>
 #include <raytracer.h>
 #include <settings.h>
+#include "SubTriangle.h"
 
 CMesh::CMesh(QObject *parent)
 	: QObject(parent)
@@ -97,13 +98,13 @@ void CMesh::Load(const QString& strInputFileName)
 		mBoundingBox.AddPoint(m_aTriangles[i]->GetBoundingBox().GetMaxVertex());
 	}
 
-	GenerateKDTree();
-
 	BuildVertexData();
 
 	m_nTrianglesWithCompleteAdjacency = 0;
 	//    BuildAdjacency();
 	BuildBezierTriangles();
+
+	GenerateKDTree();
 }
 
 bool CMesh::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo, bool bDebug)
@@ -215,13 +216,20 @@ CBezierTriangle *CMesh::GetBezierTriangle(int n)
 void CMesh::GenerateKDTree()
 {
 	//initialize an array containing all triangles
-	std::vector<int>* pAllTriangleIndeces = new std::vector<int>(GetPrimitives()->size());
-	for (int i = 0; i < pAllTriangleIndeces->size(); ++i)
-	{
-		(*pAllTriangleIndeces)[i] = i;
-	}
+	int nNumberOfSubTriangles = CUtils::PowerOf2(k_nNUMBER_OF_SUBDIVISIONS);
+	int nNumberOfPrimitives = GetPrimitives()->size();
 
-	m_pRoot = new CKDTreeNode(pAllTriangleIndeces, 0, mBoundingBox);
+	std::vector<CSubTriangle*>* pAllSubTriangles = new std::vector<CSubTriangle*>;
+	pAllSubTriangles->reserve(nNumberOfSubTriangles * nNumberOfPrimitives);
+
+	for (int j = 0; j < nNumberOfPrimitives; j++)
+	{
+		for (int i = 0; i < nNumberOfSubTriangles; ++i)
+		{
+			pAllSubTriangles->push_back(GetPrimitive(j)->GetSubTriangle(i));
+		}
+	}
+	m_pRoot = new CKDTreeNode(pAllSubTriangles, 0, mBoundingBox);
 	m_pRoot->Process();
 }
 

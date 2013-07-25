@@ -4,13 +4,13 @@
 #include <QObject>
 
 //number of threads
-static const int k_nTHREADS = 4;
+static const int k_nTHREADS = 1;
 
-static const bool k_bUSE_KDTREE = false;
+static const bool k_bUSE_KDTREE = true;
 
 //end criteria for kd-tree construction
 static const int k_nMAX_LEVEL_OF_TREE = 32;
-static const int k_nMIN_NUMBER_OF_TRIANGLES_TO_SPLIT = 64;
+static const int k_nMIN_NUMBER_OF_TRIANGLES_TO_SPLIT = 8;
 
 static const int k_nMAX_SPLITS_OF_NODE = 10;
 

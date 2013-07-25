@@ -195,6 +195,8 @@ int RayTracer::GetNextBucketId()
 {
 	//QMutexLocker locker(&mutex);
 	int nTemp = m_nNextBucket.fetchAndAddRelaxed(1);
+	
+	qDebug() << "Finished " << nTemp;
 
 	if ( nTemp >= GetBucketsCount())
 	{

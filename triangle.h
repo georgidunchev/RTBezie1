@@ -44,7 +44,8 @@ public:
 
 	virtual bool Intersect(const CRay& ray, CIntersactionInfo& intersectionInfo, bool bDebug = false) const;
 	virtual bool IntersectBezierSubTriangle(const CRay& ray, CIntersactionInfo& intersectionInfo, int i_nTriangleId, bool bDebug = false) const;
-	virtual bool IntersectSubdevidedTriangles(const CRay &ray, CIntersactionInfo &intersectionInfo, bool bDebug = false) const;
+	bool IntersectSubdevidedTriangles(const CRay &ray, CIntersactionInfo &intersectionInfo, std::vector<QVector3D>* aPointsToCheck = NULL, bool bDebug = false) const;
+	static bool IntersectSubdevidedTriangles(const CRay &ray, CIntersactionInfo &intersectionInfo, const std::vector<CSubTriangle*>& aSubTriangles, std::vector<QVector3D>* aPointsToCheck = NULL, bool bDebug = false);
 	virtual bool IntersectFast(const CRay& ray, CIntersactionInfo& intersectionInfo, bool bDebug = false) const;
     virtual bool IntersectHighQuality(const CRay& ray, CIntersactionInfo& intersectionInfo, bool bDebug = false) const;
     virtual bool Intersect(const QVector3D& vStart, const QVector3D& vEnd) const;
@@ -69,6 +70,10 @@ public:
     void BuildBezierPoints();
 	void Subdivide();
 	void AddSubTriangle(CSubTriangle* subTriangle);
+	CSubTriangle* GetSubTriangle(int n) const 
+	{ 
+		return m_aSubTriangles[n];
+	};
 
 protected:
     std::vector<int> m_aVertIndices;

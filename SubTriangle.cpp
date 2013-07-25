@@ -155,3 +155,18 @@ bool CSubTriangle::Intersect(const CRay &ray, CIntersactionInfo &intersectionInf
 {
 	return CUtils::IntersectTriangle(ray, intersectionInfo, m_vA, m_vB, m_vC, m_vABar, m_vBBar, m_vCBar);
 }
+
+void CSubTriangle::MakeBoundingBox()
+{
+	for (int i = 0; i < 3; i++)
+	{
+		m_BoundingBox.AddPoint(GetVert(i));
+	}
+
+	m_bHasBoundingBox = true;
+}
+
+const CAABox& CSubTriangle::GetBoundingBox()
+{
+	return m_BoundingBox;
+}
