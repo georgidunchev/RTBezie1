@@ -1,19 +1,4 @@
-Intersection AABB works
-visualize leafs of KDTree
-
-looks like the separation is not working right
-more splits cause more problems
-
-
 postprocess the rendered image to fill the not rendered images
-
-
-problematic settings 1: 
-k_nMAX_LEVEL_OF_TREE = 4;
-k_nMIN_NUMBER_OF_TRIANGLES_TO_SPLIT = 6;
-k_nMAX_SPLITS_OF_NODE = 2;
-k_nNUMBER_OF_SUBDIVISIONS = 3;
-
 
 
 Things to do:

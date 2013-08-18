@@ -504,40 +504,6 @@ bool CTriangle::IntersectBezierSubTriangle(const CRay &ray, CIntersactionInfo &i
 bool CTriangle::IntersectSubdevidedTriangles(const CRay &ray, CIntersactionInfo &intersectionInfo, std::vector<QVector3D>* aPointsToCheck, bool bDebug) const
 {
 	return IntersectSubdevidedTriangles(ray, intersectionInfo, m_aSubTriangles, aPointsToCheck, bDebug);
-
-	int nSize = m_aSubTriangles.size();
-	float fModifier = 8.0f / static_cast<float>(nSize);
-
-	for (int i = 0; i < nSize; i++)
-	{
-		if( m_aSubTriangles[i]->Intersect(ray, intersectionInfo,bDebug) )
-		{
-			if (false)
-			{
-				bool bR = ((i / 4) > 0);
-				bool bG = (((i % 4) / 2) > 0);
-				bool bB = (((i % 4) % 2) > 0);
-			
-				float fR = bR ? fModifier * static_cast<float>(i) * 0.125f : 0.0f;
-				float fG = bG ? fModifier * static_cast<float>(i) * 0.125f : 0.0f;
-				float fB = bB ? fModifier * static_cast<float>(i) * 0.125f : 0.0f;
-
-				intersectionInfo.color = CColor(fR, fG, fB);
-			}
-			if (aPointsToCheck)
-			{
-				aPointsToCheck->push_back(QVector3D(intersectionInfo.u,intersectionInfo.v,intersectionInfo.w));
-				for (int j = 0; j < 3; j++)
-				{
-					aPointsToCheck->push_back(m_aSubTriangles[i]->GetVertBar(j));
-				}
-				
-			}
-
-			return true;
-		}
-	}
-	return false;
 }
 
 
@@ -552,29 +518,29 @@ bool CTriangle::IntersectSubdevidedTriangles(const CRay &ray, CIntersactionInfo 
 		{
 			int nId = aSubTriangles[i]->m_nSubtriangleID;
 
-			if (false)
+			if (true)
 			{
-
-				bool bR = ((nId / 4) > 0);
-				bool bG = (((nId % 4) / 2) > 0);
-				bool bB = (((nId % 4) % 2) > 0);
+				int nSubtriangleId = aSubTriangles[i]->m_nSubtriangleID;
+				bool bR = ((nSubtriangleId / 4) > 0);
+				bool bG = (((nSubtriangleId % 4) / 2) > 0);
+				bool bB = (((nSubtriangleId % 4) % 2) > 0);
 			
-				float fR = bR ? fModifier * static_cast<float>(nId) * 0.125f : 0.0f;
-				float fG = bG ? fModifier * static_cast<float>(nId) * 0.125f : 0.0f;
-				float fB = bB ? fModifier * static_cast<float>(nId) * 0.125f : 0.0f;
+				float fR = bR ? fModifier * static_cast<float>(nSubtriangleId) * 0.125f : 0.0f;
+				float fG = bG ? fModifier * static_cast<float>(nSubtriangleId) * 0.125f : 0.0f;
+				float fB = bB ? fModifier * static_cast<float>(nSubtriangleId) * 0.125f : 0.0f;
 
 				intersectionInfo.color = CColor(fR, fG, fB);
 			}
+			
 			if (aPointsToCheck)
 			{
 				aPointsToCheck->push_back(QVector3D(intersectionInfo.u,intersectionInfo.v,intersectionInfo.w));
 				for (int j = 0; j < 3; j++)
 				{
 					aPointsToCheck->push_back(aSubTriangles[i]->GetVertBar(j));
-				}
-				
+				}			
 			}
-
+		
 			intersectionInfo.m_nSubTriangleId = nId;
 
 			return true;
@@ -602,7 +568,6 @@ bool CTriangle::Intersect(const QVector3D &vStart, const QVector3D &vEnd) const
 
 bool CTriangle::intersectSimpleBezierTriangle(const CRay &ray, CIntersactionInfo &info, QVector3D &barCoord, unsigned int iterations, bool bDebug) const
 {
-
 	//    return CTriangle::Intersect(ray, info);
 	//Planes along ray
 	QVector3D N1 = CUtils::Cross(ray.Direction(), QVector3D(-1,-1,-1));

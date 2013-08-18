@@ -30,8 +30,7 @@ void CKDTreeNode::Process()
 	// clear the input triangles' array;
 
 	if (m_nLevel >= k_nMAX_LEVEL_OF_TREE
-		//|| m_pTriangles->size() <= k_nMIN_NUMBER_OF_TRIANGLES_TO_SPLIT
-			)
+		|| m_pTriangles->size() <= k_nMIN_NUMBER_OF_TRIANGLES_TO_SPLIT)
 	{
 		return;
 	}
@@ -97,7 +96,7 @@ bool CKDTreeNode::Separate(	std::vector<CSubTriangle*>& AllTriangles,
 
 		int nMin = qMin(nTrianglesLeft, nTrianglesRight);
 		
-		//if (nMin > nMaxMinDistance)
+		if (nMin > nMaxMinDistance)
 		{
 			nMaxMinDistance = nMin;
 			nBestTrianglesLeft = nTrianglesLeft;
@@ -107,7 +106,7 @@ bool CKDTreeNode::Separate(	std::vector<CSubTriangle*>& AllTriangles,
 		}
 	}
 
-	//if (nMaxMinDistance > 0)
+	if (nMaxMinDistance > 0)
 	{
 		pLeftTriangles->reserve(nBestTrianglesLeft);
 		pRightTriangles->reserve(nBestTrianglesRight);
@@ -150,66 +149,64 @@ bool CKDTreeNode::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo
 			return m_BoundingBox.Intersect(ray, intersectionInfo, bDebug);
 		}
 		return bIntersect;
-		//return GetMesh().Intersect(ray,intersectionInfo, *m_pTriangles, &m_BoundingBox);
 	}
 	else
 	{
+		if (bDebug)
+		{
+			qDebug() << "Left";
+		}
+
 		CIntersactionInfo intersectionInfoLeft(intersectionInfo);
-		CIntersactionInfo intersectionInfoRight(intersectionInfo);
-
-		if (bDebug)
-		{
-			qDebug()<<"Left";
-		}
-		float fR = 0.0f;
-		float fG = 0.0f;
-		float fB = 0.0f;
-		float fColorIncrement = 1.0f/static_cast<float>(k_nMAX_LEVEL_OF_TREE);
-
 		bool bIntersectLeft = m_pLeftNode->Intersect(ray, intersectionInfoLeft, bDebug);
+		
 		if (bDebug)
 		{
-			qDebug()<<"Right";
+			qDebug() << "Right";
 		}
+
+		CIntersactionInfo intersectionInfoRight(intersectionInfo);
 		bool bIntersectRight = m_pRightNode->Intersect(ray, intersectionInfoRight, bDebug);
 
 		if (!bIntersectLeft && !bIntersectRight)
 		{
 			return false;
 		}
-		else if(bIntersectLeft && !bIntersectRight)
-		{
-			fR += fColorIncrement;
-			intersectionInfo = intersectionInfoLeft;
-			intersectionInfo.color += CColor(fR, fG, fB);
-			return true;
-		}
-		else if(!bIntersectLeft && bIntersectRight)
-		{
-			fB += fColorIncrement;
-			intersectionInfo = intersectionInfoRight;
-			intersectionInfo.color += CColor(fR, fG, fB);
-			return true;
-		}
 		else
 		{
-			if ( !m_BoundingBox.Intersect(ray) )
-			{
-				//return false;
-			}
+			float fR = 0.0f, fG = 0.0f, fB = 0.0f;
+			static const float fColorIncrement = 1.0f / static_cast<float>(k_nMAX_LEVEL_OF_TREE);
 
-			// two intersection, choose the closest one
-			if (intersectionInfoLeft.m_fDistance < intersectionInfoRight.m_fDistance)
+			if(bIntersectLeft && !bIntersectRight)
 			{
 				fR += fColorIncrement;
 				intersectionInfo = intersectionInfoLeft;
 			}
-			else
+			else if(!bIntersectLeft && bIntersectRight)
 			{
 				fB += fColorIncrement;
 				intersectionInfo = intersectionInfoRight;
 			}
-			intersectionInfo.color += CColor(fR, fG, fB);
+			else
+			{
+				// two intersection, choose the closest one
+				if (intersectionInfoLeft.m_fDistance < intersectionInfoRight.m_fDistance)
+				{
+					fR += fColorIncrement;
+					intersectionInfo = intersectionInfoLeft;
+				}
+				else
+				{
+					fB += fColorIncrement;
+					intersectionInfo = intersectionInfoRight;
+				}
+			}
+
+			if (k_bSHOW_KDTREE)
+			{
+				intersectionInfo.color += CColor(fR, fG, fB);
+			}
+
 			return true;
 		}
 	}

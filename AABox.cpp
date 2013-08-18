@@ -171,14 +171,6 @@ bool CAABox::Intersect(const CRay &ray, bool bDebug) const
 		}
 
 		x = aRayStart[u] + aRayDir[u] * dist;
-		//if (aVMin[u] <= x && x <= aVMax[u])
-		//{
-		//	y = aRayStart[v] + aRayDir[v] * dist;
-		//	if (aVMin[v] <= y && y <= aVMax[v])
-		//	{
-		//		return true;
-		//	}
-		//}
 
 		if (fMinX <= x && x <= fMaxX)
 		{
