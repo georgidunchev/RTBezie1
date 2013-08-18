@@ -16,7 +16,8 @@ MainWindow::MainWindow(QWidget *parent)
 	, m_bShouldRefreshView(false)
 {
 	ui->setupUi(this);
-	GetRaytracer()->GetCamera().SetCameraPos(QVector3D(0, 0.2, -0.4), QVector3D(0, 0, 1), QVector3D(0, -1, 0) );
+	GetRaytracer()->GetCamera().SetCameraPos(QVector3D(0, 0, -0.4), QVector3D(0, 0, 1), QVector3D(0, -1, 0) );
+	//GetRaytracer()->GetCamera().SetCameraPos(QVector3D(0, 0.2, -0.4), QVector3D(0, 0, 1), QVector3D(0, -1, 0) );
 	GetRaytracer()->SetCanvas(500,500);
 	
 	//    LoadNewMesh("Triangle.obj");

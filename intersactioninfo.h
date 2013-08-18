@@ -13,6 +13,8 @@ public:
     QVector3D m_vNormal;
 	float u, v, w;
 	CColor color;
+	int m_nTriangleId;
+	int m_nSubTriangleId;
 };
 
 #endif // INTERSACTIONINFO_H

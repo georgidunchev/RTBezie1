@@ -4,6 +4,7 @@
 #include <QVector3D>
 #include <Utils.h>
 #include <vertex.h>
+#include <intersactioninfo.h>
 
 class CRay;
 
@@ -22,7 +23,11 @@ public:
     bool IsInside(const QVector3D& vPoint) const;
     bool IsInside(const CVertex& vPoint) const;
 
-    bool Intersect(const CRay& ray) const;
+    bool Intersect(const CRay& ray, bool bDebug = false) const;
+
+	bool Intersect(const CRay& ray, CIntersactionInfo& io_IntersectionInfo, bool bDebug = false) const;
+	
+	bool Intersect_Test(const CRay& ray, CIntersactionInfo& io_IntersectionInfo, bool bDebug = false) const;
 
     const QVector3D& GetMinVertex() const;
     const QVector3D& GetMaxVertex() const;

@@ -24,7 +24,7 @@ public:
 					EDimiensions eDimension,
 					float& fBestPortion);
 
-    bool Intersect(const CRay& ray, CIntersactionInfo& intersectionInfo );
+    bool Intersect(const CRay& ray, CIntersactionInfo& intersectionInfo, bool bDebug = false);
 private:
     CMesh &GetMesh();
     std::vector<CSubTriangle*>* m_pTriangles;

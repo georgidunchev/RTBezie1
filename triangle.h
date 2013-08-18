@@ -39,7 +39,7 @@ class CTriangle
 {
 public:
     CTriangle();
-	CTriangle( const std::vector<CVertex> & aVertecis, int v1, int v2, int v3);
+	CTriangle( const std::vector<CVertex> & aVertecis, int v1, int v2, int v3, int nTriangleId = -1);
 	virtual ~CTriangle();
 
 	virtual bool Intersect(const CRay& ray, CIntersactionInfo& intersectionInfo, bool bDebug = false) const;
@@ -100,6 +100,8 @@ protected:
     QVector3D Q30, Q03, Q21, Q12, Q20, Q02, Q11, Q10, Q01, Q00;
 
 	std::vector<CSubTriangle*> m_aSubTriangles;
+
+	int m_nTriangleId;
 };
 
 

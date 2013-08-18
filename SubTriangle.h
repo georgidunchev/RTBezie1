@@ -38,6 +38,9 @@ public:
 	void MakeBoundingBox();
     const CAABox& GetBoundingBox();
 
+	//debug
+	int m_nSubtriangleID;
+
 private:
 
 	void GetDivision(int& o_nStartOfLongest, QVector3D& o_vMidPoint, QVector3D& o_vMidPointBar) const;

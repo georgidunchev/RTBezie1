@@ -30,7 +30,8 @@ void CKDTreeNode::Process()
 	// clear the input triangles' array;
 
 	if (m_nLevel >= k_nMAX_LEVEL_OF_TREE
-		|| m_pTriangles->size() <= k_nMIN_NUMBER_OF_TRIANGLES_TO_SPLIT)
+		//|| m_pTriangles->size() <= k_nMIN_NUMBER_OF_TRIANGLES_TO_SPLIT
+			)
 	{
 		return;
 	}
@@ -96,7 +97,7 @@ bool CKDTreeNode::Separate(	std::vector<CSubTriangle*>& AllTriangles,
 
 		int nMin = qMin(nTrianglesLeft, nTrianglesRight);
 		
-		if (nMin > nMaxMinDistance)
+		//if (nMin > nMaxMinDistance)
 		{
 			nMaxMinDistance = nMin;
 			nBestTrianglesLeft = nTrianglesLeft;
@@ -106,7 +107,7 @@ bool CKDTreeNode::Separate(	std::vector<CSubTriangle*>& AllTriangles,
 		}
 	}
 
-	if (nMaxMinDistance > 0)
+	//if (nMaxMinDistance > 0)
 	{
 		pLeftTriangles->reserve(nBestTrianglesLeft);
 		pRightTriangles->reserve(nBestTrianglesRight);
@@ -132,10 +133,10 @@ bool CKDTreeNode::Separate(	std::vector<CSubTriangle*>& AllTriangles,
 	return false;
 }
 
-bool CKDTreeNode::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo)
+bool CKDTreeNode::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo, bool bDebug)
 {
 	// discard intersection in ray does not cross the BBox of the node
-	if ( !m_BoundingBox.Intersect(ray) )
+	if ( !m_BoundingBox.Intersect(ray, bDebug) )
 	{
 		return false;
 	}
@@ -143,12 +144,12 @@ bool CKDTreeNode::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo
 	//end criteria - the node is a leaf and we intersect the contained triangles
 	if (!m_pLeftNode || !m_pRightNode)
 	{
-		if (m_pTriangles->size() <= 0)
+		bool bIntersect = CTriangle::IntersectSubdevidedTriangles(ray, intersectionInfo, *m_pTriangles);
+		if (!bIntersect && k_bSHOW_KDTREE)
 		{
-			return false;
+			return m_BoundingBox.Intersect(ray, intersectionInfo, bDebug);
 		}
-
-		return CTriangle::IntersectSubdevidedTriangles(ray, intersectionInfo, *m_pTriangles);
+		return bIntersect;
 		//return GetMesh().Intersect(ray,intersectionInfo, *m_pTriangles, &m_BoundingBox);
 	}
 	else
@@ -156,34 +157,59 @@ bool CKDTreeNode::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo
 		CIntersactionInfo intersectionInfoLeft(intersectionInfo);
 		CIntersactionInfo intersectionInfoRight(intersectionInfo);
 
-		bool bIntersectLeft = m_pLeftNode->Intersect(ray, intersectionInfoLeft);
-		bool bIntersectRight = m_pLeftNode->Intersect(ray, intersectionInfoRight);
+		if (bDebug)
+		{
+			qDebug()<<"Left";
+		}
+		float fR = 0.0f;
+		float fG = 0.0f;
+		float fB = 0.0f;
+		float fColorIncrement = 1.0f/static_cast<float>(k_nMAX_LEVEL_OF_TREE);
+
+		bool bIntersectLeft = m_pLeftNode->Intersect(ray, intersectionInfoLeft, bDebug);
+		if (bDebug)
+		{
+			qDebug()<<"Right";
+		}
+		bool bIntersectRight = m_pRightNode->Intersect(ray, intersectionInfoRight, bDebug);
 
 		if (!bIntersectLeft && !bIntersectRight)
 		{
 			return false;
 		}
-		else if(bIntersectLeft)
+		else if(bIntersectLeft && !bIntersectRight)
 		{
+			fR += fColorIncrement;
 			intersectionInfo = intersectionInfoLeft;
+			intersectionInfo.color += CColor(fR, fG, fB);
 			return true;
 		}
-		else if(bIntersectRight)
+		else if(!bIntersectLeft && bIntersectRight)
 		{
+			fB += fColorIncrement;
 			intersectionInfo = intersectionInfoRight;
+			intersectionInfo.color += CColor(fR, fG, fB);
 			return true;
 		}
 		else
 		{
+			if ( !m_BoundingBox.Intersect(ray) )
+			{
+				//return false;
+			}
+
 			// two intersection, choose the closest one
 			if (intersectionInfoLeft.m_fDistance < intersectionInfoRight.m_fDistance)
 			{
+				fR += fColorIncrement;
 				intersectionInfo = intersectionInfoLeft;
 			}
 			else
 			{
+				fB += fColorIncrement;
 				intersectionInfo = intersectionInfoRight;
 			}
+			intersectionInfo.color += CColor(fR, fG, fB);
 			return true;
 		}
 	}

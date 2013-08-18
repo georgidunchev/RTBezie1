@@ -14,8 +14,8 @@ enum EDimiensions
     e_Dimension_MAX
 };
 
-static const float k_fMAX = 1e9f;
-static const float k_fSMALL = 1e-9f;
+static const float k_fMAX = 1e6f;
+static const float k_fSMALL = 1.0f / k_fMAX;
 static const float k_fMIN = -k_fMAX;
 
 static const float k_fPI = 3.14159;

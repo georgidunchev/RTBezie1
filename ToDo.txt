@@ -1,3 +1,9 @@
+Intersection AABB works
+visualize leafs of KDTree
+
+postprocess the rendered image to fill the not rendered images
+
+
 Things to do:
 
 Render biggest bunny
@@ -6,3 +12,10 @@ Load complex structures
 Intersect the complex surfaces
 Save to file
 Move camera
+
+RayTracer::Render
+CMesh::Intersect
+CMesh::IntersectKDTree
+CTriangle::IntersectSubdevidedTriangles
+CSubTriangle::Intersect
+CUtils::IntersectTriangle

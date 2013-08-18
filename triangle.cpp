@@ -20,10 +20,11 @@ CTriangle::CTriangle()
 	: m_aVertecis(GetRaytracer()->GetMesh().Vertices())
 {}
 
-CTriangle::CTriangle( const std::vector<CVertex> &aVertecis, int v1, int v2, int v3)
+CTriangle::CTriangle( const std::vector<CVertex> &aVertecis, int v1, int v2, int v3, int nTriangleId)
 	: m_aVertecis(GetRaytracer()->GetMesh().Vertices())
 	, m_bHasBoundingBox(false)
 	, m_aAdditionalPoints(10, QVector3D(0, 0, 0))
+	, m_nTriangleId(nTriangleId)
 {
 	m_aVertIndices.push_back(v1);
 	m_aVertIndices.push_back(v2);
@@ -267,6 +268,7 @@ void CTriangle::Subdivide()
 	for (int i = 0; i < nSize; ++i)
 	{
 		m_aSubTriangles[i]->MakeBoundingBox();
+		m_aSubTriangles[i]->m_nSubtriangleID = i;
 	}
 }
 
@@ -289,6 +291,8 @@ bool CTriangle::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo, 
 	}
 	else
 	{
+		//return GetRaytracer()->GetMesh().IntersectKDTree(ray, intersectionInfo, bDebug);
+
 		return IntersectSubdevidedTriangles(ray, intersectionInfo);
 		//return IntersectFast(ray, intersectionInfo);
 	}
@@ -296,14 +300,17 @@ bool CTriangle::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo, 
 
 bool CTriangle::IntersectHighQuality(const CRay &ray, CIntersactionInfo &intersectionInfo, bool bDebug) const
 {
-	//return IntersectSubdevidedTriangles(ray, intersectionInfo, bDebug);
+	std::vector<QVector3D> aPointsToCheck;
+	return IntersectSubdevidedTriangles(ray, intersectionInfo, &aPointsToCheck,  bDebug);
+	//return GetRaytracer()->GetMesh().IntersectKDTree(ray, intersectionInfo, bDebug);
 		
 	float fU = k_fOneThird;
 	float fV = k_fOneThird;
 
 	//if (IntersectFast(ray, intersectionInfo, bDebug))
-	std::vector<QVector3D> aPointsToCheck;
-	if (IntersectSubdevidedTriangles(ray, intersectionInfo, &aPointsToCheck,  bDebug))
+	
+	if ( GetRaytracer()->GetMesh().IntersectKDTree(ray, intersectionInfo, bDebug))
+	//if (IntersectSubdevidedTriangles(ray, intersectionInfo, &aPointsToCheck,  bDebug))
 	{
 		fU = intersectionInfo.u;
 		fV = intersectionInfo.v;
@@ -541,15 +548,18 @@ bool CTriangle::IntersectSubdevidedTriangles(const CRay &ray, CIntersactionInfo 
 	{
 		if( aSubTriangles[i]->Intersect(ray, intersectionInfo,bDebug) )
 		{
+			int nId = aSubTriangles[i]->m_nSubtriangleID;
+
 			if (false)
 			{
-				bool bR = ((i / 4) > 0);
-				bool bG = (((i % 4) / 2) > 0);
-				bool bB = (((i % 4) % 2) > 0);
+
+				bool bR = ((nId / 4) > 0);
+				bool bG = (((nId % 4) / 2) > 0);
+				bool bB = (((nId % 4) % 2) > 0);
 			
-				float fR = bR ? fModifier * static_cast<float>(i) * 0.125f : 0.0f;
-				float fG = bG ? fModifier * static_cast<float>(i) * 0.125f : 0.0f;
-				float fB = bB ? fModifier * static_cast<float>(i) * 0.125f : 0.0f;
+				float fR = bR ? fModifier * static_cast<float>(nId) * 0.125f : 0.0f;
+				float fG = bG ? fModifier * static_cast<float>(nId) * 0.125f : 0.0f;
+				float fB = bB ? fModifier * static_cast<float>(nId) * 0.125f : 0.0f;
 
 				intersectionInfo.color = CColor(fR, fG, fB);
 			}
@@ -562,6 +572,8 @@ bool CTriangle::IntersectSubdevidedTriangles(const CRay &ray, CIntersactionInfo 
 				}
 				
 			}
+
+			intersectionInfo.m_nSubTriangleId = nId;
 
 			return true;
 		}

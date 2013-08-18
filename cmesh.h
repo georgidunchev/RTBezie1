@@ -62,7 +62,7 @@ public:
 
     int GetKDTreeNextID();
 
-    bool IntersectKDTree(const CRay &ray, CIntersactionInfo &intersectionInfo);
+    bool IntersectKDTree(const CRay &ray, CIntersactionInfo &intersectionInfo, bool bDebug = false);
 
 signals:
     

@@ -84,7 +84,7 @@ void CMesh::Load(const QString& strInputFileName)
 
 			for ( int i = 2; i < temp.size(); ++i)
 			{
-				m_aTriangles.push_back(new CTriangle(m_aVertices, temp[0], temp[i-1], temp[i]));
+				m_aTriangles.push_back(new CTriangle(m_aVertices, temp[0], temp[i-1], temp[i], m_aTriangles.size()));
 			}
 		}
 	}
@@ -111,7 +111,7 @@ bool CMesh::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo, bool
 {
 	if (k_bUSE_KDTREE)
 	{
-		return IntersectKDTree(ray, intersectionInfo);
+		return IntersectKDTree(ray, intersectionInfo, bDebug);
 	}
 	else
 	{
@@ -165,9 +165,13 @@ bool CMesh::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo, cons
 	return bIntersected;
 }
 
-bool CMesh::IntersectKDTree(const CRay &ray, CIntersactionInfo &intersectionInfo)
+bool CMesh::IntersectKDTree(const CRay &ray, CIntersactionInfo &intersectionInfo, bool bDebug)
 {
-	return m_pRoot->Intersect(ray, intersectionInfo);
+	if (bDebug)
+	{
+		qDebug()<<"Traverse KDTree";
+	}
+	return m_pRoot->Intersect(ray, intersectionInfo, bDebug);
 }
 
 std::vector<CTriangle*> *CMesh::GetPrimitives()
