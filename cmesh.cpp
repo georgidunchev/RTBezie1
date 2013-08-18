@@ -90,21 +90,27 @@ void CMesh::Load(const QString& strInputFileName)
 	}
 	file.close();
 
-	mBoundingBox.Reset();
-	for (int i = 0; i < m_aTriangles.size(); ++i)
-	{
-		m_aTriangles[i]->MakeBoundingBox();
-		mBoundingBox.AddPoint(m_aTriangles[i]->GetBoundingBox().GetMinVertex());
-		mBoundingBox.AddPoint(m_aTriangles[i]->GetBoundingBox().GetMaxVertex());
-	}
-
 	BuildVertexData();
 
 	m_nTrianglesWithCompleteAdjacency = 0;
 	//    BuildAdjacency();
 	BuildBezierTriangles();
 
-	GenerateKDTree();
+	MakeBoundingBox(); //needs all triangle/subtriangles to be generated
+
+	GenerateKDTree(); // depends on the bounding box
+}
+
+void CMesh::MakeBoundingBox() 
+{
+	// make bounding box after we have generated all triangles, subt triangles etc
+	m_BoundingBox.Reset();
+	for (int i = 0; i < m_aTriangles.size(); ++i)
+	{
+		m_aTriangles[i]->MakeBoundingBox();
+		m_BoundingBox.AddPoint(m_aTriangles[i]->GetBoundingBox().GetMinVertex());
+		m_BoundingBox.AddPoint(m_aTriangles[i]->GetBoundingBox().GetMaxVertex());
+	}
 }
 
 bool CMesh::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo, bool bDebug)
@@ -233,7 +239,7 @@ void CMesh::GenerateKDTree()
 			pAllSubTriangles->push_back(GetPrimitive(j)->GetSubTriangle(i));
 		}
 	}
-	m_pRoot = new CKDTreeNode(pAllSubTriangles, 0, mBoundingBox);
+	m_pRoot = new CKDTreeNode(pAllSubTriangles, 0, m_BoundingBox);
 	m_pRoot->Process();
 }
 

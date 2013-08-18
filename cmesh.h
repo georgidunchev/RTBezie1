@@ -70,7 +70,7 @@ public slots:
 
 private:
     void SortBBoxes();
-
+	void MakeBoundingBox();
     void BuildVertexData();
 
     void BuildAdjacency();
@@ -84,7 +84,7 @@ private:
     int m_nTrianglesWithCompleteAdjacency;
     std::vector<CTriangle*> m_aBezierTriangles;
 
-    CAABox mBoundingBox;
+    CAABox m_BoundingBox;
 
     CKDTreeNode * m_pRoot;
     std::vector<CSortedBBEntry> m_aSortedBBoxes[3];

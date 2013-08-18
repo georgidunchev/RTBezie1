@@ -77,7 +77,7 @@ bool CKDTreeNode::Separate(	std::vector<CSubTriangle*>& AllTriangles,
 
 		float fBBLeft = CUtils::GetDimension( m_BoundingBox.GetMinVertex(), eDimension);
 		float fBBRight = CUtils::GetDimension( m_BoundingBox.GetMaxVertex(), eDimension);
-		float fDivide = (fPortion-1.f)*fBBLeft + fPortion * fBBRight;
+		float fDivide = (1.f - fPortion)*fBBLeft + fPortion * fBBRight;
 
 		int nTrianglesLeft = 0, nTrianglesRight = 0;
 
