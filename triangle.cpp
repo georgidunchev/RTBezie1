@@ -115,10 +115,13 @@ const CVertex &CTriangle::C() const
 
 void CTriangle::MakeBoundingBox()
 {
-	for(int i = 0; i < m_aVertIndices.size(); ++i)
+	int nSize = m_aSubTriangles.size();
+
+	for(int i = 0; i < nSize; ++i)
 	{
-		m_BoundingBox.AddPoint(m_aVertecis[m_aVertIndices[i]]);
-		//	qDebug()<<m_aVertecis[m_aVertIndices[i]];
+		m_aSubTriangles[i]->MakeBoundingBox();
+		m_BoundingBox.AddPoint(m_aSubTriangles[i]->GetBoundingBox().GetMinVertex());
+		m_BoundingBox.AddPoint(m_aSubTriangles[i]->GetBoundingBox().GetMaxVertex());
 	}
 	//    qDebug()<<"min"<<m_BoundingBox.GetMinVertex()<<"max"<<m_BoundingBox.GetMaxVertex();
 	m_bHasBoundingBox = true;
@@ -260,14 +263,13 @@ const QVector3D &CTriangle::GetPoint(int a, int b) const
 
 void CTriangle::Subdivide()
 {
-	m_aSubTriangles.resize(2 << (k_nNUMBER_OF_SUBDIVISIONS - 1));
+	m_aSubTriangles.resize(CUtils::PowerOf2(k_nNUMBER_OF_SUBDIVISIONS));
 	m_aSubTriangles[0] = new CSubTriangle(*this);
 	m_aSubTriangles[0]->Subdivide();
 
 	int nSize = m_aSubTriangles.size();
 	for (int i = 0; i < nSize; ++i)
 	{
-		m_aSubTriangles[i]->MakeBoundingBox();
 		m_aSubTriangles[i]->m_nSubtriangleID = i;
 	}
 }
