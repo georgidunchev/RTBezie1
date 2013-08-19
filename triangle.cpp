@@ -285,38 +285,46 @@ void CTriangle::AddSubTriangle(CSubTriangle* subTriangle)
 	m_aSubTriangles[nSavePos]->Subdivide();
 }
 
-bool CTriangle::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo, bool bDebug) const
+bool CTriangle::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo, const std::vector<CSubTriangle*>& aSubTriangles, bool bDebug)
 {
 	if (GetRaytracer()->IsHighQuality())
 	{
-		return IntersectHighQuality(ray, intersectionInfo, bDebug);
+		return CTriangle::IntersectHighQuality(ray, intersectionInfo, aSubTriangles, bDebug);
 	}
 	else
 	{
 		//return GetRaytracer()->GetMesh().IntersectKDTree(ray, intersectionInfo, bDebug);
 
-		return IntersectSubdevidedTriangles(ray, intersectionInfo);
+		return IntersectSubdevidedTriangles(ray, intersectionInfo, aSubTriangles, NULL, bDebug);
 		//return IntersectFast(ray, intersectionInfo);
 	}
 }
-
-bool CTriangle::IntersectHighQuality(const CRay &ray, CIntersactionInfo &intersectionInfo, bool bDebug) const
+bool CTriangle::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo, bool bDebug) const
+{
+	return CTriangle::Intersect(ray, intersectionInfo, m_aSubTriangles, bDebug);
+}
+bool CTriangle::IntersectHighQuality(const CRay &ray, CIntersactionInfo &intersectionInfo, const std::vector<CSubTriangle*>& aSubTriangles, bool bDebug)
+{
+	if (CTriangle::IntersectSubdevidedTriangles(ray, intersectionInfo, aSubTriangles, NULL, bDebug))
+	{
+		return CTriangle::IntersectHighQuality(ray, intersectionInfo, bDebug);
+	}
+	return false;
+}
+	
+bool CTriangle::IntersectHighQuality(const CRay &ray, CIntersactionInfo &intersectionInfo, bool bDebug)
 {
 	std::vector<QVector3D> aPointsToCheck;
-	return IntersectSubdevidedTriangles(ray, intersectionInfo, &aPointsToCheck,  bDebug);
-	//return GetRaytracer()->GetMesh().IntersectKDTree(ray, intersectionInfo, bDebug);
-		
-	float fU = k_fOneThird;
-	float fV = k_fOneThird;
+	CSubTriangle& SubTriangle = * intersectionInfo.pSubTriangle;
 
-	//if (IntersectFast(ray, intersectionInfo, bDebug))
-	
-	if ( GetRaytracer()->GetMesh().IntersectKDTree(ray, intersectionInfo, bDebug))
-	//if (IntersectSubdevidedTriangles(ray, intersectionInfo, &aPointsToCheck,  bDebug))
+	aPointsToCheck.push_back(QVector3D(intersectionInfo.u,intersectionInfo.v,intersectionInfo.w));
+	for (int j = 0; j < 3; j++)
 	{
-		fU = intersectionInfo.u;
-		fV = intersectionInfo.v;
-	}
+		aPointsToCheck.push_back(SubTriangle.GetVertBar(j));
+	}	
+		
+	float fU = intersectionInfo.u;
+	float fV = intersectionInfo.v;
 	
 	float closestdist = k_fMAX;
 	intersectionInfo.m_fDistance = k_fMAX;
@@ -329,7 +337,7 @@ bool CTriangle::IntersectHighQuality(const CRay &ray, CIntersactionInfo &interse
 		{
 			for (int i = 0; i < nSize; i++)
 			{
-				if (intersectSimpleBezierTriangle(ray, intersectionInfo, aPointsToCheck[i], 5, bDebug))
+				if (intersectSimpleBezierTriangle(ray, intersectionInfo, SubTriangle, aPointsToCheck[i], 15, bDebug))
 				{
 					closestdist = intersectionInfo.m_fDistance;
 					return true;
@@ -341,7 +349,7 @@ bool CTriangle::IntersectHighQuality(const CRay &ray, CIntersactionInfo &interse
 		else
 		{
 			QVector3D res = QVector3D(fU, fV, 0);
-			if (intersectSimpleBezierTriangle(ray, intersectionInfo, res, 5, bDebug))
+			if (intersectSimpleBezierTriangle(ray, intersectionInfo, SubTriangle, res, 5, bDebug))
 			{
 				closestdist = intersectionInfo.m_fDistance;
 				return true;
@@ -356,18 +364,23 @@ bool CTriangle::IntersectHighQuality(const CRay &ray, CIntersactionInfo &interse
 	{
 		int iterations = 5;
 		QVector3D res = QVector3D(1.0/3.0, 1.0/3.0, 0);
-		intersectSimpleBezierTriangle(ray, intersectionInfo, res, iterations, bDebug );
+		intersectSimpleBezierTriangle(ray, intersectionInfo, SubTriangle, res, iterations, bDebug );
 		res = QVector3D(1.0/6.0, 1.0/6.0, 0);
-		intersectSimpleBezierTriangle(ray, intersectionInfo, res, iterations, bDebug );
+		intersectSimpleBezierTriangle(ray, intersectionInfo, SubTriangle, res, iterations, bDebug );
 		res = QVector3D(2.0/3.0, 1.0/6.0, 0);
-		intersectSimpleBezierTriangle(ray, intersectionInfo, res, iterations, bDebug );
+		intersectSimpleBezierTriangle(ray, intersectionInfo, SubTriangle, res, iterations, bDebug );
 		res = QVector3D(1.0/6.0, 2.0/3.0 ,0);
-		intersectSimpleBezierTriangle(ray, intersectionInfo, res, iterations, bDebug );
+		intersectSimpleBezierTriangle(ray, intersectionInfo, SubTriangle, res, iterations, bDebug );
 
 		closestdist = intersectionInfo.m_fDistance;
 	}
 
 	return fabs(closestdist - k_fMAX) > k_fMIN;
+}
+
+bool CTriangle::intersectSimpleBezierTriangle(const CRay &ray, CIntersactionInfo &info, CSubTriangle& SubTriangle, QVector3D &barCoord, unsigned int iterations, bool bDebug)
+{
+	return SubTriangle.GetParent().intersectSimpleBezierTriangle(ray, info, barCoord, iterations, bDebug);
 }
 
 bool CTriangle::IntersectFast(const CRay &ray, CIntersactionInfo &intersectionInfo, bool bDebug) const
@@ -506,7 +519,6 @@ bool CTriangle::IntersectSubdevidedTriangles(const CRay &ray, CIntersactionInfo 
 	return IntersectSubdevidedTriangles(ray, intersectionInfo, m_aSubTriangles, aPointsToCheck, bDebug);
 }
 
-
 bool CTriangle::IntersectSubdevidedTriangles(const CRay &ray, CIntersactionInfo &intersectionInfo, const std::vector<CSubTriangle*>& aSubTriangles, std::vector<QVector3D>* aPointsToCheck, bool bDebug)
 {
 	int nSize = aSubTriangles.size();
@@ -518,7 +530,7 @@ bool CTriangle::IntersectSubdevidedTriangles(const CRay &ray, CIntersactionInfo 
 		{
 			int nId = aSubTriangles[i]->m_nSubtriangleID;
 
-			if (true)
+			if (false)
 			{
 				int nSubtriangleId = aSubTriangles[i]->m_nSubtriangleID;
 				bool bR = ((nSubtriangleId / 4) > 0);
@@ -532,14 +544,7 @@ bool CTriangle::IntersectSubdevidedTriangles(const CRay &ray, CIntersactionInfo 
 				intersectionInfo.color = CColor(fR, fG, fB);
 			}
 			
-			if (aPointsToCheck)
-			{
-				aPointsToCheck->push_back(QVector3D(intersectionInfo.u,intersectionInfo.v,intersectionInfo.w));
-				for (int j = 0; j < 3; j++)
-				{
-					aPointsToCheck->push_back(aSubTriangles[i]->GetVertBar(j));
-				}			
-			}
+			intersectionInfo.pSubTriangle = aSubTriangles[i];
 		
 			intersectionInfo.m_nSubTriangleId = nId;
 
@@ -577,7 +582,7 @@ bool CTriangle::intersectSimpleBezierTriangle(const CRay &ray, CIntersactionInfo
 	double d1 = -CUtils::Dot(N1, ray.StartPoint());
 	double d2 = -CUtils::Dot(N2, ray.StartPoint());
 
-	float fSMall = 1e-6;
+	float fSMall = 1e-3;
 
 	//    QMatrix inverseJacobian;
 	float invConst;

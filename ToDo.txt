@@ -1,3 +1,6 @@
+Still a lot of misses for bezier surface
+
+
 postprocess the rendered image to fill the not rendered images
 
 
@@ -16,3 +19,14 @@ CMesh::IntersectKDTree
 CTriangle::IntersectSubdevidedTriangles
 CSubTriangle::Intersect
 CUtils::IntersectTriangle
+
+
+RayTracer::Render
+CMesh::Intersect
+CMesh::IntersectKDTree
+CTriangle::Intersect(ray, intersectionInfo, *m_pTriangles);
+CTriangle::IntersectHighQuality(ray, intersectionInfo, aSubTriangles, bDebug);
+|CTriangle::IntersectSubdevidedTriangles(ray, intersectionInfo, aSubTriangles, NULL, bDebug)
+|CTriangle::IntersectHighQuality(ray, intersectionInfo, bDebug);
+intersectSimpleBezierTriangle(ray, intersectionInfo, SubTriangle, aPointsToCheck[i], 5, bDebug)
+intersectSimpleBezierTriangle(ray, intersectionInfo, barCoord, iterations, bDebug);

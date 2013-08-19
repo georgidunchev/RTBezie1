@@ -38,6 +38,8 @@ public:
 	void MakeBoundingBox();
     const CAABox& GetBoundingBox();
 
+	CTriangle& GetParent() const { return m_Parent; };
+
 	//debug
 	int m_nSubtriangleID;
 

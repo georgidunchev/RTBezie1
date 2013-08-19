@@ -10,12 +10,12 @@ static const bool k_bUSE_KDTREE = true;
 static const bool k_bSHOW_KDTREE = false;
 
 //end criteria for kd-tree construction
-static const int k_nMAX_LEVEL_OF_TREE = 10;
+static const int k_nMAX_LEVEL_OF_TREE = 20;
 static const int k_nMIN_NUMBER_OF_TRIANGLES_TO_SPLIT = 6;
 
 static const int k_nMAX_SPLITS_OF_NODE = 10;
 
-static const int k_nNUMBER_OF_SUBDIVISIONS = 5;
+static const int k_nNUMBER_OF_SUBDIVISIONS = 3;
 
 class CSettings : public QObject
 {
