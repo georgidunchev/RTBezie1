@@ -4,6 +4,8 @@
 #include <QVector3D>
 #include <color.h>
 
+class CSubTriangle;
+
 class CIntersactionInfo
 {
 public:
@@ -15,6 +17,7 @@ public:
 	CColor color;
 	int m_nTriangleId;
 	int m_nSubTriangleId;
+	CSubTriangle * pSubTriangle;
 };
 
 #endif // INTERSACTIONINFO_H
