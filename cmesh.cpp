@@ -18,6 +18,21 @@ CMesh::CMesh(QObject *parent)
 
 void CMesh::Load(const QString& strInputFileName)
 {
+	ReadFromFile(strInputFileName);
+
+	BuildVertexData();
+
+	m_nTrianglesWithCompleteAdjacency = 0;
+	//    BuildAdjacency();
+	BuildBezierTriangles();
+
+	MakeBoundingBox(); //needs all triangle/subtriangles to be generated
+
+	GenerateKDTree(); // depends on the bounding box
+}
+
+void CMesh::ReadFromFile(const QString &strInputFileName)
+{
 	QFile file(strInputFileName);
 	if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
 	{
@@ -89,16 +104,6 @@ void CMesh::Load(const QString& strInputFileName)
 		}
 	}
 	file.close();
-
-	BuildVertexData();
-
-	m_nTrianglesWithCompleteAdjacency = 0;
-	//    BuildAdjacency();
-	BuildBezierTriangles();
-
-	MakeBoundingBox(); //needs all triangle/subtriangles to be generated
-
-	GenerateKDTree(); // depends on the bounding box
 }
 
 void CMesh::MakeBoundingBox() 
@@ -117,7 +122,13 @@ bool CMesh::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo, bool
 {
 	if (k_bUSE_KDTREE)
 	{
-		return IntersectKDTree(ray, intersectionInfo, bDebug);
+		bool bIntersect = IntersectKDTree(ray, intersectionInfo, bDebug);
+		if (bIntersect)
+		{
+			std::vector<CSubTriangle*> aSubTriangles;
+			aSubTriangles.push_back(intersectionInfo.pSubTriangle);
+			return CTriangle::Intersect(ray, intersectionInfo, aSubTriangles);
+		}
 	}
 	else
 	{
@@ -128,6 +139,8 @@ bool CMesh::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo, bool
 		}
 		return Intersect(ray, intersectionInfo, aTriangles, NULL, bDebug);
 	}
+
+	return false;
 }
 
 bool CMesh::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo, const std::vector<int>& aTriangles, CAABox* pBBox, bool bDebug)
