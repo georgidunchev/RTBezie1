@@ -15,7 +15,7 @@ static const int k_nMIN_NUMBER_OF_TRIANGLES_TO_SPLIT = 6;
 
 static const int k_nMAX_SPLITS_OF_NODE = 10;
 
-static const int k_nNUMBER_OF_SUBDIVISIONS = 3;
+static const int k_nNUMBER_OF_SUBDIVISIONS = 8;
 
 class CSettings : public QObject
 {

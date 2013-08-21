@@ -153,7 +153,17 @@ void CSubTriangle::GetDivision(int& o_nStartOfLongest, QVector3D& o_vMidPoint, Q
 
 bool CSubTriangle::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo, bool bDebug) const
 {
-	return CUtils::IntersectTriangle(ray, intersectionInfo, m_vA, m_vB, m_vC, m_vABar, m_vBBar, m_vCBar);
+	bool bIntersect = CUtils::IntersectTriangle(ray, intersectionInfo, m_vA, m_vB, m_vC, m_vABar, m_vBBar, m_vCBar);
+	if (bIntersect)
+	{
+		//Smoothed normal
+		QVector3D vNormalA = intersectionInfo.u * m_Parent.A().Normal_Get();
+		QVector3D vNormalB = intersectionInfo.v * m_Parent.B().Normal_Get();
+		QVector3D vNormalC = intersectionInfo.w * m_Parent.C().Normal_Get();
+		intersectionInfo.m_vNormal = vNormalA + vNormalB + vNormalC;
+		intersectionInfo.m_vNormal.normalize();
+	}
+	return bIntersect;
 }
 
 void CSubTriangle::MakeBoundingBox()

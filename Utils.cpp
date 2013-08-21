@@ -184,12 +184,16 @@ bool CUtils::IntersectTriangle(const CRay &i_Ray,
 
     closestdist = gamma;
     io_IntersectionInfo.m_fDistance = closestdist;
-    Normal(io_IntersectionInfo.m_vNormal, a, b);
+    
     io_IntersectionInfo.m_vIntersectionPoint = CUtils::GetPointAtDistance(i_Ray, closestdist);
 	io_IntersectionInfo.u = 1.0f - lambda2 - lambda3;
 	io_IntersectionInfo.v = lambda2;
 	io_IntersectionInfo.w = lambda3;
-    return true;
+	
+	//Normal to the surface
+	Normal(io_IntersectionInfo.m_vNormal, a, b);
+
+	return true;
 }
 
 
