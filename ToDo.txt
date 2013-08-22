@@ -1,3 +1,5 @@
+fix smoothed normals - should refactor
+
 Still a lot of misses for bezier surface
 
 

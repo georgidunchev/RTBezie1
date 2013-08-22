@@ -716,7 +716,12 @@ bool CTriangle::intersectSimpleBezierTriangle(const CRay &ray, CIntersactionInfo
 		+ Q11 * u
 		+ Q01;
 
-	CUtils::Normal(info.m_vNormal, dBu, dBv);
+	//CUtils::Normal(info.m_vNormal, dBu, dBv);
+	QVector3D vNormalA = info.u * A().Normal_Get();
+	QVector3D vNormalB = info.v * CTriangle::B().Normal_Get();
+	QVector3D vNormalC = info.w * C().Normal_Get();
+	info.m_vNormal = vNormalA + vNormalB + vNormalC;
+	info.m_vNormal.normalize();
 
 	return true;
 }
