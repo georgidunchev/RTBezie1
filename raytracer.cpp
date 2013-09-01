@@ -11,7 +11,7 @@
 RayTracer::RayTracer(QObject *parent)
 	: QObject(parent)
 	, m_Camera(this)
-	, m_pMesh(NULL)
+	, m_Mesh(this)
 	, m_nRunningThreads(0)   
 {
 	m_nHorizontalBuckets = 10;
@@ -126,7 +126,7 @@ void RayTracer::RenderThreaded()
 {
 	m_nNextBucket = 0;
 
-	for( int j = 0; j < k_nTHREADS; ++j)
+	for( uint j = 0; j < k_nTHREADS; ++j)
 	{
 		CRaytracerThread* pThread;
 		if ( m_arrThreads.size() <= j)
@@ -152,7 +152,7 @@ QImage& RayTracer::GetImage()
 
 CMesh& RayTracer::GetMesh()
 {
-	return *m_pMesh;
+	return m_Mesh;
 }
 bool RayTracer::IsHighQuality() const
 {
@@ -161,13 +161,7 @@ bool RayTracer::IsHighQuality() const
 
 void RayTracer::LoadNewMesh(const QString& strInputFileName)
 {
-	if (m_pMesh)
-	{
-		delete m_pMesh;
-	}
-
-	m_pMesh = new CMesh(this);
-	m_pMesh->Load(strInputFileName);
+	m_Mesh.Load(strInputFileName);
 }
 
 Camera &RayTracer::GetCamera()

@@ -28,6 +28,8 @@ private slots:
     void on_openMeshButton_clicked();
     void on_StartRender_clicked();
     void slotRenderFinished();
+    void slotLoadingStarted(int nMaxSteps);
+    void slotLoadingFinished();
 
     void on_RenderBezierCheckBox_toggled(bool checked);
 
@@ -35,7 +37,9 @@ private slots:
 
     void on_AutoRender_clicked(bool checked);
 
+
 private:
+    void StartSingleRender();
     void StartRender(bool bHighQuality = true);
     Ui::MainWindow *ui;
     QProgressDialog progress;

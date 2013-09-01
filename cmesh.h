@@ -67,7 +67,10 @@ public:
     bool IntersectKDTree(const CRay &ray, CIntersactionInfo &intersectionInfo, bool bDebug = false);
 
 signals:
-    
+    void sigLoadingStarted(int value);
+    void sigLoadingStepDone(int value);
+    void sigLoadingFinished();
+
 public slots:
 
 private:

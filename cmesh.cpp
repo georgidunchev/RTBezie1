@@ -18,17 +18,26 @@ CMesh::CMesh(QObject *parent)
 
 void CMesh::Load(const QString& strInputFileName)
 {
+    int nSteps = 5;
+    emit sigLoadingStarted(nSteps);
+
+    int nCrntStep = 1;
+
 	ReadFromFile(strInputFileName);
+	emit sigLoadingStepDone( nCrntStep++ );
 
 	BuildVertexData();
+	emit sigLoadingStepDone( nCrntStep++ );
+	//BuildAdjacency();
 
-	m_nTrianglesWithCompleteAdjacency = 0;
-	//    BuildAdjacency();
 	BuildBezierTriangles();
+	emit sigLoadingStepDone( nCrntStep++ );
 
 	MakeBoundingBox(); //needs all triangle/subtriangles to be generated
+	emit sigLoadingStepDone( nCrntStep++ );
 
 	GenerateKDTree(); // depends on the bounding box
+	emit sigLoadingFinished();
 }
 
 void CMesh::ReadFromFile(const QString &strInputFileName)
@@ -39,9 +48,11 @@ void CMesh::ReadFromFile(const QString &strInputFileName)
 		return;
 	}
 
-	QString strReturnMessage("Data loaded correctly");
 	QTextStream inputStream(&file);
 	QString strLine;
+
+	m_aVertices.clear();
+	m_aTriangles.clear();
 
 	m_aVertices.push_back( CVertex() );
 
@@ -58,8 +69,8 @@ void CMesh::ReadFromFile(const QString &strInputFileName)
 		}
 		else if (strMarker == "v" )
 		{
-			std::vector<qreal> temp;
-			for (int i = 0; i < 3; ++i)
+			std::vector<qreal> aCoords;
+			for (uint i = 0; i < 3; ++i)
 			{
 				lineStream >> strMarker;
 				if(strMarker.isEmpty())
@@ -68,21 +79,21 @@ void CMesh::ReadFromFile(const QString &strInputFileName)
 					break;
 				}
 
-				temp.push_back(strMarker.toDouble());
+				aCoords.push_back(strMarker.toDouble());
 			}
 
-			m_aVertices.push_back(CVertex(QVector3D(temp[0], temp[1], temp[2]), m_aVertices.size()));
+			m_aVertices.push_back(CVertex(QVector3D(aCoords[0], aCoords[1], aCoords[2]), m_aVertices.size()));
 		}
 		else if (strMarker == "f" )
 		{
-			std::vector<int> temp;
+			std::vector<int> aVertIDs;
 			lineStream >> strMarker;
 			int i = 0;
 
 			while(!strMarker.isEmpty())
 			{
 				i++;
-				temp.push_back(strMarker.toInt());
+				aVertIDs.push_back(strMarker.toInt());
 				lineStream >> strMarker;
 			}
 
@@ -97,9 +108,9 @@ void CMesh::ReadFromFile(const QString &strInputFileName)
 				qDebug()<<"Face splitted to multiple triangles";
 			}
 
-			for ( int i = 2; i < temp.size(); ++i)
+			for ( uint i = 2; i < aVertIDs.size(); ++i)
 			{
-				m_aTriangles.push_back(new CTriangle(m_aVertices, temp[0], temp[i-1], temp[i], m_aTriangles.size()));
+				m_aTriangles.push_back(new CTriangle(m_aVertices, aVertIDs[0], aVertIDs[i-1], aVertIDs[i], m_aTriangles.size()));
 			}
 		}
 	}
@@ -110,7 +121,7 @@ void CMesh::MakeBoundingBox()
 {
 	// make bounding box after we have generated all triangles, subt triangles etc
 	m_BoundingBox.Reset();
-	for (int i = 0; i < m_aTriangles.size(); ++i)
+	for (uint i = 0; i < m_aTriangles.size(); ++i)
 	{
 		m_aTriangles[i]->MakeBoundingBox();
 		m_BoundingBox.AddPoint(m_aTriangles[i]->GetBoundingBox().GetMinVertex());
@@ -134,7 +145,7 @@ bool CMesh::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo, bool
 	else
 	{
 		std::vector<int> aTriangles(GetPrimitives()->size());
-		for (int i = 0; i < aTriangles.size(); ++i)
+		for (uint i = 0; i < aTriangles.size(); ++i)
 		{
 			aTriangles[i] = i;
 		}
@@ -174,7 +185,7 @@ bool CMesh::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo, cons
 {
 	bool bIntersected = false;
 
-	for (int i = 0; i < aTriangles.size(); ++i)
+	for (uint i = 0; i < aTriangles.size(); ++i)
 	{
 		CTriangle* Triangle = GetPrimitive(aTriangles[i]);
 		CIntersactionInfo LastIntersection;
@@ -279,6 +290,7 @@ void CMesh::GenerateKDTree()
 			pAllSubTriangles->push_back(GetPrimitive(j)->GetSubTriangle(i));
 		}
 	}
+	CUtils::SafeDel(m_pRoot);
 	m_pRoot = new CKDTreeNode(pAllSubTriangles, 0, m_BoundingBox);
 	m_pRoot->Process();
 }
@@ -306,8 +318,9 @@ void CMesh::SortBBoxes()
 	int nSize = m_aTriangles.size() * 2;
 	for(EDimiensions i = e_Dimension_X; i < e_Dimension_MAX; i = (EDimiensions)((int)i + 1) )
 	{
+	    m_aSortedBBoxes[i].clear();
 		m_aSortedBBoxes[i].resize(nSize);
-		for (int j = 0; j < m_aSortedBBoxes[i].size(); ++j)
+		for (uint j = 0; j < m_aSortedBBoxes[i].size(); ++j)
 		{
 			m_aSortedBBoxes[i][j].m_bStart = j%2==0;
 			m_aSortedBBoxes[i][j].m_nTriangleId = j/2;
@@ -352,14 +365,14 @@ bool CSortedBBEntry::compare(const CSortedBBEntry &that, const CSortedBBEntry &o
 
 void CMesh::BuildVertexData()
 {
-	for (int i = 0; i < m_aTriangles.size(); ++i)
+	for (uint i = 0; i < m_aTriangles.size(); ++i)
 	{
 		for (int j = 0; j < 3; ++j)
 		{
 			m_aTriangles[i]->GetVertex(j).Normal_AddNormal(m_aTriangles[i]->Normal());
 		}
 	}
-	for (int i = 0; i < m_aVertices.size(); ++i)
+	for (uint i = 0; i < m_aVertices.size(); ++i)
 	{
 		m_aVertices[i].Normal_Normalize();
 	}
@@ -367,11 +380,13 @@ void CMesh::BuildVertexData()
 
 void CMesh::BuildAdjacency()
 {
-	unsigned int nSize = m_aTriangles.size();
+    m_nTrianglesWithCompleteAdjacency = 0;
+	uint nSize = m_aTriangles.size();
+	m_aAdjacentTriangles.clear();
 	m_aAdjacentTriangles.resize(nSize);
-	for (unsigned int i = 0; i < nSize; ++i)
+	for (uint i = 0; i < nSize; ++i)
 	{
-		for (unsigned int j = 0; j < 3; ++j)
+		for (uint j = 0; j < 3; ++j)
 		{
 			//if (!m_aAdjacentTriangles[i].Complete(j))
 			{
@@ -441,7 +456,7 @@ int CMesh::FindAdjacentTriangle(int nTriangleID, int nSide)
 
 void CMesh::BuildBezierTriangles()
 {
-	for (int i = 0; i < m_aTriangles.size(); ++i)
+	for (uint i = 0; i < m_aTriangles.size(); ++i)
 	{
 		m_aTriangles[i]->BuildBezierPoints();
 		m_aTriangles[i]->Subdivide();

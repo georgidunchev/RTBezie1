@@ -66,7 +66,7 @@ private:
 	int m_nCrntWidth;
     int m_nCrntHeight;
 
-    CMesh* m_pMesh;
+    CMesh m_Mesh;
 
     QElapsedTimer m_Timer;
 

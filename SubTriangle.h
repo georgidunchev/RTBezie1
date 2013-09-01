@@ -49,9 +49,12 @@ private:
 
 private:
 	CTriangle& m_Parent;
-	QVector3D m_vA, m_vABar;
-	QVector3D m_vB, m_vBBar;
-	QVector3D m_vC, m_vCBar;
+	QVector3D m_vA;
+	QVector3D m_vB;
+	QVector3D m_vC;
+	QVector3D m_vABar;
+	QVector3D m_vBBar;
+	QVector3D m_vCBar;
 	int m_nSavePos;
 	int m_nSubdivisionLevel;
 

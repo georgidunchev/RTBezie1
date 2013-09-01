@@ -14,13 +14,13 @@
 #include <settings.h>
 
 CSubTriangle::CSubTriangle(CTriangle& triangle)
-	: m_vABar(1.0f, 0.0f, 0.0f)
-	, m_vBBar(0.0f, 1.0f, 0.0f)
-	, m_vCBar(0.0f, 0.0f, 1.0f)
+	: m_Parent(triangle)
 	, m_vA(m_Parent.A().GetPos())
 	, m_vB(m_Parent.B().GetPos())
 	, m_vC(m_Parent.C().GetPos())
-	, m_Parent(triangle)
+	, m_vABar(1.0f, 0.0f, 0.0f)
+	, m_vBBar(0.0f, 1.0f, 0.0f)
+	, m_vCBar(0.0f, 0.0f, 1.0f)	
 	, m_nSavePos(0)
 	, m_nSubdivisionLevel(1)
 {}
@@ -34,13 +34,13 @@ CSubTriangle::CSubTriangle(	const QVector3D& vA,
 							int nSubdivisionLevel,
 							CTriangle& Parent,
 							int nSavePos)
-	: m_vA(vA)
+	: m_Parent(Parent)
+	, m_vA(vA)
 	, m_vB(vB)
 	, m_vC(vC)
 	, m_vABar(m_vABar)
 	, m_vBBar(m_vBBar)
-	, m_vCBar(m_vCBar)
-	, m_Parent(Parent)
+	, m_vCBar(m_vCBar)	
 	, m_nSavePos(nSavePos)
 	, m_nSubdivisionLevel(nSubdivisionLevel)
 {
@@ -60,7 +60,7 @@ const QVector3D& CSubTriangle::GetVert(int i) const
 		{
 			return m_vB;
 		}
-	case 2:
+	default:
 		{
 			return m_vC;
 		}
@@ -80,7 +80,7 @@ const QVector3D& CSubTriangle::GetVertBar(int i) const
 		{
 			return m_vBBar;
 		}
-	case 2:
+	default:
 		{
 			return m_vCBar;
 		}

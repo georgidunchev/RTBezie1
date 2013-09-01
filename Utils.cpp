@@ -228,11 +228,11 @@ int CUtils::PowerOf2(const int nPow)
 {
 	if (nPow > 1)
 	{
-		return 2 << nPow -1;
+		return 2 << (nPow -1);
 	}
 	else if (nPow < 1)
 	{
-		return 2 >> 1 - nPow;
+		return 2 >> (1 - nPow);
 	} 
 	else
 	{

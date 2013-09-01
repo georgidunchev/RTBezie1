@@ -1,3 +1,11 @@
+Progress Bar:
+	modal progress bar when loading objects
+	modal progress bar when rendering high quality
+
+
+
+======================================================================
+
 To implement in UI:
 k_nTHREADS = 1;
 

@@ -4,7 +4,7 @@
 #include <QObject>
 
 //number of threads
-static const int k_nTHREADS = 4;
+static const uint k_nTHREADS = 4;
 
 static const bool k_bUSE_KDTREE = true;
 static const bool k_bSHOW_KDTREE = false;

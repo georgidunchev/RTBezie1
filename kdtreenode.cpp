@@ -50,7 +50,7 @@ void CKDTreeNode::Process()
 	CAABox LeftBBox, RightBBox;
 	m_BoundingBox.Split(fWhere, LeftBBox, RightBBox, eDimention);
 
-	qDebug() << "Split level:" << m_nLevel << "Left" << pLeftTriangles->size() << "Right"<< pRightTriangles->size();
+	//qDebug() << "Split level:" << m_nLevel << "Left" << pLeftTriangles->size() << "Right"<< pRightTriangles->size();
 
 	m_pLeftNode = new CKDTreeNode(pLeftTriangles, m_nLevel+1, LeftBBox);
 	m_pLeftNode->Process();
@@ -80,7 +80,7 @@ bool CKDTreeNode::Separate(	std::vector<CSubTriangle*>& AllTriangles,
 
 		int nTrianglesLeft = 0, nTrianglesRight = 0;
 
-		for(int j = 0; j < AllTriangles.size(); ++j)
+		for(uint j = 0; j < AllTriangles.size(); ++j)
 		{
 			float fLeft =  CUtils::GetDimension( AllTriangles[j]->GetBoundingBox().GetMinVertex() , eDimension);
 			float fRight =  CUtils::GetDimension( AllTriangles[j]->GetBoundingBox().GetMaxVertex() , eDimension);
@@ -111,7 +111,7 @@ bool CKDTreeNode::Separate(	std::vector<CSubTriangle*>& AllTriangles,
 		pLeftTriangles->reserve(nBestTrianglesLeft);
 		pRightTriangles->reserve(nBestTrianglesRight);
 
-		for (int j = 0; j < AllTriangles.size(); ++j)
+		for (uint j = 0; j < AllTriangles.size(); ++j)
 		{
 			float fLeft =  CUtils::GetDimension( AllTriangles[j]->GetBoundingBox().GetMinVertex() , eDimension);
 			float fRight =  CUtils::GetDimension( AllTriangles[j]->GetBoundingBox().GetMaxVertex() , eDimension);

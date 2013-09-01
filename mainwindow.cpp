@@ -17,6 +17,15 @@ MainWindow::MainWindow(QWidget *parent)
 	, m_bRendering(false)
 {
 	ui->setupUi(this);
+
+	progress.setWindowModality(Qt::WindowModal);
+
+	bool b;
+	b = QObject::connect(&GetRaytracer()->GetMesh(), SIGNAL(sigLoadingStarted(int)), this, SLOT(slotLoadingStarted(int)), Qt::UniqueConnection);
+	b = QObject::connect(&GetRaytracer()->GetMesh(), SIGNAL(sigLoadingStepDone(int)), &progress, SLOT(setValue(int)), Qt::UniqueConnection);
+	b = QObject::connect(&GetRaytracer()->GetMesh(), SIGNAL(sigLoadingFinished()), this, SLOT(slotLoadingFinished()), Qt::UniqueConnection);
+	b = false;
+
 	GetRaytracer()->GetCamera().SetCameraPos(QVector3D(0, 0, -0.4), QVector3D(0, 0, 1), QVector3D(0, -1, 0) );
 	//GetRaytracer()->GetCamera().SetCameraPos(QVector3D(0, 0.2, -0.4), QVector3D(0, 0, 1), QVector3D(0, -1, 0) );
 	GetRaytracer()->SetCanvas(500,500);
@@ -24,14 +33,11 @@ MainWindow::MainWindow(QWidget *parent)
 	//    LoadNewMesh("Triangle.obj");
 	//    LoadNewMesh("bunny_200.obj");
 	//    LoadNewMesh("SimpleBezierTriangle1.obj");
-	GetRaytracer()->LoadNewMesh("triangle2.obj");
+	//GetRaytracer()->LoadNewMesh("triangle2.obj");
 
 	//    GetRaytracer()->LoadNewMesh("SimpleBezierTriangle2.obj");
 
 	//QObject::connect(this, SIGNAL(DebugOutChanged(const QString &)), ui->Output, SLOT(setText(QString)));
-
-	progress.setLabelText("Rendering");
-	progress.setWindowModality(Qt::WindowModal);
 }
 
 void MainWindow::paintEvent(QPaintEvent *pe)
@@ -47,12 +53,8 @@ void MainWindow::paintEvent(QPaintEvent *pe)
 
 		if (m_bStartNormalRender)
 		{
-			m_bStartNormalRender = false;
-			m_bAutoRendering = false;
-			m_bAutoRendering = false;
-			ui->AutoRender->setEnabled(false);
-			ui->AutoRender->setChecked(false);
-			StartRender();
+		    m_bAutoRendering = false;
+		    StartSingleRender();
 		}
 		else if (m_bAutoRendering)
 		{
@@ -85,17 +87,7 @@ void MainWindow::on_StartRender_clicked()
 		return;
 	}
 
-	ui->AutoRender->setEnabled(false);
-
-	//progress.setMaximum( GetRaytracer()->GetBucketsCount() );
-
-	QObject::connect(GetRaytracer(), SIGNAL(sigBucketDone(int)), &progress, SLOT(setValue(int)), Qt::UniqueConnection);
-	QObject::connect(GetRaytracer(), SIGNAL(sigThreadsFinished()), this, SLOT(slotRenderFinished()), Qt::UniqueConnection);
-
-	if (!m_bAutoRendering)
-	{
-		StartRender();
-	}
+	StartSingleRender();
 }
 
 void MainWindow::on_AutoRender_clicked(bool checked)
@@ -121,7 +113,8 @@ void MainWindow::on_AutoRender_clicked(bool checked)
 
 void MainWindow::slotRenderFinished()
 {
-	//progress.reset();
+	progress.reset();
+	progress.setVisible(false);
 
 	ui->Image->setPixmap(QPixmap::fromImage(GetRaytracer()->GetImage()));
 
@@ -137,6 +130,20 @@ void MainWindow::slotRenderFinished()
 	m_bRendering = false;
 }
 
+void MainWindow::slotLoadingStarted(int nMaxSteps)
+{
+	progress.reset();
+	progress.setLabelText("Loading");
+	progress.setMaximum(nMaxSteps);
+	progress.show();
+}
+
+void MainWindow::slotLoadingFinished()
+{
+	progress.reset();
+	progress.setVisible(false);
+}
+
 void MainWindow::on_RenderBezierCheckBox_toggled(bool checked)
 {
 	GetSettings()->SetIntersectBezier(checked);
@@ -145,6 +152,26 @@ void MainWindow::on_RenderBezierCheckBox_toggled(bool checked)
 void MainWindow::on_NormalSmoothingCheckBox_toggled(bool checked)
 {
 
+}
+
+void MainWindow::StartSingleRender()
+{
+    m_bStartNormalRender = false;
+
+    ui->AutoRender->setEnabled(false);
+    ui->AutoRender->setChecked(false);
+
+    progress.setLabelText("Rendering");
+    progress.setMaximum( GetRaytracer()->GetBucketsCount() );
+    progress.show();
+
+    QObject::connect(GetRaytracer(), SIGNAL(sigBucketDone(int)), &progress, SLOT(setValue(int)), Qt::UniqueConnection);
+    QObject::connect(GetRaytracer(), SIGNAL(sigThreadsFinished()), this, SLOT(slotRenderFinished()), Qt::UniqueConnection);
+
+    if (!m_bAutoRendering)
+    {
+	    StartRender();
+    }
 }
 
 void MainWindow::StartRender(bool bHighQuality)
