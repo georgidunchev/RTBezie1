@@ -52,5 +52,6 @@ void CRaytracerThread::run()
 
 			//	qDebug()<<"Thread"<<m_nThreadID<<"Rendered Bucket"<<m_nBucketId;
 	}    
+	//qDebug() << "Finished Thread 0";
 	emit sigThreadEnded(m_nThreadID);
 }

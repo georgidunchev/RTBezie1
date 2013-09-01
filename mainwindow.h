@@ -43,6 +43,7 @@ private:
     bool m_bAutoRendering;
 	bool m_bStartNormalRender;
 	bool m_bShouldRefreshView;
+	bool m_bRendering;
 
 	std::string m_strOutput;
 };

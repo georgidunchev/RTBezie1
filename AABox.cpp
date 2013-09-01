@@ -83,11 +83,11 @@ bool CAABox::Intersect(const CRay &ray, bool bDebug) const
 		return true;
 	}
 
-	if (bDebug)
-	{
-		CIntersactionInfo IntersectionInfo;
-		return Intersect_Test(ray, IntersectionInfo, bDebug);
-	}
+	//if (bDebug)
+	//{
+	//	CIntersactionInfo IntersectionInfo;
+	//	return Intersect_Test(ray, IntersectionInfo, bDebug);
+	//}
 
 	//create needed data for intersection
 	float aRayDir[3], aRayStart[3], aRayRevDir[3], aVMin[3], aVMax[3];
@@ -219,54 +219,54 @@ void CAABox::Split(float fWhere, CAABox &LeftBBox, CAABox &RightBBox, EDimiensio
 
 bool CAABox::Intersect_Test(const CRay &ray, CIntersactionInfo& io_IntersectionInfo, bool bDebug) const
 {
-	if (IsInside(ray.StartPoint()))
-	{
-		return true;
-	}
+//	if (IsInside(ray.StartPoint()))
+//	{
+//		return true;
+//	}
 
-	std::vector<QVector3D> vVerteces;
-	vVerteces.reserve(8);
-	vVerteces.push_back(m_vMinVertex);
-	vVerteces.push_back(QVector3D(m_vMaxVertex.x(), m_vMinVertex.y(), m_vMinVertex.z()));
-	vVerteces.push_back(QVector3D(m_vMaxVertex.x(), m_vMinVertex.y(), m_vMaxVertex.z()));
-	vVerteces.push_back(QVector3D(m_vMinVertex.x(), m_vMinVertex.y(), m_vMaxVertex.z()));
+//	std::vector<QVector3D> vVerteces;
+//	vVerteces.reserve(8);
+//	vVerteces.push_back(m_vMinVertex);
+//	vVerteces.push_back(QVector3D(m_vMaxVertex.x(), m_vMinVertex.y(), m_vMinVertex.z()));
+//	vVerteces.push_back(QVector3D(m_vMaxVertex.x(), m_vMinVertex.y(), m_vMaxVertex.z()));
+//	vVerteces.push_back(QVector3D(m_vMinVertex.x(), m_vMinVertex.y(), m_vMaxVertex.z()));
 
-	vVerteces.push_back(QVector3D(m_vMinVertex.x(), m_vMaxVertex.y(), m_vMinVertex.z()));
-	vVerteces.push_back(QVector3D(m_vMaxVertex.x(), m_vMaxVertex.y(), m_vMinVertex.z()));
-	vVerteces.push_back(m_vMaxVertex);
-	vVerteces.push_back(QVector3D(m_vMinVertex.x(), m_vMaxVertex.y(), m_vMaxVertex.z()));
+//	vVerteces.push_back(QVector3D(m_vMinVertex.x(), m_vMaxVertex.y(), m_vMinVertex.z()));
+//	vVerteces.push_back(QVector3D(m_vMaxVertex.x(), m_vMaxVertex.y(), m_vMinVertex.z()));
+//	vVerteces.push_back(m_vMaxVertex);
+//	vVerteces.push_back(QVector3D(m_vMinVertex.x(), m_vMaxVertex.y(), m_vMaxVertex.z()));
 
-	struct bla2
-	{
-		bla2(int ix, int iy, int iz)
-			:x(ix)
-			,y(iy)
-			,z(iz)
-		{}
-		int x, y, z;
-	};
+//	struct bla2
+//	{
+//		bla2(int ix, int iy, int iz)
+//			:x(ix)
+//			,y(iy)
+//			,z(iz)
+//		{}
+//		int x, y, z;
+//	};
 
-	std::vector<bla2> bla;
-	bla.reserve(6);
-	bla.push_back(bla2(0,1,2));
-	bla.push_back(bla2(0,2,3));
-	bla.push_back(bla2(0,1,5));
-	bla.push_back(bla2(0,5,4));
-	bla.push_back(bla2(1,2,6));
-	bla.push_back(bla2(1,6,5));
-	bla.push_back(bla2(0,3,7));
-	bla.push_back(bla2(0,7,4));
-	bla.push_back(bla2(3,2,6));
-	bla.push_back(bla2(3,6,7));
-	bla.push_back(bla2(4,5,6));
-	bla.push_back(bla2(4,6,7));
+//	std::vector<bla2> bla;
+//	bla.reserve(6);
+//	bla.push_back(bla2(0,1,2));
+//	bla.push_back(bla2(0,2,3));
+//	bla.push_back(bla2(0,1,5));
+//	bla.push_back(bla2(0,5,4));
+//	bla.push_back(bla2(1,2,6));
+//	bla.push_back(bla2(1,6,5));
+//	bla.push_back(bla2(0,3,7));
+//	bla.push_back(bla2(0,7,4));
+//	bla.push_back(bla2(3,2,6));
+//	bla.push_back(bla2(3,6,7));
+//	bla.push_back(bla2(4,5,6));
+//	bla.push_back(bla2(4,6,7));
 
-	for (int i = 0; i < bla.size(); ++i)
-	{
-		if (CUtils::IntersectTriangle(ray, io_IntersectionInfo, vVerteces[bla[i].x], vVerteces[bla[i].y], vVerteces[bla[i].z]))
-		{
-			return true;
-		}
-	}
+//	for (int i = 0; i < bla.size(); ++i)
+//	{
+//		if (CUtils::IntersectTriangle(ray, io_IntersectionInfo, vVerteces[bla[i].x], vVerteces[bla[i].y], vVerteces[bla[i].z]))
+//		{
+//			return true;
+//		}
+//	}
 	return false;
 }

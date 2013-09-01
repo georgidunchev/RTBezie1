@@ -4,7 +4,7 @@
 #include <QObject>
 
 //number of threads
-static const int k_nTHREADS = 1;
+static const int k_nTHREADS = 4;
 
 static const bool k_bUSE_KDTREE = true;
 static const bool k_bSHOW_KDTREE = false;
@@ -15,7 +15,7 @@ static const int k_nMIN_NUMBER_OF_TRIANGLES_TO_SPLIT = 6;
 
 static const int k_nMAX_SPLITS_OF_NODE = 10;
 
-static const int k_nNUMBER_OF_SUBDIVISIONS = 8;
+static const int k_nNUMBER_OF_SUBDIVISIONS = 2;
 
 class CSettings : public QObject
 {

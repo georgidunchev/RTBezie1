@@ -31,7 +31,8 @@ SOURCES += main.cpp\
     beziertriangle.cpp \
     primitive.cpp \
     vertex.cpp \
-    cview.cpp
+    cview.cpp \
+    SubTriangle.cpp
 
 HEADERS  += mainwindow.h \
     raytracer.h \
@@ -54,7 +55,8 @@ HEADERS  += mainwindow.h \
     beziertriangle.h \
     primitive.h \
     vertex.h \
-    cview.h
+    cview.h \
+    SubTriangle.h
 
 FORMS    += mainwindow.ui
 

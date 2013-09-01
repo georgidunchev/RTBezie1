@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'mainwindow.ui'
 **
-** Created: Wed 26. Jun 23:29:15 2013
+** Created: Tue 27. Aug 00:35:10 2013
 **      by: Qt User Interface Compiler version 4.8.0
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -15,14 +15,14 @@
 #include <QtGui/QApplication>
 #include <QtGui/QButtonGroup>
 #include <QtGui/QCheckBox>
-#include <QtGui/QDoubleSpinBox>
-#include <QtGui/QGroupBox>
 #include <QtGui/QHBoxLayout>
 #include <QtGui/QHeaderView>
+#include <QtGui/QLabel>
 #include <QtGui/QMainWindow>
 #include <QtGui/QMenu>
 #include <QtGui/QMenuBar>
 #include <QtGui/QPushButton>
+#include <QtGui/QSpinBox>
 #include <QtGui/QStatusBar>
 #include <QtGui/QTextBrowser>
 #include <QtGui/QToolBar>
@@ -41,26 +41,26 @@ public:
     QHBoxLayout *horizontalLayout;
     CView *Image;
     QToolBox *toolBox;
-    QWidget *page;
+    QWidget *Controls;
     QPushButton *openMeshButton;
     QPushButton *StartRender;
-    QGroupBox *groupBox;
-    QDoubleSpinBox *PosX;
-    QDoubleSpinBox *PosY;
-    QDoubleSpinBox *PosZ;
-    QGroupBox *groupBox_2;
-    QDoubleSpinBox *DirX;
-    QDoubleSpinBox *DirY;
-    QDoubleSpinBox *DirZ;
-    QGroupBox *groupBox_3;
-    QDoubleSpinBox *UpX;
-    QDoubleSpinBox *UpY;
-    QDoubleSpinBox *UpZ;
-    QCheckBox *RenderBezierCheckBox;
-    QCheckBox *NormalSmoothingCheckBox;
     QPushButton *AutoRender;
     QTextBrowser *Output;
-    QWidget *page_2;
+    QLabel *label;
+    QWidget *Settings;
+    QCheckBox *RenderBezierCheckBox;
+    QCheckBox *NormalSmoothingCheckBox;
+    QSpinBox *NumberOfThreads;
+    QCheckBox *checkBox;
+    QCheckBox *checkBox_2;
+    QSpinBox *MaxLevelOfTree;
+    QLabel *label_2;
+    QSpinBox *MinNumberOfTriangleToSplit;
+    QLabel *label_3;
+    QSpinBox *NumberOfSplitsPerNode;
+    QLabel *label_4;
+    QSpinBox *NumberOfSubdivisions;
+    QLabel *label_5;
     QMenuBar *menuBar;
     QMenu *menuFiles;
     QToolBar *mainToolBar;
@@ -103,96 +103,74 @@ public:
         sizePolicy1.setHeightForWidth(toolBox->sizePolicy().hasHeightForWidth());
         toolBox->setSizePolicy(sizePolicy1);
         toolBox->setMinimumSize(QSize(250, 0));
-        page = new QWidget();
-        page->setObjectName(QString::fromUtf8("page"));
-        page->setGeometry(QRect(0, 0, 250, 472));
-        openMeshButton = new QPushButton(page);
+        toolBox->setLayoutDirection(Qt::LeftToRight);
+        Controls = new QWidget();
+        Controls->setObjectName(QString::fromUtf8("Controls"));
+        Controls->setGeometry(QRect(0, 0, 250, 472));
+        openMeshButton = new QPushButton(Controls);
         openMeshButton->setObjectName(QString::fromUtf8("openMeshButton"));
         openMeshButton->setGeometry(QRect(170, 0, 75, 23));
         openMeshButton->setCheckable(false);
-        StartRender = new QPushButton(page);
+        StartRender = new QPushButton(Controls);
         StartRender->setObjectName(QString::fromUtf8("StartRender"));
         StartRender->setEnabled(true);
         StartRender->setGeometry(QRect(170, 210, 75, 23));
-        groupBox = new QGroupBox(page);
-        groupBox->setObjectName(QString::fromUtf8("groupBox"));
-        groupBox->setGeometry(QRect(20, 20, 221, 51));
-        PosX = new QDoubleSpinBox(groupBox);
-        PosX->setObjectName(QString::fromUtf8("PosX"));
-        PosX->setGeometry(QRect(10, 20, 62, 22));
-        PosX->setMinimum(-100);
-        PosX->setSingleStep(0.01);
-        PosY = new QDoubleSpinBox(groupBox);
-        PosY->setObjectName(QString::fromUtf8("PosY"));
-        PosY->setGeometry(QRect(80, 20, 62, 22));
-        PosY->setMinimum(-100);
-        PosY->setSingleStep(0.01);
-        PosY->setValue(0.2);
-        PosZ = new QDoubleSpinBox(groupBox);
-        PosZ->setObjectName(QString::fromUtf8("PosZ"));
-        PosZ->setGeometry(QRect(150, 20, 62, 22));
-        PosZ->setMinimum(-100);
-        PosZ->setMaximum(98.99);
-        PosZ->setSingleStep(0.01);
-        PosZ->setValue(-0.4);
-        groupBox_2 = new QGroupBox(page);
-        groupBox_2->setObjectName(QString::fromUtf8("groupBox_2"));
-        groupBox_2->setGeometry(QRect(20, 70, 221, 51));
-        DirX = new QDoubleSpinBox(groupBox_2);
-        DirX->setObjectName(QString::fromUtf8("DirX"));
-        DirX->setGeometry(QRect(10, 20, 62, 22));
-        DirX->setMinimum(-100);
-        DirX->setSingleStep(0.01);
-        DirY = new QDoubleSpinBox(groupBox_2);
-        DirY->setObjectName(QString::fromUtf8("DirY"));
-        DirY->setGeometry(QRect(80, 20, 62, 22));
-        DirY->setMinimum(-100);
-        DirY->setSingleStep(0.01);
-        DirZ = new QDoubleSpinBox(groupBox_2);
-        DirZ->setObjectName(QString::fromUtf8("DirZ"));
-        DirZ->setGeometry(QRect(150, 20, 62, 22));
-        DirZ->setMinimum(-100);
-        DirZ->setSingleStep(0.01);
-        DirZ->setValue(1);
-        groupBox_3 = new QGroupBox(page);
-        groupBox_3->setObjectName(QString::fromUtf8("groupBox_3"));
-        groupBox_3->setGeometry(QRect(20, 120, 221, 51));
-        UpX = new QDoubleSpinBox(groupBox_3);
-        UpX->setObjectName(QString::fromUtf8("UpX"));
-        UpX->setGeometry(QRect(10, 20, 62, 22));
-        UpX->setMinimum(-100);
-        UpX->setSingleStep(0.01);
-        UpY = new QDoubleSpinBox(groupBox_3);
-        UpY->setObjectName(QString::fromUtf8("UpY"));
-        UpY->setGeometry(QRect(80, 20, 62, 22));
-        UpY->setMinimum(-100);
-        UpY->setSingleStep(0.01);
-        UpY->setValue(-1);
-        UpZ = new QDoubleSpinBox(groupBox_3);
-        UpZ->setObjectName(QString::fromUtf8("UpZ"));
-        UpZ->setGeometry(QRect(150, 20, 62, 22));
-        UpZ->setMinimum(-100);
-        UpZ->setSingleStep(0.01);
-        UpZ->setValue(0);
-        RenderBezierCheckBox = new QCheckBox(page);
-        RenderBezierCheckBox->setObjectName(QString::fromUtf8("RenderBezierCheckBox"));
-        RenderBezierCheckBox->setGeometry(QRect(20, 180, 71, 18));
-        NormalSmoothingCheckBox = new QCheckBox(page);
-        NormalSmoothingCheckBox->setObjectName(QString::fromUtf8("NormalSmoothingCheckBox"));
-        NormalSmoothingCheckBox->setGeometry(QRect(20, 200, 121, 18));
-        AutoRender = new QPushButton(page);
+        AutoRender = new QPushButton(Controls);
         AutoRender->setObjectName(QString::fromUtf8("AutoRender"));
         AutoRender->setEnabled(true);
         AutoRender->setGeometry(QRect(170, 180, 75, 23));
         AutoRender->setCheckable(true);
-        Output = new QTextBrowser(page);
+        Output = new QTextBrowser(Controls);
         Output->setObjectName(QString::fromUtf8("Output"));
         Output->setGeometry(QRect(20, 240, 221, 231));
-        toolBox->addItem(page, QString::fromUtf8("Page 1"));
-        page_2 = new QWidget();
-        page_2->setObjectName(QString::fromUtf8("page_2"));
-        page_2->setGeometry(QRect(0, 0, 250, 472));
-        toolBox->addItem(page_2, QString::fromUtf8("Page 2"));
+        label = new QLabel(Controls);
+        label->setObjectName(QString::fromUtf8("label"));
+        label->setGeometry(QRect(20, 0, 141, 21));
+        toolBox->addItem(Controls, QString::fromUtf8("Controls"));
+        Settings = new QWidget();
+        Settings->setObjectName(QString::fromUtf8("Settings"));
+        Settings->setGeometry(QRect(0, 0, 250, 472));
+        RenderBezierCheckBox = new QCheckBox(Settings);
+        RenderBezierCheckBox->setObjectName(QString::fromUtf8("RenderBezierCheckBox"));
+        RenderBezierCheckBox->setGeometry(QRect(0, 10, 211, 18));
+        NormalSmoothingCheckBox = new QCheckBox(Settings);
+        NormalSmoothingCheckBox->setObjectName(QString::fromUtf8("NormalSmoothingCheckBox"));
+        NormalSmoothingCheckBox->setGeometry(QRect(0, 30, 131, 20));
+        NormalSmoothingCheckBox->setMinimumSize(QSize(0, 0));
+        NumberOfThreads = new QSpinBox(Settings);
+        NumberOfThreads->setObjectName(QString::fromUtf8("NumberOfThreads"));
+        NumberOfThreads->setGeometry(QRect(0, 60, 46, 22));
+        checkBox = new QCheckBox(Settings);
+        checkBox->setObjectName(QString::fromUtf8("checkBox"));
+        checkBox->setGeometry(QRect(10, 100, 111, 18));
+        checkBox_2 = new QCheckBox(Settings);
+        checkBox_2->setObjectName(QString::fromUtf8("checkBox_2"));
+        checkBox_2->setGeometry(QRect(10, 130, 111, 18));
+        MaxLevelOfTree = new QSpinBox(Settings);
+        MaxLevelOfTree->setObjectName(QString::fromUtf8("MaxLevelOfTree"));
+        MaxLevelOfTree->setGeometry(QRect(10, 170, 46, 22));
+        label_2 = new QLabel(Settings);
+        label_2->setObjectName(QString::fromUtf8("label_2"));
+        label_2->setGeometry(QRect(80, 170, 151, 16));
+        MinNumberOfTriangleToSplit = new QSpinBox(Settings);
+        MinNumberOfTriangleToSplit->setObjectName(QString::fromUtf8("MinNumberOfTriangleToSplit"));
+        MinNumberOfTriangleToSplit->setGeometry(QRect(10, 210, 46, 22));
+        label_3 = new QLabel(Settings);
+        label_3->setObjectName(QString::fromUtf8("label_3"));
+        label_3->setGeometry(QRect(80, 210, 151, 16));
+        NumberOfSplitsPerNode = new QSpinBox(Settings);
+        NumberOfSplitsPerNode->setObjectName(QString::fromUtf8("NumberOfSplitsPerNode"));
+        NumberOfSplitsPerNode->setGeometry(QRect(10, 240, 46, 22));
+        label_4 = new QLabel(Settings);
+        label_4->setObjectName(QString::fromUtf8("label_4"));
+        label_4->setGeometry(QRect(80, 240, 151, 16));
+        NumberOfSubdivisions = new QSpinBox(Settings);
+        NumberOfSubdivisions->setObjectName(QString::fromUtf8("NumberOfSubdivisions"));
+        NumberOfSubdivisions->setGeometry(QRect(10, 280, 46, 22));
+        label_5 = new QLabel(Settings);
+        label_5->setObjectName(QString::fromUtf8("label_5"));
+        label_5->setGeometry(QRect(80, 280, 151, 16));
+        toolBox->addItem(Settings, QString::fromUtf8("Settings"));
 
         horizontalLayout->addWidget(toolBox);
 
@@ -218,7 +196,7 @@ public:
 
         retranslateUi(MainWindow);
 
-        toolBox->setCurrentIndex(0);
+        toolBox->setCurrentIndex(1);
 
 
         QMetaObject::connectSlotsByName(MainWindow);
@@ -230,14 +208,18 @@ public:
         Image->setText(QString());
         openMeshButton->setText(QApplication::translate("MainWindow", "Browse", 0, QApplication::UnicodeUTF8));
         StartRender->setText(QApplication::translate("MainWindow", "Render", 0, QApplication::UnicodeUTF8));
-        groupBox->setTitle(QApplication::translate("MainWindow", "Position", 0, QApplication::UnicodeUTF8));
-        groupBox_2->setTitle(QApplication::translate("MainWindow", "Direction", 0, QApplication::UnicodeUTF8));
-        groupBox_3->setTitle(QApplication::translate("MainWindow", "Up", 0, QApplication::UnicodeUTF8));
+        AutoRender->setText(QApplication::translate("MainWindow", "Realtime", 0, QApplication::UnicodeUTF8));
+        label->setText(QApplication::translate("MainWindow", "Open File", 0, QApplication::UnicodeUTF8));
+        toolBox->setItemText(toolBox->indexOf(Controls), QApplication::translate("MainWindow", "Controls", 0, QApplication::UnicodeUTF8));
         RenderBezierCheckBox->setText(QApplication::translate("MainWindow", "Bezier", 0, QApplication::UnicodeUTF8));
         NormalSmoothingCheckBox->setText(QApplication::translate("MainWindow", "Normal Smoothing", 0, QApplication::UnicodeUTF8));
-        AutoRender->setText(QApplication::translate("MainWindow", "Realtime", 0, QApplication::UnicodeUTF8));
-        toolBox->setItemText(toolBox->indexOf(page), QApplication::translate("MainWindow", "Page 1", 0, QApplication::UnicodeUTF8));
-        toolBox->setItemText(toolBox->indexOf(page_2), QApplication::translate("MainWindow", "Page 2", 0, QApplication::UnicodeUTF8));
+        checkBox->setText(QApplication::translate("MainWindow", "Use KD Tree", 0, QApplication::UnicodeUTF8));
+        checkBox_2->setText(QApplication::translate("MainWindow", "Show KD Tree", 0, QApplication::UnicodeUTF8));
+        label_2->setText(QApplication::translate("MainWindow", "Max Level of Tree", 0, QApplication::UnicodeUTF8));
+        label_3->setText(QApplication::translate("MainWindow", "Min Number of Triangles to Split", 0, QApplication::UnicodeUTF8));
+        label_4->setText(QApplication::translate("MainWindow", "Number of Splits per Node", 0, QApplication::UnicodeUTF8));
+        label_5->setText(QApplication::translate("MainWindow", "Number of Subdivisions", 0, QApplication::UnicodeUTF8));
+        toolBox->setItemText(toolBox->indexOf(Settings), QApplication::translate("MainWindow", "Settings", 0, QApplication::UnicodeUTF8));
         menuFiles->setTitle(QApplication::translate("MainWindow", "File", 0, QApplication::UnicodeUTF8));
     } // retranslateUi
 

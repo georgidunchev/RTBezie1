@@ -133,6 +133,8 @@ void RayTracer::RenderThreaded()
 		{
 			pThread = new CRaytracerThread(j);
 			m_arrThreads.push_back(pThread);
+			QObject::connect(pThread, SIGNAL(sigThreadStarted(int)), this, SLOT(slotThreadStarted(int)), Qt::UniqueConnection);
+			QObject::connect(pThread, SIGNAL(sigThreadEnded(int)), this, SLOT(slotThreadEnded(int)), Qt::UniqueConnection);
 		}
 		else
 		{
@@ -140,9 +142,6 @@ void RayTracer::RenderThreaded()
 		}
 		
 		pThread->start();
-
-		QObject::connect(pThread, SIGNAL(sigThreadStarted(int)), this, SLOT(slotThreadStarted(int)));
-		QObject::connect(pThread, SIGNAL(sigThreadEnded(int)), this, SLOT(slotThreadEnded(int)));
 	}
 }
 
@@ -195,12 +194,10 @@ int RayTracer::GetNextBucketId()
 {
 	//QMutexLocker locker(&mutex);
 	int nTemp = m_nNextBucket.fetchAndAddRelaxed(1);
-	
-	qDebug() << "Finished " << nTemp;
 
 	if ( nTemp >= GetBucketsCount())
 	{
-		emit sigBucketDone(GetBucketsCount());
+		//emit sigBucketDone(GetBucketsCount());
 		return -1;
 	}
 
@@ -247,13 +244,17 @@ void RayTracer::ThreadsFinished()
 
 void RayTracer::slotThreadStarted(int nId)
 {
+	//QMutexLocker locker(&mutex);
 	m_nRunningThreads++;
+	//qDebug() << "Started Thread: "<< m_nRunningThreads;
 }
 
 void RayTracer::slotThreadEnded(int nId)
 {
-	m_nRunningThreads--;
-	if(m_nRunningThreads <= 0)
+	//QMutexLocker locker(&mutex);
+	//qDebug() << "Finished Thread 1: "<< m_nRunningThreads;
+	int n_local = --m_nRunningThreads;	
+	if(n_local <= 0)
 	{
 		ThreadsFinished();
 	}

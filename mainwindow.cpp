@@ -14,6 +14,7 @@ MainWindow::MainWindow(QWidget *parent)
 	, m_bAutoRendering(false)
 	, m_bStartNormalRender(false)
 	, m_bShouldRefreshView(false)
+	, m_bRendering(false)
 {
 	ui->setupUi(this);
 	GetRaytracer()->GetCamera().SetCameraPos(QVector3D(0, 0, -0.4), QVector3D(0, 0, 1), QVector3D(0, -1, 0) );
@@ -27,7 +28,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 	//    GetRaytracer()->LoadNewMesh("SimpleBezierTriangle2.obj");
 
-	QObject::connect(this, SIGNAL(DebugOutChanged(const QString &)), ui->Output, SLOT(setText(QString)));
+	//QObject::connect(this, SIGNAL(DebugOutChanged(const QString &)), ui->Output, SLOT(setText(QString)));
 
 	progress.setLabelText("Rendering");
 	progress.setWindowModality(Qt::WindowModal);
@@ -44,14 +45,18 @@ void MainWindow::paintEvent(QPaintEvent *pe)
 		QMainWindow::paintEvent(pe);
 		emit DebugOutChanged(GetUtils()->strDebugOut);
 
-		if (m_bAutoRendering)
-		{
-			StartRender(false);
-		}
-		else if (m_bStartNormalRender)
+		if (m_bStartNormalRender)
 		{
 			m_bStartNormalRender = false;
+			m_bAutoRendering = false;
+			m_bAutoRendering = false;
+			ui->AutoRender->setEnabled(false);
+			ui->AutoRender->setChecked(false);
 			StartRender();
+		}
+		else if (m_bAutoRendering)
+		{
+			StartRender(false);
 		}
 	}
 }
@@ -77,32 +82,39 @@ void MainWindow::on_StartRender_clicked()
 	if (m_bAutoRendering)
 	{
 		m_bStartNormalRender = true;
+		return;
 	}
 
-	m_bAutoRendering = false;
 	ui->AutoRender->setEnabled(false);
-	ui->AutoRender->setChecked(false);
 
 	//progress.setMaximum( GetRaytracer()->GetBucketsCount() );
 
-	//QObject::connect(GetRaytracer(), SIGNAL(sigBucketDone(int)), &progress, SLOT(setValue(int)));
-	QObject::connect(GetRaytracer(), SIGNAL(sigThreadsFinished()), this, SLOT(slotRenderFinished()));
+	QObject::connect(GetRaytracer(), SIGNAL(sigBucketDone(int)), &progress, SLOT(setValue(int)), Qt::UniqueConnection);
+	QObject::connect(GetRaytracer(), SIGNAL(sigThreadsFinished()), this, SLOT(slotRenderFinished()), Qt::UniqueConnection);
 
-	StartRender();
+	if (!m_bAutoRendering)
+	{
+		StartRender();
+	}
 }
 
 void MainWindow::on_AutoRender_clicked(bool checked)
 {
 	m_bAutoRendering = checked;
 
+	//ui->StartRender->setEnabled(m_bAutoRendering);
+	//ui->StartRender->setChecked(m_bAutoRendering);
+
 	if (m_bAutoRendering)
 	{
 		//progress.setMaximum( GetRaytracer()->GetBucketsCount() );
 
-		//QObject::connect(GetRaytracer(), SIGNAL(sigBucketDone(int)), &progress, SLOT(setValue(int)));
-		QObject::connect(GetRaytracer(), SIGNAL(sigThreadsFinished()), this, SLOT(slotRenderFinished()));
-
-		StartRender(false);
+		QObject::disconnect(GetRaytracer(), SIGNAL(sigBucketDone(int)), &progress, SLOT(setValue(int)));
+		QObject::connect(GetRaytracer(), SIGNAL(sigThreadsFinished()), this, SLOT(slotRenderFinished()), Qt::UniqueConnection);
+		if (!m_bRendering)
+		{
+			StartRender(false);
+		}
 	}
 }
 
@@ -121,6 +133,8 @@ void MainWindow::slotRenderFinished()
 
 	ui->AutoRender->setEnabled(true);
 	m_bShouldRefreshView = true;
+
+	m_bRendering = false;
 }
 
 void MainWindow::on_RenderBezierCheckBox_toggled(bool checked)
@@ -135,13 +149,11 @@ void MainWindow::on_NormalSmoothingCheckBox_toggled(bool checked)
 
 void MainWindow::StartRender(bool bHighQuality)
 {
-	//    QVector3D vPos(ui->PosX->value(), ui->PosY->value(), ui->PosZ->value());
-	//    QVector3D vTarget(ui->DirX->value(), ui->DirY->value(), ui->DirZ->value());
-	//    QVector3D vUp(ui->UpX->value(), ui->UpY->value(), ui->UpZ->value());
-
-	//    GetRaytracer()->GetCamera().SetCameraPos(vPos, vTarget, vUp);
-	//    GetRaytracer()->SetCanvas(500,500);
-
+	if(m_bRendering)
+	{
+		return;
+	}
+	m_bRendering = true;
 	GetRaytracer()->GetTimer().start();
 	GetRaytracer()->BeginFrame(bHighQuality);
 	GetRaytracer()->RenderThreaded();
