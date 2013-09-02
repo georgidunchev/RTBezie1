@@ -3,6 +3,7 @@
 
 #include <QVector3D>
 #include <color.h>
+#include "ray.h"
 
 class CSubTriangle;
 
@@ -14,6 +15,7 @@ public:
 		, color(0.5, 0.5, 0.5)
 		, m_bInitialRay(true)
 	{};
+    QVector3D GetFacingNormal(const CRay &ray) const;
     qreal m_fDistance;
     QVector3D m_vIntersectionPoint;
     QVector3D m_vNormal;

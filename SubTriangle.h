@@ -20,9 +20,9 @@ public:
 				 const QVector3D& m_vABar,
 				 const QVector3D& m_vBBar,
 				 const QVector3D& m_vCBar,
-				 int nSubdivisionLevel,
+				 uint nSubdivisionLevel,
 				 CTriangle& Parent,
-				 int nSavePos);
+				 uint nSavePos);
 	
 	virtual ~CSubTriangle() {};
 
@@ -55,8 +55,8 @@ private:
 	QVector3D m_vABar;
 	QVector3D m_vBBar;
 	QVector3D m_vCBar;
-	int m_nSavePos;
-	int m_nSubdivisionLevel;
+	uint m_nSavePos;
+	uint m_nSubdivisionLevel;
 
 	//bounding box
     bool m_bHasBoundingBox;

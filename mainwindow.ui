@@ -128,7 +128,7 @@
            </rect>
           </property>
           <property name="text">
-           <string>Realtime</string>
+           <string>Continuous</string>
           </property>
           <property name="checkable">
            <bool>true</bool>
@@ -144,7 +144,7 @@
            </rect>
           </property>
          </widget>
-         <widget class="QLabel" name="label">
+         <widget class="QLabel" name="labelFileName">
           <property name="geometry">
            <rect>
             <x>20</x>
@@ -155,6 +155,19 @@
           </property>
           <property name="text">
            <string>Open File</string>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="butRefresh">
+          <property name="geometry">
+           <rect>
+            <x>170</x>
+            <y>30</y>
+            <width>75</width>
+            <height>23</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Refresh</string>
           </property>
          </widget>
         </widget>
@@ -248,7 +261,7 @@
            </rect>
           </property>
          </widget>
-         <widget class="QLabel" name="label_2">
+         <widget class="QLabel" name="labelMaxLvlOfTree">
           <property name="geometry">
            <rect>
             <x>80</x>
@@ -271,7 +284,7 @@
            </rect>
           </property>
          </widget>
-         <widget class="QLabel" name="label_3">
+         <widget class="QLabel" name="labelMinNofTrianglesToSplit">
           <property name="geometry">
            <rect>
             <x>80</x>
@@ -294,7 +307,7 @@
            </rect>
           </property>
          </widget>
-         <widget class="QLabel" name="label_4">
+         <widget class="QLabel" name="labelNofSplitsPerNode">
           <property name="geometry">
            <rect>
             <x>80</x>
@@ -317,7 +330,7 @@
            </rect>
           </property>
          </widget>
-         <widget class="QLabel" name="label_5">
+         <widget class="QLabel" name="labelNofSubdivisions">
           <property name="geometry">
            <rect>
             <x>80</x>
@@ -328,6 +341,19 @@
           </property>
           <property name="text">
            <string>Number of Subdivisions</string>
+          </property>
+         </widget>
+         <widget class="QLabel" name="labelNofThreads">
+          <property name="geometry">
+           <rect>
+            <x>60</x>
+            <y>60</y>
+            <width>151</width>
+            <height>16</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Number of threads</string>
           </property>
          </widget>
         </widget>

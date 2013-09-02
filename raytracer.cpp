@@ -156,11 +156,17 @@ CMesh& RayTracer::GetMesh()
 }
 bool RayTracer::IsHighQuality() const
 {
-	return m_bHighQuality;
+    return m_bHighQuality;
+}
+
+std::string RayTracer::GetOpenFileName() const
+{
+    return m_strOpenFile;
 }
 
 void RayTracer::LoadNewMesh(const QString& strInputFileName)
 {
+    m_strOpenFile = strInputFileName.toStdString();
 	m_Mesh.Load(strInputFileName);
 }
 

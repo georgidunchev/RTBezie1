@@ -1,8 +1,3 @@
-Progress Bar:
-	modal progress bar when loading objects
-	modal progress bar when rendering high quality
-
-
 
 ======================================================================
 

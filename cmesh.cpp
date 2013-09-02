@@ -28,6 +28,7 @@ void CMesh::Load(const QString& strInputFileName)
 
 	BuildVertexData();
 	emit sigLoadingStepDone( nCrntStep++ );
+
 	//BuildAdjacency();
 
 	BuildBezierTriangles();
@@ -277,7 +278,7 @@ CBezierTriangle *CMesh::GetBezierTriangle(int n)
 void CMesh::GenerateKDTree()
 {
 	//initialize an array containing all triangles
-	int nNumberOfSubTriangles = CUtils::PowerOf2(k_nNUMBER_OF_SUBDIVISIONS);
+    int nNumberOfSubTriangles = CUtils::PowerOf2(GetSettings()->GetNofSubdivisions());
 	int nNumberOfPrimitives = GetPrimitives()->size();
 
 	std::vector<CSubTriangle*>* pAllSubTriangles = new std::vector<CSubTriangle*>;

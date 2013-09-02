@@ -51,6 +51,8 @@ public:
     void GenerateKDTree();
 
 	bool IsHighQuality() const;
+
+	std::string GetOpenFileName() const;
 private:
     Camera m_Camera;
     CLightsScene m_LightScene;
@@ -85,6 +87,8 @@ private:
 	bool m_bHighQuality;
 
 	QMutex mutex;
+
+	std::string m_strOpenFile;
 
 signals:
     void sigBucketDone(int value);

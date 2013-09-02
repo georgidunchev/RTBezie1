@@ -38,6 +38,8 @@ MainWindow::MainWindow(QWidget *parent)
 	//    GetRaytracer()->LoadNewMesh("SimpleBezierTriangle2.obj");
 
 	//QObject::connect(this, SIGNAL(DebugOutChanged(const QString &)), ui->Output, SLOT(setText(QString)));
+
+	GetSettings()->SetNofSubdivisions(static_cast<uint>(ui->NumberOfSubdivisions->value()));
 }
 
 void MainWindow::paintEvent(QPaintEvent *pe)
@@ -74,7 +76,15 @@ void MainWindow::on_openMeshButton_clicked()
 	strFileName = QFileDialog::getOpenFileName(this,
 		tr("Open Model"), "", tr("Image Files (*.obj)"));
 
+	if (strFileName.isEmpty())
+	{
+	    return;
+	}
+
 	GetRaytracer()->LoadNewMesh(strFileName);
+
+	strFileName.remove(0,strFileName.lastIndexOf("/")+1);
+	ui->labelFileName->setText(strFileName);
 
 	emit EnableRenderButton(true);
 }
@@ -191,4 +201,21 @@ void MainWindow::DisplayText(const std::string& strOutput)
 {
     m_strOutput += strOutput;
     ui->Output->setText(m_strOutput.c_str());
+}
+
+void MainWindow::on_NumberOfSubdivisions_valueChanged(int arg1)
+{
+    GetSettings()->SetNofSubdivisions(static_cast<uint>(arg1));
+}
+
+void MainWindow::on_butRefresh_clicked()
+{
+    const std::string& strFilename = GetRaytracer()->GetOpenFileName();
+
+    if (strFilename.empty())
+    {
+	return;
+    }
+
+    GetRaytracer()->LoadNewMesh(strFilename.c_str());
 }

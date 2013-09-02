@@ -38,6 +38,10 @@ private slots:
     void on_AutoRender_clicked(bool checked);
 
 
+    void on_NumberOfSubdivisions_valueChanged(int arg1);
+
+    void on_butRefresh_clicked();
+
 private:
     void StartSingleRender();
     void StartRender(bool bHighQuality = true);

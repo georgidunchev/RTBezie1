@@ -15,7 +15,8 @@ public:
 private:
     CMesh &GetMesh();
     CLightsScene &GetLightScene();
-    QRgb ShadeLambert(const CRay& ray, CIntersactionInfo& intersectionInfo);
+    CColor ShadeLambert(const CRay& ray, CIntersactionInfo& intersectionInfo);
+    CColor ShadeGloss(const CRay& ray, CIntersactionInfo& intersectionInfo);
 };
 
 #endif // SHADER_H

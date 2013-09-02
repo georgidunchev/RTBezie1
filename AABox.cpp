@@ -154,13 +154,13 @@ bool CAABox::Intersect(const CRay &ray, bool bDebug) const
 			{
 				if ( bDebug )
 				{
-					qDebug() << "A Success Dim: "<< (EDimiensions)dim <<"X: "<< fMinX << x << fMaxX << "Y: " << fMinY << y << fMaxY;
+//					qDebug() << "A Success Dim: "<< (EDimiensions)dim <<"X: "<< fMinX << x << fMaxX << "Y: " << fMinY << y << fMaxY;
 				}
 				return true;
 			}
 			if ( bDebug )
 			{
-				qDebug() << "A Fail Dim: "<< (EDimiensions)dim <<"X: "<< fMinX << x << fMaxX << "Y: " << fMinY << y << fMaxY;
+//				qDebug() << "A Fail Dim: "<< (EDimiensions)dim <<"X: "<< fMinX << x << fMaxX << "Y: " << fMinY << y << fMaxY;
 			}
 		}
 
@@ -179,13 +179,13 @@ bool CAABox::Intersect(const CRay &ray, bool bDebug) const
 			{
 				if ( bDebug )
 				{
-					qDebug() << "B Success Dim: "<< (EDimiensions)dim <<"X: "<< fMinX << x << fMaxX << "Y: " << fMinY << y << fMaxY;
+//					qDebug() << "B Success Dim: "<< (EDimiensions)dim <<"X: "<< fMinX << x << fMaxX << "Y: " << fMinY << y << fMaxY;
 				}
 				return true;
 			}
 			if ( bDebug )
 			{
-				qDebug() << "B Fail Dim: "<< (EDimiensions)dim <<"X: "<< fMinX << x << fMaxX << "Y: " << fMinY << y << fMaxY;
+//				qDebug() << "B Fail Dim: "<< (EDimiensions)dim <<"X: "<< fMinX << x << fMaxX << "Y: " << fMinY << y << fMaxY;
 			}
 		}
 	}

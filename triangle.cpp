@@ -263,7 +263,8 @@ const QVector3D &CTriangle::GetPoint(int a, int b) const
 
 void CTriangle::Subdivide()
 {
-	m_aSubTriangles.resize(CUtils::PowerOf2(k_nNUMBER_OF_SUBDIVISIONS));
+	m_aSubTriangles.resize(CUtils::PowerOf2(GetSettings()->GetNofSubdivisions()));
+
 	m_aSubTriangles[0] = new CSubTriangle(*this);
 	m_aSubTriangles[0]->Subdivide();
 

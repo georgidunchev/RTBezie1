@@ -31,9 +31,9 @@ CSubTriangle::CSubTriangle(	const QVector3D& vA,
 							const QVector3D& m_vABar,
 							const QVector3D& m_vBBar,
 							const QVector3D& m_vCBar,
-							int nSubdivisionLevel,
+							uint nSubdivisionLevel,
 							CTriangle& Parent,
-							int nSavePos)
+							uint nSavePos)
 	: m_Parent(Parent)
 	, m_vA(vA)
 	, m_vB(vB)
@@ -89,7 +89,7 @@ const QVector3D& CSubTriangle::GetVertBar(int i) const
 
 void CSubTriangle::Subdivide()
 {	
-	if (m_nSubdivisionLevel > k_nNUMBER_OF_SUBDIVISIONS)
+	if (m_nSubdivisionLevel > GetSettings()->GetNofSubdivisions())
 	{
 		//qDebug() << m_vABar << m_vBBar << m_vCBar;
 		//qDebug()	<< m_nSavePos
@@ -114,7 +114,9 @@ void CSubTriangle::Subdivide()
 	const QVector3D& vertex3Bar = GetVertBar(nThirdPoint);
 
 	// populate the second subtriangle first, because the current subtriangle will be overridden when the first subtriangle is saved
-	const int nNewSavePoint = m_nSavePos + CUtils::PowerOf2(k_nNUMBER_OF_SUBDIVISIONS - m_nSubdivisionLevel);
+	const uint nNewSavePoint = m_nSavePos +
+		CUtils::PowerOf2( static_cast<int>(GetSettings()->GetNofSubdivisions()) -
+				  m_nSubdivisionLevel);
 	CSubTriangle* pSecondSubTriangle = new CSubTriangle(vMidPoint, GetVert(nSecondPoint), vertex3
 														, vMidPointBar, GetVertBar(nSecondPoint), vertex3Bar
 														, m_nSubdivisionLevel + 1, m_Parent, nNewSavePoint);
