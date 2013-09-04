@@ -524,10 +524,13 @@ bool CTriangle::IntersectSubdevidedTriangles(const CRay &ray, CIntersactionInfo 
 {
 	int nSize = aSubTriangles.size();
 	float fModifier = 8.0f / static_cast<float>(nSize);
+	
+	bool bIntersected = false;
 
 	for (int i = 0; i < nSize; i++)
 	{
-		if( aSubTriangles[i]->Intersect(ray, intersectionInfo,bDebug) )
+		CIntersactionInfo intersectionInfoLocal(intersectionInfo);
+		if( aSubTriangles[i]->Intersect(ray, intersectionInfoLocal,bDebug) )
 		{
 			int nId = aSubTriangles[i]->m_nSubtriangleID;
 
@@ -542,17 +545,21 @@ bool CTriangle::IntersectSubdevidedTriangles(const CRay &ray, CIntersactionInfo 
 				float fG = bG ? fModifier * static_cast<float>(nSubtriangleId) * 0.125f : 0.0f;
 				float fB = bB ? fModifier * static_cast<float>(nSubtriangleId) * 0.125f : 0.0f;
 
-				intersectionInfo.color = CColor(fR, fG, fB);
+				intersectionInfoLocal.color = CColor(fR, fG, fB);
 			}
 			
-			intersectionInfo.pSubTriangle = aSubTriangles[i];
+			intersectionInfoLocal.pSubTriangle = aSubTriangles[i];
 		
-			intersectionInfo.m_nSubTriangleId = nId;
+			intersectionInfoLocal.m_nSubTriangleId = nId;
 
-			return true;
+			if (intersectionInfoLocal.m_fDistance < intersectionInfo.m_fDistance)
+			{
+				intersectionInfo = intersectionInfoLocal;
+				bIntersected = true;
+			}
 		}
 	}
-	return false;
+	return bIntersected;
 }
 
 bool CTriangle::Intersect(const QVector3D &vStart, const QVector3D &vEnd) const

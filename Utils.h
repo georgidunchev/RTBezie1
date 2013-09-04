@@ -69,6 +69,8 @@ public:
 
 	static int PowerOf2(const int nPow);
 	
+	static QVector3D Reflect(const QVector3D& toBeReflected, const QVector3D& normal);
+
 	//std::stringstream& DebugOut();
 
 

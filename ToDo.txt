@@ -44,14 +44,21 @@ Intersect the complex surfaces
 Save to file
 Move camera
 
+================================================================================
+normal
 RayTracer::Render
 CMesh::Intersect
 CMesh::IntersectKDTree
+CKDTreeNode::Intersect(ray, intersectionInfo, bDebug);
 CTriangle::IntersectSubdevidedTriangles
-CSubTriangle::Intersect
-CUtils::IntersectTriangle
+CTriangle::Intersect(ray, intersectionInfo, aSubTriangles)
+IntersectSubdevidedTriangles(ray, intersectionInfo, aSubTriangles, NULL, bDebug);
+CSubTriangle::Intersect(ray, intersectionInfo,bDebug)
+CUtils::IntersectTriangle(ray, intersectionInfo, m_vA, m_vB, m_vC, m_vABar, m_vBBar, m_vCBar)
+CUtils::IntersectTriangle(	i_Ray, io_IntersectionInfo, i_vA, i_vB, i_vC))
 
-
+================================================================================
+bezier
 RayTracer::Render
 CMesh::Intersect
 CMesh::IntersectKDTree

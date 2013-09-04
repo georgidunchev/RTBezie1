@@ -12,6 +12,7 @@
 
 CMesh::CMesh(QObject *parent)
 	: QObject(parent)
+	, m_pRoot(NULL)
 {
 
 }
@@ -136,8 +137,10 @@ bool CMesh::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo, bool
 	if (k_bUSE_KDTREE)
 	{
 		bool bIntersect = IntersectKDTree(ray, intersectionInfo, bDebug);
-		if (bIntersect)
+		bResult = bIntersect;
+		if (bIntersect && GetRaytracer()->IsHighQuality())
 		{
+		    intersectionInfo.m_fDistance = k_fMAX;
 			std::vector<CSubTriangle*> aSubTriangles;
 			aSubTriangles.push_back(intersectionInfo.pSubTriangle);
 			bResult = CTriangle::Intersect(ray, intersectionInfo, aSubTriangles);

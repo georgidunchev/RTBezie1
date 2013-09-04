@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'mainwindow.ui'
 **
-** Created: Tue 27. Aug 00:35:10 2013
+** Created: Tue 3. Sep 16:03:03 2013
 **      by: Qt User Interface Compiler version 4.8.0
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -46,7 +46,8 @@ public:
     QPushButton *StartRender;
     QPushButton *AutoRender;
     QTextBrowser *Output;
-    QLabel *label;
+    QLabel *labelFileName;
+    QPushButton *butRefresh;
     QWidget *Settings;
     QCheckBox *RenderBezierCheckBox;
     QCheckBox *NormalSmoothingCheckBox;
@@ -54,13 +55,14 @@ public:
     QCheckBox *checkBox;
     QCheckBox *checkBox_2;
     QSpinBox *MaxLevelOfTree;
-    QLabel *label_2;
+    QLabel *labelMaxLvlOfTree;
     QSpinBox *MinNumberOfTriangleToSplit;
-    QLabel *label_3;
+    QLabel *labelMinNofTrianglesToSplit;
     QSpinBox *NumberOfSplitsPerNode;
-    QLabel *label_4;
+    QLabel *labelNofSplitsPerNode;
     QSpinBox *NumberOfSubdivisions;
-    QLabel *label_5;
+    QLabel *labelNofSubdivisions;
+    QLabel *labelNofThreads;
     QMenuBar *menuBar;
     QMenu *menuFiles;
     QToolBar *mainToolBar;
@@ -123,9 +125,12 @@ public:
         Output = new QTextBrowser(Controls);
         Output->setObjectName(QString::fromUtf8("Output"));
         Output->setGeometry(QRect(20, 240, 221, 231));
-        label = new QLabel(Controls);
-        label->setObjectName(QString::fromUtf8("label"));
-        label->setGeometry(QRect(20, 0, 141, 21));
+        labelFileName = new QLabel(Controls);
+        labelFileName->setObjectName(QString::fromUtf8("labelFileName"));
+        labelFileName->setGeometry(QRect(20, 0, 141, 21));
+        butRefresh = new QPushButton(Controls);
+        butRefresh->setObjectName(QString::fromUtf8("butRefresh"));
+        butRefresh->setGeometry(QRect(170, 30, 75, 23));
         toolBox->addItem(Controls, QString::fromUtf8("Controls"));
         Settings = new QWidget();
         Settings->setObjectName(QString::fromUtf8("Settings"));
@@ -149,27 +154,30 @@ public:
         MaxLevelOfTree = new QSpinBox(Settings);
         MaxLevelOfTree->setObjectName(QString::fromUtf8("MaxLevelOfTree"));
         MaxLevelOfTree->setGeometry(QRect(10, 170, 46, 22));
-        label_2 = new QLabel(Settings);
-        label_2->setObjectName(QString::fromUtf8("label_2"));
-        label_2->setGeometry(QRect(80, 170, 151, 16));
+        labelMaxLvlOfTree = new QLabel(Settings);
+        labelMaxLvlOfTree->setObjectName(QString::fromUtf8("labelMaxLvlOfTree"));
+        labelMaxLvlOfTree->setGeometry(QRect(80, 170, 151, 16));
         MinNumberOfTriangleToSplit = new QSpinBox(Settings);
         MinNumberOfTriangleToSplit->setObjectName(QString::fromUtf8("MinNumberOfTriangleToSplit"));
         MinNumberOfTriangleToSplit->setGeometry(QRect(10, 210, 46, 22));
-        label_3 = new QLabel(Settings);
-        label_3->setObjectName(QString::fromUtf8("label_3"));
-        label_3->setGeometry(QRect(80, 210, 151, 16));
+        labelMinNofTrianglesToSplit = new QLabel(Settings);
+        labelMinNofTrianglesToSplit->setObjectName(QString::fromUtf8("labelMinNofTrianglesToSplit"));
+        labelMinNofTrianglesToSplit->setGeometry(QRect(80, 210, 151, 16));
         NumberOfSplitsPerNode = new QSpinBox(Settings);
         NumberOfSplitsPerNode->setObjectName(QString::fromUtf8("NumberOfSplitsPerNode"));
         NumberOfSplitsPerNode->setGeometry(QRect(10, 240, 46, 22));
-        label_4 = new QLabel(Settings);
-        label_4->setObjectName(QString::fromUtf8("label_4"));
-        label_4->setGeometry(QRect(80, 240, 151, 16));
+        labelNofSplitsPerNode = new QLabel(Settings);
+        labelNofSplitsPerNode->setObjectName(QString::fromUtf8("labelNofSplitsPerNode"));
+        labelNofSplitsPerNode->setGeometry(QRect(80, 240, 151, 16));
         NumberOfSubdivisions = new QSpinBox(Settings);
         NumberOfSubdivisions->setObjectName(QString::fromUtf8("NumberOfSubdivisions"));
         NumberOfSubdivisions->setGeometry(QRect(10, 280, 46, 22));
-        label_5 = new QLabel(Settings);
-        label_5->setObjectName(QString::fromUtf8("label_5"));
-        label_5->setGeometry(QRect(80, 280, 151, 16));
+        labelNofSubdivisions = new QLabel(Settings);
+        labelNofSubdivisions->setObjectName(QString::fromUtf8("labelNofSubdivisions"));
+        labelNofSubdivisions->setGeometry(QRect(80, 280, 151, 16));
+        labelNofThreads = new QLabel(Settings);
+        labelNofThreads->setObjectName(QString::fromUtf8("labelNofThreads"));
+        labelNofThreads->setGeometry(QRect(60, 60, 151, 16));
         toolBox->addItem(Settings, QString::fromUtf8("Settings"));
 
         horizontalLayout->addWidget(toolBox);
@@ -196,7 +204,7 @@ public:
 
         retranslateUi(MainWindow);
 
-        toolBox->setCurrentIndex(1);
+        toolBox->setCurrentIndex(0);
 
 
         QMetaObject::connectSlotsByName(MainWindow);
@@ -208,17 +216,19 @@ public:
         Image->setText(QString());
         openMeshButton->setText(QApplication::translate("MainWindow", "Browse", 0, QApplication::UnicodeUTF8));
         StartRender->setText(QApplication::translate("MainWindow", "Render", 0, QApplication::UnicodeUTF8));
-        AutoRender->setText(QApplication::translate("MainWindow", "Realtime", 0, QApplication::UnicodeUTF8));
-        label->setText(QApplication::translate("MainWindow", "Open File", 0, QApplication::UnicodeUTF8));
+        AutoRender->setText(QApplication::translate("MainWindow", "Continuous", 0, QApplication::UnicodeUTF8));
+        labelFileName->setText(QApplication::translate("MainWindow", "Open File", 0, QApplication::UnicodeUTF8));
+        butRefresh->setText(QApplication::translate("MainWindow", "Refresh", 0, QApplication::UnicodeUTF8));
         toolBox->setItemText(toolBox->indexOf(Controls), QApplication::translate("MainWindow", "Controls", 0, QApplication::UnicodeUTF8));
         RenderBezierCheckBox->setText(QApplication::translate("MainWindow", "Bezier", 0, QApplication::UnicodeUTF8));
         NormalSmoothingCheckBox->setText(QApplication::translate("MainWindow", "Normal Smoothing", 0, QApplication::UnicodeUTF8));
         checkBox->setText(QApplication::translate("MainWindow", "Use KD Tree", 0, QApplication::UnicodeUTF8));
         checkBox_2->setText(QApplication::translate("MainWindow", "Show KD Tree", 0, QApplication::UnicodeUTF8));
-        label_2->setText(QApplication::translate("MainWindow", "Max Level of Tree", 0, QApplication::UnicodeUTF8));
-        label_3->setText(QApplication::translate("MainWindow", "Min Number of Triangles to Split", 0, QApplication::UnicodeUTF8));
-        label_4->setText(QApplication::translate("MainWindow", "Number of Splits per Node", 0, QApplication::UnicodeUTF8));
-        label_5->setText(QApplication::translate("MainWindow", "Number of Subdivisions", 0, QApplication::UnicodeUTF8));
+        labelMaxLvlOfTree->setText(QApplication::translate("MainWindow", "Max Level of Tree", 0, QApplication::UnicodeUTF8));
+        labelMinNofTrianglesToSplit->setText(QApplication::translate("MainWindow", "Min Number of Triangles to Split", 0, QApplication::UnicodeUTF8));
+        labelNofSplitsPerNode->setText(QApplication::translate("MainWindow", "Number of Splits per Node", 0, QApplication::UnicodeUTF8));
+        labelNofSubdivisions->setText(QApplication::translate("MainWindow", "Number of Subdivisions", 0, QApplication::UnicodeUTF8));
+        labelNofThreads->setText(QApplication::translate("MainWindow", "Number of threads", 0, QApplication::UnicodeUTF8));
         toolBox->setItemText(toolBox->indexOf(Settings), QApplication::translate("MainWindow", "Settings", 0, QApplication::UnicodeUTF8));
         menuFiles->setTitle(QApplication::translate("MainWindow", "File", 0, QApplication::UnicodeUTF8));
     } // retranslateUi

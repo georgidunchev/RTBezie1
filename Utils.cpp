@@ -240,6 +240,11 @@ int CUtils::PowerOf2(const int nPow)
 	}
 }
 
+QVector3D CUtils::Reflect(const QVector3D &toBeReflected, const QVector3D &normal)
+{
+	    return toBeReflected + 2 * (Dot(normal, -toBeReflected)) * normal;
+}
+
 void CUtils::AddDebugString(const char* str)
 {
 	strDebugOut.append( QString(str) );
