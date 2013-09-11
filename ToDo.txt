@@ -1,3 +1,6 @@
+subdivide to bezier patches
+use bezier patches instead of subtriangles
+
 
 ======================================================================
 

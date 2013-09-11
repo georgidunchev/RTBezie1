@@ -139,7 +139,7 @@ void CSubTriangle::GetDivision(int& o_nStartOfLongest, QVector3D& o_vMidPoint, Q
 		const int j = (i + 1) % 3;
 
 		vMidPointBar = (GetVertBar(i) + GetVertBar(j)) / 2.0f;
-		vMidPoint = m_Parent.GetPointFromBarycentric(vMidPointBar);
+		vMidPoint = m_Parent.GetBezierPatch().GetPointFromBarycentric(vMidPointBar);
 
 		const float fNewDistance = (GetVert(i) - vMidPoint).lengthSquared();// this should work with bezier stuff
 
