@@ -28,7 +28,6 @@ SOURCES += main.cpp\
     lightpoint.cpp \
     shader.cpp \
     color.cpp \
-    beziertriangle.cpp \
     primitive.cpp \
     vertex.cpp \
     cview.cpp \
@@ -53,7 +52,6 @@ HEADERS  += mainwindow.h \
     lightpoint.h \
     shader.h \
     color.h \
-    beziertriangle.h \
     primitive.h \
     vertex.h \
     cview.h \
