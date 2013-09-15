@@ -57,8 +57,8 @@ public:
 				   const QVector3D& i_vA,
 				   const QVector3D& i_vB,
 				   const QVector3D& i_vC);
-	   
-	static bool IntersectTriangle( const CRay &i_Ray,
+
+    static bool IntersectTriangle( const CRay &i_Ray,
 				   CIntersactionInfo& io_IntersectionInfo,
 				   const QVector3D& i_vA,
 				   const QVector3D& i_vB,
@@ -67,20 +67,22 @@ public:
 				   const QVector3D& i_vBBar,
 				   const QVector3D& i_vCBar);
 
-	static int PowerOf2(const int nPow);
-	
-	static QVector3D Reflect(const QVector3D& toBeReflected, const QVector3D& normal);
+    static int PowerOf2(const int nPow);
 
-	//std::stringstream& DebugOut();
+    static QVector3D Reflect(const QVector3D& toBeReflected, const QVector3D& normal);
+
+    static void GetNextPoint(int& io_a, int& io_b, int nPos, int nMod = 1);
+
+    //std::stringstream& DebugOut();
 
 
-	void AddDebugString(const char* str);
+    void AddDebugString(const char* str);
 
-//private:
-	QString strDebugOut;
-//
-//signals:
-//	void DebugOutChanged(const QString& str);
+    //private:
+    QString strDebugOut;
+    //
+    //signals:
+    //	void DebugOutChanged(const QString& str);
 };
 
 

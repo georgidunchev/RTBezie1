@@ -8,6 +8,7 @@
 class CRay;
 class CIntersactionInfo;
 class CTriangle;
+class CSubTriangle;
 
 struct CVertexInfo
 {
@@ -17,7 +18,7 @@ struct CVertexInfo
     QVector3D* vNew1;
     QVector3D* vNew2;
     const QVector3D* vNormal;
-    CVertexInfo() {};
+    CVertexInfo() {}
     CVertexInfo(QVector3D& pMain,
 		QVector3D& pEnd1,
 		QVector3D& pNew1,
@@ -30,13 +31,14 @@ struct CVertexInfo
 	,vNew1(&pNew1)
 	,vNew2(&pNew2)
 	,vNormal(&pNormal)
-    {};
+    {}
 };
 
 class CBezierPatch
 {
 public:
     CBezierPatch(CTriangle* pParent);
+    CBezierPatch(CSubTriangle* pParent);
 
     const QVector3D GetPointFromBarycentric(const QVector3D& vCoords);
     const QVector3D GetPointFromBarycentric(const QVector2D& vCoords);
@@ -59,7 +61,7 @@ public:
 private:
     int GetIndex(int a, int b) const;
     QVector3D &Point(int a, int b);
-    const QVector3D &GetPoint(int a, int b) const;
+    const QVector3D &GetPoint(int a, int b) const;   
 
     void BuildBezierPoint(CVertexInfo& o_Info);
     void BuildBezierPoint(QVector3D& o_vNew,
@@ -67,7 +69,8 @@ private:
 			  const QVector3D& i_vEnd,
 			  const QVector3D& i_vNormal);
 
-    CTriangle* m_pParent;
+    CTriangle* m_pParent_Triangle;
+    CSubTriangle* m_pParent_SubTriangle;
 
     std::vector<QVector3D> m_aAdditionalPoints;
 

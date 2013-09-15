@@ -5,6 +5,7 @@
 #include <vector>
 #include <AABox.h>
 #include <vertex.h>
+#include "bezierpatch.h"
 
 class CRay;
 class CIntersactionInfo;
@@ -21,10 +22,16 @@ public:
 		 const QVector3D& m_vBBar,
 		 const QVector3D& m_vCBar,
 		 uint nSubdivisionLevel,
-		 CTriangle& Parent,
+		 CSubTriangle *Parent_SubTriangle,
 		 uint nSavePos);
 
-    virtual ~CSubTriangle() {};
+    CSubTriangle(int nStartOfLongest,
+		 bool bFirst,
+		 uint nSubdivisionLevel,
+		 CSubTriangle *Parent_SubTriangle,
+		 uint nSavePos);
+
+    virtual ~CSubTriangle() {}
 
     void Subdivide();
 
@@ -38,7 +45,9 @@ public:
     void MakeBoundingBox();
     const CAABox& GetBoundingBox();
 
-    CTriangle& GetParent() const { return m_Parent; };
+    CTriangle& GetParent() const { return m_Parent; }
+
+    CBezierPatch* GetBezierPatch()  { return m_pBezierPatch; }
 
     //debug
     int m_nSubtriangleID;
@@ -49,6 +58,7 @@ private:
 
 private:
     CTriangle& m_Parent;
+    CSubTriangle* m_pParent_SubTriangle;
     QVector3D m_vA;
     QVector3D m_vB;
     QVector3D m_vC;
@@ -57,6 +67,8 @@ private:
     QVector3D m_vCBar;
     uint m_nSavePos;
     uint m_nSubdivisionLevel;
+
+    CBezierPatch* m_pBezierPatch;
 
     //bounding box
     bool m_bHasBoundingBox;

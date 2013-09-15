@@ -56,9 +56,9 @@ public:
     CSubTriangle* GetSubTriangle(int n) const
     {
 	return m_aSubTriangles[n];
-    };
+    }
 
-    CBezierPatch& GetBezierPatch()  { return m_BezierPatch; };
+    CBezierPatch& GetBezierPatch()  { return m_BezierPatch; }
 protected:
     std::vector<int> m_aVertIndices;
     std::vector<CVertex>& m_aVertecis;

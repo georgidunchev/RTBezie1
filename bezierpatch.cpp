@@ -6,9 +6,17 @@
 #include <QDebug>
 #include "triangle.h"
 
-CBezierPatch::CBezierPatch(CTriangle *pParent):
-    m_pParent(pParent),
-    m_aAdditionalPoints(10, QVector3D(0, 0, 0))
+CBezierPatch::CBezierPatch(CTriangle *pParent)
+    : m_pParent_Triangle(pParent)
+    , m_pParent_SubTriangle(NULL)
+    , m_aAdditionalPoints(10, QVector3D(0, 0, 0))
+{
+}
+
+CBezierPatch::CBezierPatch(CSubTriangle *pParent)
+    : m_pParent_Triangle(NULL)
+    , m_pParent_SubTriangle(pParent)
+    , m_aAdditionalPoints(10, QVector3D(0, 0, 0))
 {
 }
 
@@ -39,32 +47,26 @@ const QVector3D CBezierPatch::GetPointFromBarycentric(float u, float v)
 
 void CBezierPatch::BuildBezierPoints()
 {
-    m_aAdditionalPoints[0] = m_pParent->A().GetPos();
-    m_aAdditionalPoints[1] = m_pParent->B().GetPos();
-    m_aAdditionalPoints[2] = m_pParent->C().GetPos();
+    m_aAdditionalPoints[0] = m_pParent_Triangle->A().GetPos();
+    m_aAdditionalPoints[1] = m_pParent_Triangle->B().GetPos();
+    m_aAdditionalPoints[2] = m_pParent_Triangle->C().GetPos();
 
     std::vector<CVertexInfo> aVertices;
     // Push the needed information for generating the additional points
     aVertices.push_back(CVertexInfo(Point(3,0),
 				    Point(0,3), Point(2,1),
 				    Point(0,0), Point(2,0),
-				    m_pParent->A().Normal_Get()));
+				    m_pParent_Triangle->A().Normal_Get()));
 
     aVertices.push_back(CVertexInfo(Point(0,3),
 				    Point(0,0), Point(0,2),
 				    Point(3,0), Point(1,2),
-				    m_pParent->B().Normal_Get()));
+				    m_pParent_Triangle->B().Normal_Get()));
 
     aVertices.push_back(CVertexInfo(Point(0,0),
 				    Point(3,0), Point(1,0),
 				    Point(0,3), Point(0,1),
-				    m_pParent->C().Normal_Get()));
-
-    //	Point(0,2) = Point(0,3);
-    //    	Point(1,2) = Point(0,3);
-
-    //	Point(1,0) = Point(0,0);
-    //	Point(0,1) = Point(0,0);
+				    m_pParent_Triangle->C().Normal_Get()));
 
     //Generate the new bezier points
     unsigned int nSize = aVertices.size();
@@ -110,10 +112,6 @@ void CBezierPatch::BuildBezierPoint(QVector3D &o_vNew,
     o_vNew *= k_fOneThird;
     o_vNew = CUtils::ProjectionOfVectorInPlane(o_vNew, i_vNormal);
     o_vNew += i_vMain;
-    //    o_vNew = (i_vEnd - i_vMain);
-    //    float fDot = CUtils::Dot(o_vNew, i_vNormal);
-    //    o_vNew = 2 * i_vMain + i_vEnd - fDot * i_vNormal;
-    //    o_vNew *= 0.3333f;
 }
 
 int CBezierPatch::GetIndex(int a, int b) const
@@ -316,9 +314,9 @@ bool CBezierPatch::intersect(const CRay &ray, CIntersactionInfo &info, QVector3D
 	    + Q01;
 
     //CUtils::Normal(info.m_vNormal, dBu, dBv);
-    QVector3D vNormalA = info.u * m_pParent->A().Normal_Get();
-    QVector3D vNormalB = info.v * m_pParent->B().Normal_Get();
-    QVector3D vNormalC = info.w * m_pParent->C().Normal_Get();
+    QVector3D vNormalA = info.u * m_pParent_Triangle->A().Normal_Get();
+    QVector3D vNormalB = info.v * m_pParent_Triangle->B().Normal_Get();
+    QVector3D vNormalC = info.w * m_pParent_Triangle->C().Normal_Get();
     info.m_vNormal = vNormalA + vNormalB + vNormalC;
     info.m_vNormal.normalize();
 

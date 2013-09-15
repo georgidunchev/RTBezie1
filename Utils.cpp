@@ -242,7 +242,20 @@ int CUtils::PowerOf2(const int nPow)
 
 QVector3D CUtils::Reflect(const QVector3D &toBeReflected, const QVector3D &normal)
 {
-	    return toBeReflected + 2 * (Dot(normal, -toBeReflected)) * normal;
+    return toBeReflected + 2 * (Dot(normal, -toBeReflected)) * normal;
+}
+
+void CUtils::GetNextPoint(int &io_a, int &io_b, int nPos, int nMod)
+{
+    int point[3] = {io_a, io_b, 3 - io_a - io_b};
+    int nPos2 = (nPos+1)%3;
+    int nPos3 = (nPos+2)%3;
+    point[nPos] = point[nPos] + nMod;
+    point[nPos2] = point[nPos2] - nMod ;
+    point[nPos3] = 3 - point[nPos] - point[nPos2];
+
+    io_a = point[0];
+    io_b = point[1];
 }
 
 void CUtils::AddDebugString(const char* str)
