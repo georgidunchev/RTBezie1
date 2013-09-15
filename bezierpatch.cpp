@@ -163,6 +163,11 @@ QVector3D& CBezierPatch::Point(int a, int b)
     return m_aAdditionalPoints[GetIndex(a,b)];
 }
 
+QVector3D &CBezierPatch::Point(int idx)
+{
+    return m_aAdditionalPoints[idx];
+}
+
 const QVector3D &CBezierPatch::GetPoint(int a, int b) const
 {
     return m_aAdditionalPoints[GetIndex(a,b)];

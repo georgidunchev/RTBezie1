@@ -58,10 +58,13 @@ public:
 		   unsigned int iterations,
 		   bool bDebug = false) const;
 
-private:
     int GetIndex(int a, int b) const;
     QVector3D &Point(int a, int b);
-    const QVector3D &GetPoint(int a, int b) const;   
+    QVector3D &Point(int idx);
+    const QVector3D &GetPoint(int a, int b) const;
+
+private:
+
 
     void BuildBezierPoint(CVertexInfo& o_Info);
     void BuildBezierPoint(QVector3D& o_vNew,
