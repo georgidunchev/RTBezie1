@@ -27,10 +27,7 @@ CSubTriangle::CSubTriangle(CTriangle& triangle)
     , m_nSubdivisionLevel(1)
 {
     m_pBezierPatch = new CBezierPatch(this);
-    for (uint i = 0; i < 10; ++i)
-    {
-	m_pBezierPatch->Point(i) = m_Parent.GetBezierPatch().Point(i);
-    }
+    m_pBezierPatch->BuildBezierPoints_InitialSub();
 }
 
 CSubTriangle::CSubTriangle(	const QVector3D& vA,
@@ -66,169 +63,17 @@ CSubTriangle::CSubTriangle(int nStartOfLongest,
     , m_nSavePos(nSavePos)
     , m_nSubdivisionLevel(nSubdivisionLevel)
 {
-
     m_pBezierPatch = new CBezierPatch(this);
-
-    int a[3], b[3];
-    switch (nStartOfLongest)
-    {
-    case 0:
-    {
-	a[0] = a[1] = a[2] = 3;
-	b[0] = b[1] = b[2] = 0;
-	break;
-    }
-    case 1:
-    {
-	a[0] = a[1] = a[2] = 0;
-	b[0] = b[1] = b[2] = 3;
-	break;
-    }
-    case 2:
-    {
-	a[0] = a[1] = a[2] = 0;
-	b[0] = b[1] = b[2] = 0;
-	break;
-    }
-    }
-
-    int pos1 = (nStartOfLongest - 1)%3;
-
-    CUtils::GetNextPoint(a[1], b[1], pos1, 3);
-    CUtils::GetNextPoint(a[2], b[2], nStartOfLongest, -3);
-
-    //divide subtriangle by the longest edge
-    const int nSecondPoint = (nStartOfLongest + 1) % 3;
-    const int nThirdPoint = (nStartOfLongest + 2) % 3;
-
-    QVector3D vMidPointBar = (GetVertBar(nStartOfLongest) + GetVertBar(nSecondPoint)) / 2.0f;
-    QVector3D vMidPoint = m_Parent.GetBezierPatch().GetPointFromBarycentric(vMidPointBar);
-
-//    if (bFirst)
-    {
-	//300
-	m_pBezierPatch->Point(a[2], b[2]) = m_pParent_SubTriangle->GetBezierPatch()->GetPoint(a[2],b[2]);
-	qDebug() << a[2] << b[2];
-
-	int c[6];
-	int d[6];
-	QVector3D t[3];
-	//201 &210
-	c[0] = c[1] = a[2];
-	d[0] = d[1] = b[2];
-	CUtils::GetNextPoint(c[0], d[0], 2 - nStartOfLongest, 1);
-	CUtils::GetNextPoint(c[1], d[1], (3 - nStartOfLongest)%3, -1);
-	qDebug() << c[0] << d[0] << "," << c[1] << d[1];
-
-	t[0] = m_pParent_SubTriangle->GetBezierPatch()->GetPoint(c[0],d[0]);
-	t[1] = m_pParent_SubTriangle->GetBezierPatch()->GetPoint(c[1],d[1]);
-	m_pBezierPatch->Point(c[0], d[0]) = t[0];
-	m_pBezierPatch->Point(c[1], d[1]) = (t[0] + t[1]) * 0.5f;
-
-	//102 & 111 & 120
-	c[0] = c[1] = c[2] = a[2];
-	d[0] = d[1] = d[2] = b[2];
-	CUtils::GetNextPoint(c[0], d[0], 2 - nStartOfLongest, 2);
-	c[1] = 1; d[1] = 1;
-	CUtils::GetNextPoint(c[2], d[2], (3 - nStartOfLongest)%3, -2);
-	qDebug() << c[0] << d[0] << "," << c[1] << d[1] << "," << c[2] << d[2];
-
-	t[0] = m_pParent_SubTriangle->GetBezierPatch()->GetPoint(c[0],d[0]);
-	t[1] = m_pParent_SubTriangle->GetBezierPatch()->GetPoint(c[1],d[1]);
-	t[2] = m_pParent_SubTriangle->GetBezierPatch()->GetPoint(c[2],d[2]);
-	m_pBezierPatch->Point(c[0], d[0]) = t[0];
-	t[0] = (t[0]+t[1]) * 0.5f;
-	t[1] = (t[1]+t[2]) * 0.5f;
-	m_pBezierPatch->Point(c[1], d[1]) = t[0];
-	t[0] = (t[0]+t[1]) * 0.5f;
-	m_pBezierPatch->Point(c[2], d[2]) = t[0];
-
-	//003 & 012 & 021 & 030
-	c[0] = c[1] = c[2] = c[3] = a[0];
-	d[0] = d[1] = d[2] = d[3] = b[0];
-	CUtils::GetNextPoint(c[1], d[1], (4 - nStartOfLongest)%3, 1);
-	CUtils::GetNextPoint(c[2], d[2], (4 - nStartOfLongest)%3, 2);
-	c[3] = a[1]; d[3]= b[1];
-	qDebug() << c[0] << d[0] << "," << c[1] << d[1] << "," << c[2] << d[2] << "," << c[3] << d[3];
-
-	t[0] = m_pParent_SubTriangle->GetBezierPatch()->GetPoint(c[0],d[0]);
-	t[1] = m_pParent_SubTriangle->GetBezierPatch()->GetPoint(c[1],d[1]);
-	t[2] = m_pParent_SubTriangle->GetBezierPatch()->GetPoint(c[2],d[2]);
-
-	m_pBezierPatch->Point(c[0], d[0]) = t[0];
-	t[0] = (t[0]+t[1]) * 0.5f;
-	t[1] = (t[1]+t[2]) * 0.5f;
-	m_pBezierPatch->Point(c[1], d[1]) = t[0];
-	t[0] = (t[0]+t[1]) * 0.5f;
-	m_pBezierPatch->Point(c[2], d[2]) = t[0];
-	m_pBezierPatch->Point(c[3], d[3]) = vMidPoint;
-
-    }
-//    else
-    {
-	//300
-	m_pBezierPatch->Point(a[2], b[2]) = m_pParent_SubTriangle->GetBezierPatch()->GetPoint(a[2],b[2]);
-	qDebug() << a[2] << b[2];
-
-	int c[3];
-	int d[3];
-	QVector3D t[3];
-
-	//201 & 210
-	c[0] = c[1] = a[2];
-	d[0] = d[1] = b[2];
-	CUtils::GetNextPoint(c[0], d[0], 2 - nStartOfLongest, 1);
-	CUtils::GetNextPoint(c[1], d[1], (3 - nStartOfLongest)%3, -1);
-	qDebug() << c[0] << d[0] << "," << c[1] << d[1];
-	t[0] = m_pParent_SubTriangle->GetBezierPatch()->GetPoint(c[0],d[0]);
-	t[1] = m_pParent_SubTriangle->GetBezierPatch()->GetPoint(c[1],d[1]);
-	m_pBezierPatch->Point(c[0], d[0]) = (t[0]+t[1]) * 0.5f;
-	m_pBezierPatch->Point(c[1], d[1]) = t[1];
-
-	//102 & 111 & 120
-	c[0] = c[1] = c[2] = a[2];
-	d[0] = d[1] = d[2] = b[2];
-	CUtils::GetNextPoint(c[0], d[0], 2 - nStartOfLongest, 2);
-	c[1] = 1; d[1] = 1;
-	CUtils::GetNextPoint(c[2], d[2], (3 - nStartOfLongest)%3, -2);
-	qDebug() << c[0] << d[0] << "," << c[1] << d[1] << "," << c[2] << d[2];
-
-	t[0] = m_pParent_SubTriangle->GetBezierPatch()->GetPoint(c[2],d[2]);
-	t[1] = m_pParent_SubTriangle->GetBezierPatch()->GetPoint(c[1],d[1]);
-	t[2] = m_pParent_SubTriangle->GetBezierPatch()->GetPoint(c[0],d[0]);
-	m_pBezierPatch->Point(c[2], d[2]) = t[0];
-	t[0] = (t[0]+t[1]) * 0.5f;
-	t[1] = (t[0]+t[1]) * 0.5f;
-	m_pBezierPatch->Point(c[1], d[1]) = t[0];
-	t[0] = (t[0]+t[1]) * 0.5f;
-	m_pBezierPatch->Point(c[0], d[0]) = t[0];
-
-	//003 & 012 & 021 & 030
-	c[0] = c[1] = c[2] = c[3] = a[0];
-	d[0] = d[1] = d[2] = d[3] = b[0];
-	CUtils::GetNextPoint(c[1], d[1], (4 - nStartOfLongest)%3, 1);
-	CUtils::GetNextPoint(c[2], d[2], (4 - nStartOfLongest)%3, 2);
-	c[3] = a[1]; d[3]= b[1];
-	qDebug() << c[0] << d[0] << "," << c[1] << d[1] << "," << c[2] << d[2] << "," << c[3] << d[3];
-
-	t[0] = m_pParent_SubTriangle->GetBezierPatch()->GetPoint(c[3],d[3]);
-	t[1] = m_pParent_SubTriangle->GetBezierPatch()->GetPoint(c[2],d[2]);
-	t[2] = m_pParent_SubTriangle->GetBezierPatch()->GetPoint(c[1],d[1]);
-
-	m_pBezierPatch->Point(c[3], d[3]) = t[0];
-	t[0] = (t[0]+t[1]) * 0.5f;
-	t[1] = (t[1]+t[2]) * 0.5f;
-	m_pBezierPatch->Point(c[2], d[2]) = t[0];
-	t[0] = (t[0]+t[1]) * 0.5f;
-	m_pBezierPatch->Point(c[1], d[1]) = t[0];
-	m_pBezierPatch->Point(c[0], d[0]) = vMidPoint;
-    }
+    m_pBezierPatch->BuildBezierPoints_Sub(nStartOfLongest, bFirst);
 
 
-    qDebug()<<a[0] << b[0];
-    qDebug()<<a[1] << b[1];
-    qDebug()<<a[2] << b[2];
 
+//    //divide subtriangle by the longest edge
+//    const int nSecondPoint = (nStartOfLongest + 1) % 3;
+//    const int nThirdPoint = (nStartOfLongest + 2) % 3;
+
+//    QVector3D vMidPointBar = (GetVertBar(nStartOfLongest) + GetVertBar(nSecondPoint)) / 2.0f;
+//    QVector3D vMidPoint = m_Parent.GetBezierPatch().GetPointFromBarycentric(vMidPointBar);
 
 
 //    int a_second, b_second;

@@ -44,7 +44,13 @@ public:
     const QVector3D GetPointFromBarycentric(const QVector2D& vCoords);
     const QVector3D GetPointFromBarycentric(float u, float v);
 
+    // used for triangles from the mesh
     void BuildBezierPoints();
+    // used for initial sub triangles created from triangle
+    void BuildBezierPoints_InitialSub();
+    // used for sub triangles
+    void BuildBezierPoints_Sub(int nStartOfLongest, bool bFirst);
+
     void Subdivide();
 //    void AddSubTriangle(CSubTriangle* subTriangle);
 //    CSubTriangle* GetSubTriangle(int n) const
@@ -71,6 +77,8 @@ private:
 			  const QVector3D& i_vMain,
 			  const QVector3D& i_vEnd,
 			  const QVector3D& i_vNormal);
+
+    void Reverse(std::vector<int>& io_c, std::vector<int>& io_d);
 
     CTriangle* m_pParent_Triangle;
     CSubTriangle* m_pParent_SubTriangle;

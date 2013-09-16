@@ -5,6 +5,7 @@
 #include <qmath.h>
 #include <QDebug>
 #include "triangle.h"
+#include "SubTriangle.h"
 
 CBezierPatch::CBezierPatch(CTriangle *pParent)
     : m_pParent_Triangle(pParent)
@@ -97,6 +98,130 @@ void CBezierPatch::BuildBezierPoints()
     Q00 = Point(0,0);
 }
 
+void CBezierPatch::BuildBezierPoints_InitialSub()
+{
+    for (uint i = 0; i < 10; ++i)
+    {
+	Point(i) = m_pParent_SubTriangle->GetParent().GetBezierPatch().Point(i);
+    }
+}
+
+void CBezierPatch::BuildBezierPoints_Sub(int nStartOfLongest, bool bFirst)
+{
+    int a[3], b[3];
+    switch (nStartOfLongest)
+    {
+    case 0:
+    {
+	a[0] = a[1] = a[2] = 3;
+	b[0] = b[1] = b[2] = 0;
+	break;
+    }
+    case 1:
+    {
+	a[0] = a[1] = a[2] = 0;
+	b[0] = b[1] = b[2] = 3;
+	break;
+    }
+    case 2:
+    {
+	a[0] = a[1] = a[2] = 0;
+	b[0] = b[1] = b[2] = 0;
+	break;
+    }
+    }
+
+    int pos1 = (2 + nStartOfLongest)%3;
+
+    CUtils::GetNextPoint(a[1], b[1], pos1, 3);
+    CUtils::GetNextPoint(a[2], b[2], nStartOfLongest, -3);
+
+    CBezierPatch& ParentPatch = *m_pParent_SubTriangle->GetParentSubTriangle()->GetBezierPatch();
+
+    //300
+    Point(a[2], b[2]) = ParentPatch.GetPoint(a[2],b[2]);
+    qDebug() << a[2] << b[2];
+
+    std::vector<int> c;
+    std::vector<int> d;
+    QVector3D t[4];
+    //201 &210
+    c.assign(2, a[2]);
+    d.assign(2, b[2]);
+    CUtils::GetNextPoint(c[0], d[0], nStartOfLongest, 1);
+    CUtils::GetNextPoint(c[1], d[1], (1 + nStartOfLongest)%3, -1);
+
+    if (!bFirst)
+    {
+	Reverse(c, d);
+    }
+
+    qDebug() << c[0] << d[0] << "," << c[1] << d[1];
+
+    t[0] = ParentPatch.GetPoint(c[0],d[0]);
+    t[1] = ParentPatch.GetPoint(c[1],d[1]);
+    Point(c[0], d[0]) = t[0];
+    Point(c[1], d[1]) = (t[0] + t[1]) * 0.5f;
+
+    //102 & 111 & 120
+    c.clear();
+    d.clear();
+    c.assign(3, a[2]);
+    d.assign(3, b[2]);
+    CUtils::GetNextPoint(c[0], d[0], nStartOfLongest, 2);
+    c[1] = 1; d[1] = 1;
+    CUtils::GetNextPoint(c[2], d[2], (1 + nStartOfLongest)%3, -2);
+
+    if (!bFirst)
+    {
+	Reverse(c, d);
+    }
+
+    qDebug() << c[0] << d[0] << "," << c[1] << d[1] << "," << c[2] << d[2];
+
+    t[0] = ParentPatch.GetPoint(c[0],d[0]);
+    t[1] = ParentPatch.GetPoint(c[1],d[1]);
+    t[2] = ParentPatch.GetPoint(c[2],d[2]);
+    Point(c[0], d[0]) = t[0];
+    t[0] = (t[0]+t[1]) * 0.5f;
+    t[1] = (t[1]+t[2]) * 0.5f;
+    Point(c[1], d[1]) = t[0];
+    t[0] = (t[0]+t[1]) * 0.5f;
+    Point(c[2], d[2]) = t[0];
+
+    //003 & 012 & 021 & 030
+    c.clear();
+    d.clear();
+    c.assign(4, a[0]);
+    d.assign(4, b[0]);
+    CUtils::GetNextPoint(c[1], d[1], (2 + nStartOfLongest)%3, 1);
+    CUtils::GetNextPoint(c[2], d[2], (2 + nStartOfLongest)%3, 2);
+    c[3] = a[1]; d[3]= b[1];
+
+    if (!bFirst)
+    {
+	Reverse(c, d);
+    }
+
+    qDebug() << c[0] << d[0] << "," << c[1] << d[1] << "," << c[2] << d[2] << "," << c[3] << d[3];
+
+    t[0] = ParentPatch.GetPoint(c[0],d[0]);
+    t[1] = ParentPatch.GetPoint(c[1],d[1]);
+    t[2] = ParentPatch.GetPoint(c[2],d[2]);
+    t[3] = ParentPatch.GetPoint(c[3],d[3]);
+
+    Point(c[0], d[0]) = t[0];
+    t[0] = (t[0]+t[1]) * 0.5f;
+    t[1] = (t[1]+t[2]) * 0.5f;
+    t[2] = (t[2] + ParentPatch.GetPoint(c[3],d[3])) * 0.5f;
+    Point(c[1], d[1]) = t[0];
+    t[0] = (t[0]+t[1]) * 0.5f;
+    t[1] = (t[1]+t[2]) * 0.5f;
+    Point(c[2], d[2]) = t[0];
+    t[0] = (t[0]+t[1]) * 0.5f;
+    Point(c[3], d[3]) = t[0];
+}
+
 void CBezierPatch::BuildBezierPoint(CVertexInfo &o_Info)
 {
     BuildBezierPoint(*o_Info.vNew1, *o_Info.vMain, *o_Info.vEnd1, *o_Info.vNormal);
@@ -112,6 +237,16 @@ void CBezierPatch::BuildBezierPoint(QVector3D &o_vNew,
     o_vNew *= k_fOneThird;
     o_vNew = CUtils::ProjectionOfVectorInPlane(o_vNew, i_vNormal);
     o_vNew += i_vMain;
+}
+
+void CBezierPatch::Reverse(std::vector<int> &io_c, std::vector<int> &io_d)
+{
+    for (uint i = 0, n = io_c.size(); i < n/2; ++i)
+    {
+	const int j = n-1-i;
+	std::swap(io_c[i], io_c[j]);
+	std::swap(io_d[i], io_d[j]);
+    }
 }
 
 int CBezierPatch::GetIndex(int a, int b) const

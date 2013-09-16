@@ -46,6 +46,7 @@ public:
     const CAABox& GetBoundingBox();
 
     CTriangle& GetParent() const { return m_Parent; }
+    CSubTriangle* GetParentSubTriangle() const { return m_pParent_SubTriangle; }
 
     CBezierPatch* GetBezierPatch()  { return m_pBezierPatch; }
 
