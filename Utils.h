@@ -71,7 +71,7 @@ public:
 
     static QVector3D Reflect(const QVector3D& toBeReflected, const QVector3D& normal);
 
-    static void GetNextPoint(int& io_a, int& io_b, int nPos, int nMod = 1);
+    static void GetNextPoint(int& io_a, int& io_b, int nPos, int nMod);
 
     //std::stringstream& DebugOut();
 

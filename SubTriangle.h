@@ -15,18 +15,11 @@ class CSubTriangle
 {
 public:
     CSubTriangle(CTriangle& triangle);
-    CSubTriangle(const QVector3D& vA,
-		 const QVector3D& vB,
-		 const QVector3D& vC,
+    CSubTriangle(int nStartOfLongest,
+		 bool bFirst,
 		 const QVector3D& m_vABar,
 		 const QVector3D& m_vBBar,
 		 const QVector3D& m_vCBar,
-		 uint nSubdivisionLevel,
-		 CSubTriangle *Parent_SubTriangle,
-		 uint nSavePos);
-
-    CSubTriangle(int nStartOfLongest,
-		 bool bFirst,
 		 uint nSubdivisionLevel,
 		 CSubTriangle *Parent_SubTriangle,
 		 uint nSavePos);
@@ -35,6 +28,7 @@ public:
 
     void Subdivide();
 
+    static bool IntersectSubdevidedTriangles(const CRay &ray, CIntersactionInfo &intersectionInfo, const std::vector<CSubTriangle*>& aSubTriangles, bool bDebug = false);
     virtual bool Intersect(const CRay& ray, CIntersactionInfo& intersectionInfo, bool bDebug = false) const;
 
     const int GetSavePos() const { return m_nSavePos; }
@@ -60,9 +54,6 @@ private:
 private:
     CTriangle& m_Parent;
     CSubTriangle* m_pParent_SubTriangle;
-    QVector3D m_vA;
-    QVector3D m_vB;
-    QVector3D m_vC;
     QVector3D m_vABar;
     QVector3D m_vBBar;
     QVector3D m_vCBar;

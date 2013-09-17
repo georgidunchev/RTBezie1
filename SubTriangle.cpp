@@ -17,9 +17,6 @@
 CSubTriangle::CSubTriangle(CTriangle& triangle)
     : m_Parent(triangle)
     , m_pParent_SubTriangle(NULL)
-    , m_vA(m_Parent.A().GetPos())
-    , m_vB(m_Parent.B().GetPos())
-    , m_vC(m_Parent.C().GetPos())
     , m_vABar(1.0f, 0.0f, 0.0f)
     , m_vBBar(0.0f, 1.0f, 0.0f)
     , m_vCBar(0.0f, 0.0f, 1.0f)
@@ -30,68 +27,28 @@ CSubTriangle::CSubTriangle(CTriangle& triangle)
     m_pBezierPatch->BuildBezierPoints_InitialSub();
 }
 
-CSubTriangle::CSubTriangle(	const QVector3D& vA,
-				const QVector3D& vB,
-				const QVector3D& vC,
-				const QVector3D& m_vABar,
-				const QVector3D& m_vBBar,
-				const QVector3D& m_vCBar,
-				uint nSubdivisionLevel,
-				CSubTriangle* Parent_SubTriangle,
-				uint nSavePos)
+CSubTriangle::CSubTriangle(int nStartOfLongest,
+	     bool bFirst,
+	     const QVector3D &m_vABar,
+	     const QVector3D &m_vBBar,
+	     const QVector3D &m_vCBar,
+	     uint nSubdivisionLevel, CSubTriangle *Parent_SubTriangle, uint nSavePos)
     : m_Parent(Parent_SubTriangle->GetParent())
     , m_pParent_SubTriangle(Parent_SubTriangle)
-    , m_vA(vA)
-    , m_vB(vB)
-    , m_vC(vC)
     , m_vABar(m_vABar)
     , m_vBBar(m_vBBar)
     , m_vCBar(m_vCBar)
     , m_nSavePos(nSavePos)
     , m_nSubdivisionLevel(nSubdivisionLevel)
 {
-
-}
-
-CSubTriangle::CSubTriangle(int nStartOfLongest,
-	     bool bFirst,
-	     uint nSubdivisionLevel,
-	     CSubTriangle *Parent_SubTriangle,
-	     uint nSavePos)
-    : m_Parent(Parent_SubTriangle->GetParent())
-    , m_pParent_SubTriangle(Parent_SubTriangle)
-    , m_nSavePos(nSavePos)
-    , m_nSubdivisionLevel(nSubdivisionLevel)
-{
     m_pBezierPatch = new CBezierPatch(this);
     m_pBezierPatch->BuildBezierPoints_Sub(nStartOfLongest, bFirst);
 
-
-
-//    //divide subtriangle by the longest edge
-//    const int nSecondPoint = (nStartOfLongest + 1) % 3;
-//    const int nThirdPoint = (nStartOfLongest + 2) % 3;
-
-//    QVector3D vMidPointBar = (GetVertBar(nStartOfLongest) + GetVertBar(nSecondPoint)) / 2.0f;
-//    QVector3D vMidPoint = m_Parent.GetBezierPatch().GetPointFromBarycentric(vMidPointBar);
-
-
-//    int a_second, b_second;
-//    CSubTriangle* pSecondSubTriangle = new CSubTriangle(vMidPoint, GetVert(nSecondPoint), vertex3
-//							, vMidPointBar, GetVertBar(nSecondPoint), vertex3Bar
-//							, m_nSubdivisionLevel + 1, this, nNewSavePoint);
-
-//    CSubTriangle* pFirstSubTriangle = new CSubTriangle(	GetVert(nStartOfLongest), vMidPoint, vertex3
-//							, GetVertBar(nStartOfLongest), vMidPointBar, vertex3Bar
-//							, m_nSubdivisionLevel + 1, this, m_nSavePos);
-
-//    const QVector3D& vertex3 = GetVert(nThirdPoint);
-//    const QVector3D& vertex3Bar = GetVertBar(nThirdPoint);
-
-//    // populate the second subtriangle first, because the current subtriangle will be overridden when the first subtriangle is saved
-//    const uint nNewSavePoint = m_nSavePos +
-//	    CUtils::PowerOf2( static_cast<int>(GetSettings()->GetNofSubdivisions()) -
-//			      m_nSubdivisionLevel);
+//    qDebug() << "1" << m_Parent.GetBezierPatch().GetPointFromBarycentric(m_vABar)
+//	     << m_Parent.GetBezierPatch().GetPointFromBarycentric(m_vBBar)
+//	     << m_Parent.GetBezierPatch().GetPointFromBarycentric(m_vCBar)
+//	     << "Longest" << nStartOfLongest;
+//    qDebug() << "2" <<m_pBezierPatch->GetPoint(3,0) << m_pBezierPatch->GetPoint(0,3) << m_pBezierPatch->GetPoint(0,0) << "Longest" << nStartOfLongest;
 }
 
 const QVector3D& CSubTriangle::GetVert(int i) const
@@ -101,15 +58,18 @@ const QVector3D& CSubTriangle::GetVert(int i) const
     {
     case 0:
     {
-	return m_vA;
+//	return m_vA;
+	return m_pBezierPatch->GetPoint(3,0);
     }
     case 1:
     {
-	return m_vB;
+//	return m_vB;
+	return m_pBezierPatch->GetPoint(0,3);
     }
     default:
     {
-	return m_vC;
+//	return m_vC;
+	return m_pBezierPatch->GetPoint(0,0);
     }
     }
 }
@@ -149,28 +109,20 @@ void CSubTriangle::Subdivide()
 
     GetDivision(nStartOfLongest, vMidPoint, vMidPointBar);
 
-    //divide subtriangle by the longest edge
-    const int nSecondPoint = (nStartOfLongest + 1) % 3;
-    const int nThirdPoint = (nStartOfLongest + 2) % 3;
-
-    const QVector3D& vertex3 = GetVert(nThirdPoint);
-    const QVector3D& vertex3Bar = GetVertBar(nThirdPoint);
-
     // populate the second subtriangle first, because the current subtriangle will be overridden when the first subtriangle is saved
-    const uint nNewSavePoint = m_nSavePos +
-	    CUtils::PowerOf2( static_cast<int>(GetSettings()->GetNofSubdivisions()) -
-			      m_nSubdivisionLevel);
-//    CSubTriangle* pSecondSubTriangle = new CSubTriangle(vMidPoint, GetVert(nSecondPoint), vertex3
-//							, vMidPointBar, GetVertBar(nSecondPoint), vertex3Bar
-//							, m_nSubdivisionLevel + 1, this, nNewSavePoint);
-    CSubTriangle* pSecondSubTriangle = new CSubTriangle(nStartOfLongest, false, m_nSubdivisionLevel + 1, this, nNewSavePoint);
-
+    const uint nNewSavePoint = m_nSavePos + CUtils::PowerOf2( static_cast<int>(GetSettings()->GetNofSubdivisions()) - m_nSubdivisionLevel);
+    QVector3D a[3] = {GetVertBar(0), GetVertBar(1), GetVertBar(2)};
+    a[nStartOfLongest] = vMidPointBar;
+    CSubTriangle* pSecondSubTriangle = new CSubTriangle(nStartOfLongest, false
+							, a[0], a[1], a[2]
+							, m_nSubdivisionLevel + 1, this, nNewSavePoint);
     m_Parent.AddSubTriangle(pSecondSubTriangle);
 
-//    CSubTriangle* pFirstSubTriangle = new CSubTriangle(	GetVert(nStartOfLongest), vMidPoint, vertex3
-//							, GetVertBar(nStartOfLongest), vMidPointBar, vertex3Bar
-//							, m_nSubdivisionLevel + 1, this, m_nSavePos);
-    CSubTriangle* pFirstSubTriangle = new CSubTriangle(	nStartOfLongest, true, m_nSubdivisionLevel + 1, this, m_nSavePos);
+    QVector3D b[3] = {GetVertBar(0), GetVertBar(1), GetVertBar(2)};
+    b[(nStartOfLongest+1)%3] = vMidPointBar;
+    CSubTriangle* pFirstSubTriangle = new CSubTriangle(	nStartOfLongest, true
+							, b[0], b[1], b[2]
+							, m_nSubdivisionLevel + 1, this, m_nSavePos);
     m_Parent.AddSubTriangle(pFirstSubTriangle);
 }
 
@@ -201,9 +153,52 @@ void CSubTriangle::GetDivision(int& o_nStartOfLongest, QVector3D& o_vMidPoint, Q
     }
 }
 
+bool CSubTriangle::IntersectSubdevidedTriangles(const CRay &ray, CIntersactionInfo &intersectionInfo, const std::vector<CSubTriangle*>& aSubTriangles, bool bDebug)
+{
+    int nSize = aSubTriangles.size();
+    float fModifier = 8.0f / static_cast<float>(nSize);
+
+    bool bIntersected = false;
+
+    for (int i = 0; i < nSize; i++)
+    {
+	CIntersactionInfo intersectionInfoLocal(intersectionInfo);
+	if( aSubTriangles[i]->Intersect(ray, intersectionInfoLocal,bDebug) )
+	{
+	    int nId = aSubTriangles[i]->m_nSubtriangleID;
+
+	    if (false)
+	    {
+		int nSubtriangleId = aSubTriangles[i]->m_nSubtriangleID;
+		bool bR = ((nSubtriangleId / 4) > 0);
+		bool bG = (((nSubtriangleId % 4) / 2) > 0);
+		bool bB = (((nSubtriangleId % 4) % 2) > 0);
+
+		float fR = bR ? fModifier * static_cast<float>(nSubtriangleId) * 0.125f : 0.0f;
+		float fG = bG ? fModifier * static_cast<float>(nSubtriangleId) * 0.125f : 0.0f;
+		float fB = bB ? fModifier * static_cast<float>(nSubtriangleId) * 0.125f : 0.0f;
+
+		intersectionInfoLocal.color = CColor(fR, fG, fB);
+	    }
+
+	    intersectionInfoLocal.pSubTriangle = aSubTriangles[i];
+
+	    intersectionInfoLocal.m_nSubTriangleId = nId;
+
+	    if (intersectionInfoLocal.m_fDistance < intersectionInfo.m_fDistance)
+	    {
+		intersectionInfo = intersectionInfoLocal;
+		bIntersected = true;
+	    }
+	}
+    }
+    return bIntersected;
+}
+
 bool CSubTriangle::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo, bool bDebug) const
 {
-    bool bIntersect = CUtils::IntersectTriangle(ray, intersectionInfo, m_vA, m_vB, m_vC, m_vABar, m_vBBar, m_vCBar);
+    bool bIntersect = CUtils::IntersectTriangle(ray, intersectionInfo, GetVert(0), GetVert(1), GetVert(2), m_vABar, m_vBBar, m_vCBar);
+//    bool bIntersect = m_pBezierPatch->intersect(ray, intersectionInfo, bDebug);
     if (bIntersect)
     {
 	//Smoothed normal

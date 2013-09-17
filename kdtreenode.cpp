@@ -143,7 +143,7 @@ bool CKDTreeNode::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo
 	//end criteria - the node is a leaf and we intersect the contained triangles
 	if (!m_pLeftNode || !m_pRightNode)
 	{
-		bool bIntersect = CTriangle::IntersectSubdevidedTriangles(ray, intersectionInfo, *m_pTriangles);
+		bool bIntersect = CSubTriangle::IntersectSubdevidedTriangles(ray, intersectionInfo, *m_pTriangles);
 		//bool bIntersect = CTriangle::Intersect(ray, intersectionInfo, *m_pTriangles);
 		if (!bIntersect && k_bSHOW_KDTREE)
 		{

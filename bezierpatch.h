@@ -58,11 +58,14 @@ public:
 //	return m_aSubTriangles[n];
 //    };
 
+    bool IntersectHighQuality(const CRay& ray, CIntersactionInfo& intersectionInfo, bool bDebug = false) const;
     bool intersect(const CRay &ray,
 		   CIntersactionInfo &info,
 		   QVector3D &barCoord,
 		   unsigned int iterations,
 		   bool bDebug = false) const;
+
+
 
     int GetIndex(int a, int b) const;
     QVector3D &Point(int a, int b);

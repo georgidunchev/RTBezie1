@@ -133,51 +133,51 @@ void CBezierPatch::BuildBezierPoints_Sub(int nStartOfLongest, bool bFirst)
 
     int pos1 = (2 + nStartOfLongest)%3;
 
-    CUtils::GetNextPoint(a[1], b[1], pos1, 3);
-    CUtils::GetNextPoint(a[2], b[2], nStartOfLongest, -3);
+    CUtils::GetNextPoint(a[1], b[1], nStartOfLongest, -3);
+    CUtils::GetNextPoint(a[2], b[2], pos1, 3);
 
     CBezierPatch& ParentPatch = *m_pParent_SubTriangle->GetParentSubTriangle()->GetBezierPatch();
 
-    //300
+    //003
     Point(a[2], b[2]) = ParentPatch.GetPoint(a[2],b[2]);
-    qDebug() << a[2] << b[2];
+//    qDebug() << a[2] << b[2] << (bFirst?"Left":"Right");
 
     std::vector<int> c;
     std::vector<int> d;
     QVector3D t[4];
-    //201 &210
+    //102 &012
     c.assign(2, a[2]);
     d.assign(2, b[2]);
-    CUtils::GetNextPoint(c[0], d[0], nStartOfLongest, 1);
-    CUtils::GetNextPoint(c[1], d[1], (1 + nStartOfLongest)%3, -1);
+    CUtils::GetNextPoint(c[0], d[0], (2 + nStartOfLongest)%3, -1);
+    CUtils::GetNextPoint(c[1], d[1], (1 + nStartOfLongest)%3, 1);
 
     if (!bFirst)
     {
 	Reverse(c, d);
     }
 
-    qDebug() << c[0] << d[0] << "," << c[1] << d[1];
+//    qDebug() << c[0] << d[0] << "," << c[1] << d[1];
 
     t[0] = ParentPatch.GetPoint(c[0],d[0]);
     t[1] = ParentPatch.GetPoint(c[1],d[1]);
     Point(c[0], d[0]) = t[0];
     Point(c[1], d[1]) = (t[0] + t[1]) * 0.5f;
 
-    //102 & 111 & 120
+    //201 & 111 & 021
     c.clear();
     d.clear();
     c.assign(3, a[2]);
     d.assign(3, b[2]);
-    CUtils::GetNextPoint(c[0], d[0], nStartOfLongest, 2);
+    CUtils::GetNextPoint(c[0], d[0], (2 + nStartOfLongest)%3, -2);
     c[1] = 1; d[1] = 1;
-    CUtils::GetNextPoint(c[2], d[2], (1 + nStartOfLongest)%3, -2);
+    CUtils::GetNextPoint(c[2], d[2], (1 + nStartOfLongest)%3, 2);
 
     if (!bFirst)
     {
 	Reverse(c, d);
     }
 
-    qDebug() << c[0] << d[0] << "," << c[1] << d[1] << "," << c[2] << d[2];
+//    qDebug() << c[0] << d[0] << "," << c[1] << d[1] << "," << c[2] << d[2];
 
     t[0] = ParentPatch.GetPoint(c[0],d[0]);
     t[1] = ParentPatch.GetPoint(c[1],d[1]);
@@ -189,13 +189,13 @@ void CBezierPatch::BuildBezierPoints_Sub(int nStartOfLongest, bool bFirst)
     t[0] = (t[0]+t[1]) * 0.5f;
     Point(c[2], d[2]) = t[0];
 
-    //003 & 012 & 021 & 030
+    //030 & 210 & 120 & 030
     c.clear();
     d.clear();
     c.assign(4, a[0]);
     d.assign(4, b[0]);
-    CUtils::GetNextPoint(c[1], d[1], (2 + nStartOfLongest)%3, 1);
-    CUtils::GetNextPoint(c[2], d[2], (2 + nStartOfLongest)%3, 2);
+    CUtils::GetNextPoint(c[1], d[1], nStartOfLongest, -1);
+    CUtils::GetNextPoint(c[2], d[2], nStartOfLongest, -2);
     c[3] = a[1]; d[3]= b[1];
 
     if (!bFirst)
@@ -203,7 +203,7 @@ void CBezierPatch::BuildBezierPoints_Sub(int nStartOfLongest, bool bFirst)
 	Reverse(c, d);
     }
 
-    qDebug() << c[0] << d[0] << "," << c[1] << d[1] << "," << c[2] << d[2] << "," << c[3] << d[3];
+//    qDebug() << c[0] << d[0] << "," << c[1] << d[1] << "," << c[2] << d[2] << "," << c[3] << d[3];
 
     t[0] = ParentPatch.GetPoint(c[0],d[0]);
     t[1] = ParentPatch.GetPoint(c[1],d[1]);
@@ -306,6 +306,56 @@ QVector3D &CBezierPatch::Point(int idx)
 const QVector3D &CBezierPatch::GetPoint(int a, int b) const
 {
     return m_aAdditionalPoints[GetIndex(a,b)];
+}
+
+bool CBezierPatch::IntersectHighQuality(const CRay &ray, CIntersactionInfo &intersectionInfo, bool bDebug) const
+{
+    return false;
+//    std::vector<QVector3D> aPointsToCheck;
+//    CSubTriangle& SubTriangle = * intersectionInfo.pSubTriangle;
+
+////    aPointsToCheck.push_back(QVector3D(intersectionInfo.u,intersectionInfo.v,intersectionInfo.w));
+//    for (int j = 0; j < 3; j++)
+//    {
+//	aPointsToCheck.push_back(SubTriangle.GetVertBar(j));
+//    }
+
+//    float fU = intersectionInfo.u;
+//    float fV = intersectionInfo.v;
+
+//    float closestdist = k_fMAX;
+//    intersectionInfo.m_fDistance = k_fMAX;
+
+//    bool bezierFast = false;
+//    if (!bezierFast)
+//    {
+//	for (int i = 0, n = m_aAdditionalPoints.size(); i < n; ++i)
+//	{
+//	    if (intersectSimpleBezierTriangle(ray, intersectionInfo, SubTriangle, m_aAdditionalPoints[i], 15, bDebug))
+//	    {
+//		closestdist = intersectionInfo.m_fDistance;
+//		return true;
+//	    }
+
+//	}
+//	return false;
+//    }
+//    else
+//    {
+//	int iterations = 5;
+//	QVector3D res = QVector3D(1.0/3.0, 1.0/3.0, 0);
+//	intersectSimpleBezierTriangle(ray, intersectionInfo, SubTriangle, res, iterations, bDebug );
+//	res = QVector3D(1.0/6.0, 1.0/6.0, 0);
+//	intersectSimpleBezierTriangle(ray, intersectionInfo, SubTriangle, res, iterations, bDebug );
+//	res = QVector3D(2.0/3.0, 1.0/6.0, 0);
+//	intersectSimpleBezierTriangle(ray, intersectionInfo, SubTriangle, res, iterations, bDebug );
+//	res = QVector3D(1.0/6.0, 2.0/3.0 ,0);
+//	intersectSimpleBezierTriangle(ray, intersectionInfo, SubTriangle, res, iterations, bDebug );
+
+//	closestdist = intersectionInfo.m_fDistance;
+//    }
+
+//    return fabs(closestdist - k_fMAX) > k_fMIN;
 }
 
 bool CBezierPatch::intersect(const CRay &ray, CIntersactionInfo &info, QVector3D &barCoord, unsigned int iterations, bool bDebug) const
