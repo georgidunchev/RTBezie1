@@ -18,14 +18,14 @@
 
 CTriangle::CTriangle()
     : m_aVertecis(GetRaytracer()->GetMesh().Vertices())
-    , m_BezierPatch(this)
+    , m_BezierPatch(*this)
 {}
 
 CTriangle::CTriangle( const std::vector<CVertex> &aVertecis, int v1, int v2, int v3, int nTriangleId)
     : m_aVertecis(GetRaytracer()->GetMesh().Vertices())
     , m_bHasBoundingBox(false)
     , m_nTriangleId(nTriangleId)
-    , m_BezierPatch(this)
+    , m_BezierPatch(*this)
 {
     m_aVertIndices.push_back(v1);
     m_aVertIndices.push_back(v2);
@@ -136,7 +136,7 @@ void CTriangle::AddSubTriangle(CSubTriangle* subTriangle)
 
 bool CTriangle::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo, const std::vector<CSubTriangle*>& aSubTriangles, bool bDebug)
 {
-    if (GetRaytracer()->IsHighQuality())
+    if (intersectionInfo.m_bHighQuality)
     {
 	return CTriangle::IntersectHighQuality(ray, intersectionInfo, aSubTriangles, bDebug);
     }
@@ -166,14 +166,14 @@ bool CTriangle::IntersectHighQuality(const CRay &ray, CIntersactionInfo &interse
     std::vector<QVector3D> aPointsToCheck;
     CSubTriangle& SubTriangle = * intersectionInfo.pSubTriangle;
 
-    aPointsToCheck.push_back(QVector3D(intersectionInfo.u,intersectionInfo.v,intersectionInfo.w));
+    aPointsToCheck.push_back(intersectionInfo.m_vBarCoordsLocal);
     for (int j = 0; j < 3; j++)
     {
 	aPointsToCheck.push_back(SubTriangle.GetVertBar(j));
     }
 
-    float fU = intersectionInfo.u;
-    float fV = intersectionInfo.v;
+    float fU = intersectionInfo.m_vBarCoordsLocal.x();
+    float fV = intersectionInfo.m_vBarCoordsLocal.y();
 
     float closestdist = k_fMAX;
     intersectionInfo.m_fDistance = k_fMAX;

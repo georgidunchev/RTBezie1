@@ -1,4 +1,4 @@
-#include <QtGui/QApplication>
+#include <QtWidgets/QApplication>
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
@@ -57,7 +57,7 @@ void myMessageOutput(QtMsgType type, const char *msg)
 
 int main(int argc, char *argv[])
 {
-    qInstallMsgHandler(myMessageOutput);
+//    qInstallMsgHandler(myMessageOutput);
     QApplication a(argc, argv);
 
     raytracer_instace = new RayTracer();

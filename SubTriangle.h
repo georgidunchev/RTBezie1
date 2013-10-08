@@ -31,7 +31,7 @@ public:
     static bool IntersectSubdevidedTriangles(const CRay &ray, CIntersactionInfo &intersectionInfo, const std::vector<CSubTriangle*>& aSubTriangles, bool bDebug = false);
     virtual bool Intersect(const CRay& ray, CIntersactionInfo& intersectionInfo, bool bDebug = false) const;
 
-    const int GetSavePos() const { return m_nSavePos; }
+    int GetSavePos() const { return m_nSavePos; }
 
     const QVector3D& GetVert(int i) const;
     const QVector3D& GetVertBar(int i) const;
@@ -44,6 +44,7 @@ public:
 
     CBezierPatch* GetBezierPatch()  { return m_pBezierPatch; }
 
+    const QVector3D GetParentBar(const QVector3D& vLocalBar) const;
     //debug
     int m_nSubtriangleID;
 

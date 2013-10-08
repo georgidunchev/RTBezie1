@@ -4,7 +4,16 @@ git diff --cached > mypatch.patch
 git apply mypatch.patch
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-
+===NEW FLOW===========================================================
+RayTracer::Render
+CMesh::Intersect
+CMesh::IntersectKDTree
+CSubTriangle::IntersectSubdevidedTriangles(ray, intersectionInfo, *m_pTriangles)
+CSubTriangle::Intersect(ray, intersectionInfoLocal,bDebug)
+====SPLIT====
+CBezierPatch::IntersectHighQuality()
+CBezierPatch::intersect(ray, intersectionInfo, GetPointFromBarycentric(m_aAdditionalPoints[i]), 15, bDebug)
+======================================================================
 subdivide to bezier patches
 use bezier patches instead of subtriangles
 

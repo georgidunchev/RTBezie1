@@ -20,26 +20,23 @@ MainWindow::MainWindow(QWidget *parent)
 
 	progress.setWindowModality(Qt::WindowModal);
 
-	bool b;
-	b = QObject::connect(&GetRaytracer()->GetMesh(), SIGNAL(sigLoadingStarted(int)), this, SLOT(slotLoadingStarted(int)), Qt::UniqueConnection);
-	b = QObject::connect(&GetRaytracer()->GetMesh(), SIGNAL(sigLoadingStepDone(int)), &progress, SLOT(setValue(int)), Qt::UniqueConnection);
-	b = QObject::connect(&GetRaytracer()->GetMesh(), SIGNAL(sigLoadingFinished()), this, SLOT(slotLoadingFinished()), Qt::UniqueConnection);
-	b = false;
+	QObject::connect(&GetRaytracer()->GetMesh(), SIGNAL(sigLoadingStarted(int)), this, SLOT(slotLoadingStarted(int)), Qt::UniqueConnection);
+	QObject::connect(&GetRaytracer()->GetMesh(), SIGNAL(sigLoadingStepDone(int)), &progress, SLOT(setValue(int)), Qt::UniqueConnection);
+	QObject::connect(&GetRaytracer()->GetMesh(), SIGNAL(sigLoadingFinished()), this, SLOT(slotLoadingFinished()), Qt::UniqueConnection);
 
 	GetRaytracer()->GetCamera().SetCameraPos(QVector3D(0, 0, -0.4), QVector3D(0, 0, 1), QVector3D(0, -1, 0) );
 	//GetRaytracer()->GetCamera().SetCameraPos(QVector3D(0, 0.2, -0.4), QVector3D(0, 0, 1), QVector3D(0, -1, 0) );
 	GetRaytracer()->SetCanvas(500,500);
-	
+
+	//QObject::connect(this, SIGNAL(DebugOutChanged(const QString &)), ui->Output, SLOT(setText(QString)));
+
+	GetSettings()->SetNofSubdivisions(static_cast<uint>(ui->NumberOfSubdivisions->value()));
 	//    LoadNewMesh("Triangle.obj");
 	//    LoadNewMesh("bunny_200.obj");
 	//    LoadNewMesh("SimpleBezierTriangle1.obj");
 	//GetRaytracer()->LoadNewMesh("triangle2.obj");
 
-	//    GetRaytracer()->LoadNewMesh("SimpleBezierTriangle2.obj");
-
-	//QObject::connect(this, SIGNAL(DebugOutChanged(const QString &)), ui->Output, SLOT(setText(QString)));
-
-	GetSettings()->SetNofSubdivisions(static_cast<uint>(ui->NumberOfSubdivisions->value()));
+	GetRaytracer()->LoadNewMesh("SimpleBezierTriangle1.obj");
 }
 
 void MainWindow::paintEvent(QPaintEvent *pe)

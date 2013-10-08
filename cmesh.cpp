@@ -131,18 +131,12 @@ void CMesh::MakeBoundingBox()
 
 bool CMesh::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo, bool bDebug)
 {
+    intersectionInfo.m_bHighQuality = GetRaytracer()->IsHighQuality();
+
     bool bResult = false;
     if (k_bUSE_KDTREE)
     {
-	bool bIntersect = IntersectKDTree(ray, intersectionInfo, bDebug);
-	bResult = bIntersect;
-	if (bIntersect && GetRaytracer()->IsHighQuality())
-	{
-	    intersectionInfo.m_fDistance = k_fMAX;
-	    std::vector<CSubTriangle*> aSubTriangles;
-	    aSubTriangles.push_back(intersectionInfo.pSubTriangle);
-	    bResult = CTriangle::Intersect(ray, intersectionInfo, aSubTriangles);
-	}
+	bResult = IntersectKDTree(ray, intersectionInfo, bDebug);
     }
     else
     {
@@ -154,31 +148,31 @@ bool CMesh::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo, bool
 	bResult = Intersect(ray, intersectionInfo, aTriangles, NULL, bDebug);
     }
 
-    if(bResult && intersectionInfo.m_bInitialRay)
-    {
-	int i = 0;
-	QVector3D vIntersection = intersectionInfo.m_vIntersectionPoint;
-	QVector3D vLIghtDirection = GetRaytracer()->GetLightScene().GetLight(i).GetPosition() - vIntersection;
-	vLIghtDirection.normalize();
-	vIntersection += vLIghtDirection * k_fSMALL;
+//    if(bResult && intersectionInfo.m_bInitialRay)
+//    {
+//	int i = 0;
+//	QVector3D vIntersection = intersectionInfo.m_vIntersectionPoint;
+//	QVector3D vLIghtDirection = GetRaytracer()->GetLightScene().GetLight(i).GetPosition() - vIntersection;
+//	vLIghtDirection.normalize();
+//	vIntersection += vLIghtDirection * k_fSMALL;
 
-	//CRay LightRay(GetLightScene().GetLight(i).GetPosition(), vLIghtDirection);
-	CRay LightRay(vIntersection, vLIghtDirection);
+//	//CRay LightRay(GetLightScene().GetLight(i).GetPosition(), vLIghtDirection);
+//	CRay LightRay(vIntersection, vLIghtDirection);
 
-	float fDistToLight = vLIghtDirection.length();
+//	float fDistToLight = vLIghtDirection.length();
 
-	CIntersactionInfo LightIntersectionInfo;
-	LightIntersectionInfo.m_bInitialRay = false;
-	if (Intersect(LightRay, LightIntersectionInfo))
-	{
-	    //if the first intersection is the intersection point
-	    if (LightIntersectionInfo.m_fDistance < fDistToLight - k_fSMALL)
-	    {
-		CColor colorForLight(0.f, 0.f, 0.f);
-		intersectionInfo.color = colorForLight;
-	    }
-	}
-    }
+//	CIntersactionInfo LightIntersectionInfo;
+//	LightIntersectionInfo.m_bInitialRay = false;
+//	if (Intersect(LightRay, LightIntersectionInfo))
+//	{
+//	    //if the first intersection is the intersection point
+//	    if (LightIntersectionInfo.m_fDistance < fDistToLight - k_fSMALL)
+//	    {
+//		CColor colorForLight(0.f, 0.f, 0.f);
+//		intersectionInfo.color = colorForLight;
+//	    }
+//	}
+//    }
 
     return bResult;
 }

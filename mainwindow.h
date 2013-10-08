@@ -1,8 +1,8 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <QMainWindow>
-#include <QProgressDialog>
+#include <QtWidgets/QMainWindow>
+#include <QtWidgets/QProgressDialog>
 
 namespace Ui {
 class MainWindow;

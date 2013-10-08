@@ -14,7 +14,7 @@ public:
 
     void AddLight(const ILight &Light);
     const ILight& GetLight(int n);
-    const int GetLightsNumber();
+    int GetLightsNumber();
 private:
     CMesh &GetMesh();
     std::vector<ILight> m_aLights;

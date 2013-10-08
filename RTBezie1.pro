@@ -9,6 +9,7 @@ QT       += core gui
 TARGET = RTBezie1
 TEMPLATE = app
 
+QT += widgets
 
 SOURCES += main.cpp\
         mainwindow.cpp \
@@ -58,7 +59,8 @@ HEADERS  += mainwindow.h \
     SubTriangle.h \
     bezierpatch.h
 
-FORMS    += mainwindow.ui
+FORMS    += \
+    mainwindow.ui
 
 OTHER_FILES += \
     ToDo.txt \

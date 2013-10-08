@@ -4,7 +4,7 @@
 #include <qmath.h>
 
 CUtils::CUtils(QObject *parent)
-	: QObject(parent)
+    : QObject(parent)
 {
 }
 
@@ -83,7 +83,7 @@ float CUtils::Triple(QVector3D vec1, QVector3D vec2, QVector3D vec3)
 
 QVector3D CUtils::VertexMatrixMultiply(const QVector3D& v, const Matrix& m)
 {
-	return QVector3D(
+    return QVector3D(
 		v.x() * m[0][0] + v.y() * m[1][0] + v.z() * m[2][0],
 		v.x() * m[0][1] + v.y() * m[1][1] + v.z() * m[2][1],
 		v.x() * m[0][2] + v.y() * m[1][2] + v.z() * m[2][2] );
@@ -150,9 +150,9 @@ bool CUtils::IntersectTriangle(const CRay &i_Ray,
     const float Dcr = CUtils::Triple(a, b, c);
     // check for zero; if it is zero, then the triangle and the ray are parallel
     if (fabs(Dcr) < k_fSMALL)
-	{
-		return false;
-	}
+    {
+	return false;
+    }
     // find the reciprocal of the determinant. We would use this quantity later in order
     // to multiply by rDcr instead of divide by Dcr (division is much slower)
     double rDcr = 1.0 / Dcr;
@@ -161,39 +161,40 @@ bool CUtils::IntersectTriangle(const CRay &i_Ray,
     const double gamma = CUtils::Triple(a, b, h) * rDcr;
     // Is the intersection point behind us?  Is the intersection point worse than what we currently have?
     if (gamma <= 0 || gamma > closestdist)
-	{
-		return false;
-	}
+    {
+	return false;
+    }
     lambda2 = CUtils::Triple(h, b, c) * rDcr;
     // Check if it is in range (barycentric coordinates)
     if (lambda2 < 0 || lambda2 > 1)
-	{
-		return false;
-	}
+    {
+	return false;
+    }
     lambda3 = CUtils::Triple(a, h, c) * rDcr;
 
     // Calculate lambda3 and check if it is in range as well
     if (lambda3 < 0 || lambda3 > 1)
-	{
-		return false;
-	}
+    {
+	return false;
+    }
     if (lambda2 + lambda3 > 1)
-	{
-		return false;
-	}
+    {
+	return false;
+    }
 
     closestdist = gamma;
     io_IntersectionInfo.m_fDistance = closestdist;
     
     io_IntersectionInfo.m_vIntersectionPoint = CUtils::GetPointAtDistance(i_Ray, closestdist);
-	io_IntersectionInfo.u = 1.0f - lambda2 - lambda3;
-	io_IntersectionInfo.v = lambda2;
-	io_IntersectionInfo.w = lambda3;
-	
-	//Normal to the surface
-	Normal(io_IntersectionInfo.m_vNormal, a, b);
 
-	return true;
+    io_IntersectionInfo.m_vBarCoordsLocal.setX(1.0f - lambda2 - lambda3);
+    io_IntersectionInfo.m_vBarCoordsLocal.setY(lambda2);
+    io_IntersectionInfo.m_vBarCoordsLocal.setZ(lambda3);
+
+    //Normal to the surface
+    Normal(io_IntersectionInfo.m_vNormal, a, b);
+
+    return true;
 }
 
 
@@ -201,43 +202,40 @@ bool CUtils::IntersectTriangle(const CRay &i_Ray,
 			       CIntersactionInfo &io_IntersectionInfo,
 			       const QVector3D& i_vA,
 			       const QVector3D& i_vB,
-				   const QVector3D& i_vC,
-				   const QVector3D& i_vABar,
-				   const QVector3D& i_vBBar,
-				   const QVector3D& i_vCBar)
+			       const QVector3D& i_vC,
+			       const QVector3D& i_vABar,
+			       const QVector3D& i_vBBar,
+			       const QVector3D& i_vCBar)
 {
-	if (!IntersectTriangle(	i_Ray, io_IntersectionInfo, i_vA, i_vB, i_vC))
-	{
-		return false;
-	}
-		
-	const QVector3D vPA = i_vABar * io_IntersectionInfo.u;
-	const QVector3D vPB = i_vBBar * io_IntersectionInfo.v;
-	const QVector3D vPC = i_vCBar * io_IntersectionInfo.w;
+    if (!IntersectTriangle(i_Ray, io_IntersectionInfo, i_vA, i_vB, i_vC))
+    {
+	return false;
+    }
 
-	const QVector3D vBarCoord = vPA + vPB + vPC;
+    const QVector3D vPA = i_vABar * io_IntersectionInfo.m_vBarCoordsLocal.x();
+    const QVector3D vPB = i_vBBar * io_IntersectionInfo.m_vBarCoordsLocal.y();
+    const QVector3D vPC = i_vCBar * io_IntersectionInfo.m_vBarCoordsLocal.z();
 
-	io_IntersectionInfo.u = vBarCoord.x();
-	io_IntersectionInfo.v = vBarCoord.y();
-	io_IntersectionInfo.w = vBarCoord.z();
+    io_IntersectionInfo.m_vBarCoordsGlobal = vPA + vPB + vPC;
+
     return true;
 }
 
 
 int CUtils::PowerOf2(const int nPow)
 {
-	if (nPow > 1)
-	{
-		return 2 << (nPow -1);
-	}
-	else if (nPow < 1)
-	{
-		return 2 >> (1 - nPow);
-	} 
-	else
-	{
-		return 2;
-	}
+    if (nPow > 1)
+    {
+	return 2 << (nPow -1);
+    }
+    else if (nPow < 1)
+    {
+	return 2 >> (1 - nPow);
+    }
+    else
+    {
+	return 2;
+    }
 }
 
 QVector3D CUtils::Reflect(const QVector3D &toBeReflected, const QVector3D &normal)
@@ -260,7 +258,7 @@ void CUtils::GetNextPoint(int &io_a, int &io_b, int nPos, int nMod)
 
 void CUtils::AddDebugString(const char* str)
 {
-	strDebugOut.append( QString(str) );
-	strDebugOut.append( "\n");
-	//emit DebugOutChanged(strDebugOut);
+    strDebugOut.append( QString(str) );
+    strDebugOut.append( "\n");
+    //emit DebugOutChanged(strDebugOut);
 }

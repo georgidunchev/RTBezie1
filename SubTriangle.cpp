@@ -158,6 +158,11 @@ bool CSubTriangle::IntersectSubdevidedTriangles(const CRay &ray, CIntersactionIn
     int nSize = aSubTriangles.size();
     float fModifier = 8.0f / static_cast<float>(nSize);
 
+    if (bDebug)
+    {
+	qDebug()<<"Checking " << nSize << " patches";
+    }
+
     bool bIntersected = false;
 
     for (int i = 0; i < nSize; i++)
@@ -181,6 +186,20 @@ bool CSubTriangle::IntersectSubdevidedTriangles(const CRay &ray, CIntersactionIn
 		intersectionInfoLocal.color = CColor(fR, fG, fB);
 	    }
 
+//	    if (false)
+	    {
+		int nSubtriangleId = aSubTriangles[i]->m_nSubtriangleID;
+		bool bR = ((nSubtriangleId % 3) == 0);
+		bool bG = ((nSubtriangleId % 3) == 1);
+		bool bB = ((nSubtriangleId % 3) == 2);
+
+		float fR = bR ? 1.0f : 0.0f;
+		float fG = bG ? 1.0f : 0.0f;
+		float fB = bB ? 1.0f : 0.0f;
+
+		intersectionInfoLocal.color = CColor(fR, fG, fB);
+	    }
+
 	    intersectionInfoLocal.pSubTriangle = aSubTriangles[i];
 
 	    intersectionInfoLocal.m_nSubTriangleId = nId;
@@ -197,14 +216,22 @@ bool CSubTriangle::IntersectSubdevidedTriangles(const CRay &ray, CIntersactionIn
 
 bool CSubTriangle::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo, bool bDebug) const
 {
-    bool bIntersect = CUtils::IntersectTriangle(ray, intersectionInfo, GetVert(0), GetVert(1), GetVert(2), m_vABar, m_vBBar, m_vCBar);
-//    bool bIntersect = m_pBezierPatch->intersect(ray, intersectionInfo, bDebug);
+    bool bIntersect = false;
+    if (intersectionInfo.m_bHighQuality)
+    {
+	bIntersect = m_pBezierPatch->IntersectHighQuality(ray, intersectionInfo, bDebug);
+    }
+    else
+    {
+	bIntersect = CUtils::IntersectTriangle(ray, intersectionInfo, GetVert(0), GetVert(1), GetVert(2), m_vABar, m_vBBar, m_vCBar);
+    }
+
     if (bIntersect)
     {
 	//Smoothed normal
-	QVector3D vNormalA = intersectionInfo.u * m_Parent.A().Normal_Get();
-	QVector3D vNormalB = intersectionInfo.v * m_Parent.B().Normal_Get();
-	QVector3D vNormalC = intersectionInfo.w * m_Parent.C().Normal_Get();
+	QVector3D vNormalA = intersectionInfo.m_vBarCoordsGlobal.x() * m_Parent.A().Normal_Get();
+	QVector3D vNormalB = intersectionInfo.m_vBarCoordsGlobal.y() * m_Parent.B().Normal_Get();
+	QVector3D vNormalC = intersectionInfo.m_vBarCoordsGlobal.z() * m_Parent.C().Normal_Get();
 	intersectionInfo.m_vNormal = vNormalA + vNormalB + vNormalC;
 	intersectionInfo.m_vNormal.normalize();
     }
@@ -224,4 +251,14 @@ void CSubTriangle::MakeBoundingBox()
 const CAABox& CSubTriangle::GetBoundingBox()
 {
     return m_BoundingBox;
+}
+
+const QVector3D CSubTriangle::GetParentBar(const QVector3D &vLocalBar) const
+{
+    const QVector3D vPA = m_vABar * vLocalBar.x();
+    const QVector3D vPB = m_vBBar * vLocalBar.y();
+    const QVector3D vPC = m_vCBar * vLocalBar.z();
+
+    const QVector3D vBarCoord = vPA + vPB + vPC;
+    return vBarCoord;
 }

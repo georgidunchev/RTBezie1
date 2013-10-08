@@ -6,7 +6,7 @@
 #include <QImage>
 #include <QAtomicInt>
 #include <QElapsedTimer>
-#include <QProgressDialog>
+#include <QtWidgets/QProgressDialog>
 #include <qmutex.h>
 
 #include <lightsscene.h>

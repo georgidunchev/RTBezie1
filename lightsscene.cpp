@@ -31,7 +31,7 @@ const ILight &CLightsScene::GetLight(int n)
     return m_aLights[n];
 }
 
-const int CLightsScene::GetLightsNumber()
+int CLightsScene::GetLightsNumber()
 {
     return m_aLights.size();
 }

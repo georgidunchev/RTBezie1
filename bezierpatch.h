@@ -37,12 +37,12 @@ struct CVertexInfo
 class CBezierPatch
 {
 public:
-    CBezierPatch(CTriangle* pParent);
+    CBezierPatch(CTriangle &pParent);
     CBezierPatch(CSubTriangle* pParent);
 
-    const QVector3D GetPointFromBarycentric(const QVector3D& vCoords);
-    const QVector3D GetPointFromBarycentric(const QVector2D& vCoords);
-    const QVector3D GetPointFromBarycentric(float u, float v);
+    const QVector3D GetPointFromBarycentric(const QVector3D& vCoords) const;
+    const QVector3D GetPointFromBarycentric(const QVector2D& vCoords) const;
+    const QVector3D GetPointFromBarycentric(float u, float v) const;
 
     // used for triangles from the mesh
     void BuildBezierPoints();
@@ -59,9 +59,11 @@ public:
 //    };
 
     bool IntersectHighQuality(const CRay& ray, CIntersactionInfo& intersectionInfo, bool bDebug = false) const;
+    bool IntersectLowQuality(const CRay& ray, CIntersactionInfo& intersectionInfo, bool bDebug = false) const;
+
     bool intersect(const CRay &ray,
 		   CIntersactionInfo &info,
-		   QVector3D &barCoord,
+		   QVector3D barCoord,
 		   unsigned int iterations,
 		   bool bDebug = false) const;
 
@@ -71,9 +73,12 @@ public:
     QVector3D &Point(int a, int b);
     QVector3D &Point(int idx);
     const QVector3D &GetPoint(int a, int b) const;
+    const QVector3D &GetPoint(QVector2D bar) const;
 
 private:
 
+    //used internally
+    void BuildBezierPoints_Internal();
 
     void BuildBezierPoint(CVertexInfo& o_Info);
     void BuildBezierPoint(QVector3D& o_vNew,
@@ -83,7 +88,7 @@ private:
 
     void Reverse(std::vector<int>& io_c, std::vector<int>& io_d);
 
-    CTriangle* m_pParent_Triangle;
+    CTriangle& m_Parent_Triangle;
     CSubTriangle* m_pParent_SubTriangle;
 
     std::vector<QVector3D> m_aAdditionalPoints;
