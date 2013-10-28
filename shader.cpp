@@ -12,8 +12,18 @@ CShader::CShader()
 
 QRgb CShader::Shade(const CRay &ray, CIntersactionInfo &intersectionInfo)
 {
-    CColor cLamber = ShadeLambert(ray, intersectionInfo);
-    //cLamber += ShadeGloss(ray, intersectionInfo);
+    CColor cLamber;
+    const float fLow = 0.05f;
+    const float fHigh = 1.0f - fLow;
+    bool bWireframe = false;
+    if (!bWireframe ||
+	    intersectionInfo.m_vBarCoordsLocal.x() < fLow || intersectionInfo.m_vBarCoordsLocal.x() > fHigh ||
+	    intersectionInfo.m_vBarCoordsLocal.y() < fLow || intersectionInfo.m_vBarCoordsLocal.y() > fHigh ||
+	    intersectionInfo.m_vBarCoordsLocal.z() < fLow || intersectionInfo.m_vBarCoordsLocal.z() > fHigh)
+    {
+	cLamber = ShadeLambert(ray, intersectionInfo);
+	//cLamber += ShadeGloss(ray, intersectionInfo);
+    }
 
     return cLamber.GetRGB();
 }
