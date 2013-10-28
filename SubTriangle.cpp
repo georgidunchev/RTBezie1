@@ -250,9 +250,9 @@ bool CSubTriangle::Intersect(const CRay &ray, CIntersactionInfo &intersectionInf
 
 void CSubTriangle::MakeBoundingBox()
 {
-    for (int i = 0; i < 3; i++)
+    for (int i = 0; i < 10; i++)
     {
-	m_BoundingBox.AddPoint(GetVert(i));
+	m_BoundingBox.AddPoint(m_pBezierPatch->Point(i));
     }
 
     m_bHasBoundingBox = true;
