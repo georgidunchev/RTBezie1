@@ -186,7 +186,7 @@ bool CSubTriangle::IntersectSubdevidedTriangles(const CRay &ray, CIntersactionIn
 		intersectionInfoLocal.color = CColor(fR, fG, fB);
 	    }
 
-//	    if (false)
+	    if (false)
 	    {
 		int nSubtriangleId = aSubTriangles[i]->m_nSubtriangleID;
 		bool bR = ((nSubtriangleId % 3) == 0);
@@ -217,13 +217,23 @@ bool CSubTriangle::IntersectSubdevidedTriangles(const CRay &ray, CIntersactionIn
 bool CSubTriangle::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo, bool bDebug) const
 {
     bool bIntersect = false;
+
+    CIntersactionInfo localInfo(intersectionInfo);
+    bIntersect = CUtils::IntersectTriangle(ray, localInfo, GetVert(0), GetVert(1), GetVert(2), m_vABar, m_vBBar, m_vCBar);
+    if (bIntersect && bDebug)
+    {
+	qDebug()<<"TRIANGLE INTERSECTION " << localInfo.m_vIntersectionPoint;
+	qDebug()<<"TRIANGLE INTERSECTION Bar " << localInfo.m_vBarCoordsLocal;
+    }
+
     if (intersectionInfo.m_bHighQuality)
     {
 	bIntersect = m_pBezierPatch->IntersectHighQuality(ray, intersectionInfo, bDebug);
     }
     else
     {
-	bIntersect = CUtils::IntersectTriangle(ray, intersectionInfo, GetVert(0), GetVert(1), GetVert(2), m_vABar, m_vBBar, m_vCBar);
+	intersectionInfo=localInfo;
+//	bIntersect = CUtils::IntersectTriangle(ray, intersectionInfo, GetVert(0), GetVert(1), GetVert(2), m_vABar, m_vBBar, m_vCBar);
     }
 
     if (bIntersect)

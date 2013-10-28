@@ -40,6 +40,7 @@ CColor CShader::ShadeLambert(const CRay &ray, CIntersactionInfo &intersectionInf
 		float fCos = QVector3D::dotProduct(vLIghtDirection.normalized(), intersectionInfo.GetFacingNormal(ray));
 
 		CColor colorForLight(1.0f, 1.0f, 1.0f);
+		colorForLight = intersectionInfo.color;
 
 		if (fCos > 0.0f)
 		{
@@ -48,7 +49,7 @@ CColor CShader::ShadeLambert(const CRay &ray, CIntersactionInfo &intersectionInf
 
 		    colorForLight *= fCos;
 		    fLightColor *= fCos;
-		    //		colorForLight *= intersectionInfo.color;
+//				colorForLight *= intersectionInfo.color;
 		    //		colorForLight *= fLightColor;
 		    //		colorForLight *= 1.f/GetLightScene().GetLightsNumber();
 		}

@@ -372,10 +372,19 @@ bool CBezierPatch::IntersectHighQuality(const CRay &ray, CIntersactionInfo &inte
     bool bezierFast = false;
     if (!bezierFast)
     {
-	for (int i = 0, n = aPointsToCheck.size(); i < n; ++i)
+	for (int n = 0, i = aPointsToCheck.size()-1; i >= n; --i)
 	{
-	    if (intersect(ray, intersectionInfo, aPointsToCheck[i], 15, bDebug))
+	    if (bDebug)
 	    {
+		qDebug() <<"Bar"<<aPointsToCheck[i];
+		qDebug() <<"Point "<< GetPointFromBarycentric(aPointsToCheck[i]);
+	    }
+
+	    CIntersactionInfo LocalInfo(intersectionInfo);
+	    if (intersect(ray, LocalInfo, aPointsToCheck[i], 4, bDebug))
+	    {
+		intersectionInfo = LocalInfo;
+		intersectionInfo.color = CColor(1.0f- aPointsToCheck[i].x(), 1.0f - aPointsToCheck[i].y(), 1.0f - aPointsToCheck[i].z());
 		closestdist = intersectionInfo.m_fDistance;
 		return true;
 	    }
@@ -431,20 +440,14 @@ bool CBezierPatch::intersect(const CRay &ray, CIntersactionInfo &info, QVector3D
 {
     //    return CTriangle::Intersect(ray, info);
     //Planes along ray
-    QVector3D N1 = CUtils::Cross(ray.Direction(), QVector3D(-1,-1,-1));
-    N1.normalize();
+    QVector3D N1 = CUtils::Cross(ray.Direction(), QVector3D(-1.0f,-1.0f,-1.0f));
+//    N1.normalize();
     QVector3D N2 = CUtils::Cross(ray.Direction(), N1);
-    N2.normalize();
-    float d1 = -CUtils::Dot(N1, ray.StartPoint());
-    float d2 = -CUtils::Dot(N2, ray.StartPoint());
+//    N2.normalize();
+    const float d1 = -CUtils::Dot(N1, ray.StartPoint());
+    const float d2 = -CUtils::Dot(N2, ray.StartPoint());
 
     float fSMall = 1e-3;
-
-    //    QMatrix inverseJacobian;
-    float invConst;
-    QVector3D B, R = QVector3D(0,0,0);
-    QVector3D dBu;
-    QVector3D dBv;
 
     for (unsigned int i = 0; i < iterations; i++)
     {
@@ -452,7 +455,7 @@ bool CBezierPatch::intersect(const CRay &ray, CIntersactionInfo &info, QVector3D
 	const double &v(barCoord.y());
 
 	//partial U derivative of B
-	dBu = 3 * Q30 * u * u
+	const QVector3D dBu = 3 * Q30 * u * u
 		+ 2 * Q21 * u * v
 		+ Q12 * v * v
 		+ 2 * Q20 * u
@@ -460,27 +463,24 @@ bool CBezierPatch::intersect(const CRay &ray, CIntersactionInfo &info, QVector3D
 		+ Q10;
 
 	//Partial V derivative of B
-	dBv = 3 * Q03 * v * v
+	const QVector3D dBv = 3 * Q03 * v * v
 		+ 2 * Q12 * u * v
 		+ Q21 * u * u
 		+ 2 * Q02 * v
 		+ Q11 * u
 		+ Q01;
 
-	//Calculating B
-	B = Q30 * u*u*u
-		+ Q03 * v*v*v
-		+ Q21 * u*u*v
-		+ Q12 * u*v*v
-		+ Q20 * u*u
-		+ Q02 * v*v
-		+ Q11 * u*v
-		+ Q10 * u
-		+ Q01 * v
-		+ Q00;
+	const QVector3D B = GetPointFromBarycentric(barCoord);
 
-	R.setX(CUtils::Dot(N1, B) + d1);
-	R.setY(CUtils::Dot(N2, B) + d2);
+	const QVector3D R = QVector3D(CUtils::Dot(N1, B) + d1,
+				      CUtils::Dot(N2, B) + d2,
+				      0);
+
+	if (bDebug)
+	{
+	    qDebug() << "R: " << R;
+	}
+
 	if ( ( fabs(R.x()) < fSMall ) &&
 	     ( fabs(R.y()) < fSMall ) )
 	{
@@ -488,19 +488,23 @@ bool CBezierPatch::intersect(const CRay &ray, CIntersactionInfo &info, QVector3D
 	}
 
 	//Inverse Jacobian
-	float fN1dotdBu = CUtils::Dot(N1, dBu);
-	float fN1dotdBv = CUtils::Dot(N1, dBv);
-	float fN2dotdBu = CUtils::Dot(N2, dBu);
-	float fN2dotdBv = CUtils::Dot(N2, dBv);
+	const float fN1dotdBu = CUtils::Dot(N1, dBu);
+	const float fN1dotdBv = CUtils::Dot(N1, dBv);
+	const float fN2dotdBu = CUtils::Dot(N2, dBu);
+	const float fN2dotdBv = CUtils::Dot(N2, dBv);
 
-	invConst = 1.0 / ( fN1dotdBu*fN2dotdBv - fN1dotdBv*fN2dotdBu );
+	const float invConst = 1.0f / ( fN1dotdBu * fN2dotdBv - fN1dotdBv * fN2dotdBu );
+
 	Matrix inverseJacobian;
-	inverseJacobian[0][0] = fN2dotdBv*invConst;
-	inverseJacobian[0][1] = -fN2dotdBu*invConst;
-	inverseJacobian[1][0] = -fN1dotdBu*invConst;
-	inverseJacobian[1][1] = fN1dotdBv*invConst;
+
+	inverseJacobian[0][0] = fN2dotdBv  * invConst;
+	inverseJacobian[0][1] = -fN2dotdBu * invConst;
 	inverseJacobian[0][2] = 0;
+
+	inverseJacobian[1][0] = -fN1dotdBv * invConst;
+	inverseJacobian[1][1] = fN1dotdBu * invConst;
 	inverseJacobian[1][2] = 0;
+
 	inverseJacobian[2][0] = 0;
 	inverseJacobian[2][1] = 0;
 	inverseJacobian[2][2] = 1;
@@ -508,40 +512,50 @@ bool CBezierPatch::intersect(const CRay &ray, CIntersactionInfo &info, QVector3D
 	//Newton Iteration
 
 	barCoord = barCoord - CUtils::VertexMatrixMultiply(R, inverseJacobian);
+	barCoord.setZ(1.0 - barCoord.x() - barCoord.y());
+
+	if (barCoord.x() > k_fMAX || barCoord.x() < k_fMIN
+		|| barCoord.y() > k_fMAX || barCoord.y() < k_fMIN
+		|| barCoord.z() > k_fMAX || barCoord.z() < k_fMIN)
+	{
+	    return false;
+	}
 
 	if (bDebug)
 	{
-	    char str[100];
-	    sprintf( str, "Iteration %d u: %4.2f v: %4.2f w: %4.2f", i, u, v, 1.0-u-v);
-	    qDebug() << str;
+	    qDebug() << "Iteration" << i << barCoord;
 	}
     }
 
     const float &u(barCoord.x());
     const float &v(barCoord.y());
     const float w(1.0 - u - v);
-    barCoord.setZ(w);
 
-    if (u<0.0 || u>1.0 || v<0.0 || v>1.0 || w<0.0 || w>1.0)
+
+    if (u < -k_fSMALL || u > 1.0f + k_fSMALL
+	    || v < -k_fSMALL || v > 1.0f + k_fSMALL
+	    || w < -k_fSMALL || w > 1.0f + k_fSMALL)
     {
 	return false;
     }
 
+    if (bDebug)
+    {
+	char str[100];
+	sprintf( str, "u: %4.2f v: %4.2f w: %4.2f",  u, v, w);
+	qDebug() << str;
+    }
+
     //Calculating B
-    B = Q30 * u*u*u
-	    + Q03 * v*v*v
-	    + Q21 * u*u*v
-	    + Q12 * u*v*v
-	    + Q20 * u*u
-	    + Q02 * v*v
-	    + Q11 * u*v
-	    + Q10 * u
-	    + Q01 * v
-	    + Q00;
+    const QVector3D B = GetPointFromBarycentric(barCoord);
 
     if ( ( fabs(CUtils::Dot(N1, B) + d1) > fSMall ) ||
 	 ( fabs(CUtils::Dot(N2, B) + d2) > fSMall ) )
     {
+	if (bDebug)
+	{
+	    qDebug() << "error too big";
+	}
 	return false;
     }
 
@@ -549,6 +563,10 @@ bool CBezierPatch::intersect(const CRay &ray, CIntersactionInfo &info, QVector3D
     float len = (B - ray.StartPoint()).length();
     if (len > info.m_fDistance)
     {
+	if (bDebug)
+	{
+	    qDebug() << "Len > Distance";
+	}
 	return false;
     }
 
@@ -556,21 +574,21 @@ bool CBezierPatch::intersect(const CRay &ray, CIntersactionInfo &info, QVector3D
     info.m_fDistance = len;
     //    getBezierNormal(barCoord, info);
 
-    //partial U derivative of B
-    dBu = 3 * Q30 * u * u
-	    + 2 * Q21 * u * v
-	    + Q12 * v * v
-	    + 2 * Q20 * u
-	    + Q11 * v
-	    + Q10;
+//    //partial U derivative of B
+//    const QVector3D dBu = 3 * Q30 * u * u
+//	    + 2 * Q21 * u * v
+//	    + Q12 * v * v
+//	    + 2 * Q20 * u
+//	    + Q11 * v
+//	    + Q10;
 
-    //Partial V derivative of B
-    dBv = 3 * Q03 * v * v
-	    + 2 * Q12 * u * v
-	    + Q21 * u * u
-	    + 2 * Q02 * v
-	    + Q11 * u
-	    + Q01;
+//    //Partial V derivative of B
+//    const QVector3D dBv = 3 * Q03 * v * v
+//	    + 2 * Q12 * u * v
+//	    + Q21 * u * u
+//	    + 2 * Q02 * v
+//	    + Q11 * u
+//	    + Q01;
 
     //CUtils::Normal(info.m_vNormal, dBu, dBv);
 
