@@ -1,18 +1,26 @@
 #include "ray.h"
 
-CRay::CRay(QVector3D v3dOrigin, QVector3D v3dDirection)
+CRay::CRay(CVector3DF v3dOrigin, CVector3DF v3dDirection)
 {
     m_v3dOrigin = v3dOrigin;
     m_v3dDirection = v3dDirection;
-    m_v3dDirection.normalize();
+    m_v3dDirection.Normalize();
 }
 
-QVector3D CRay::StartPoint() const
+CVector3DF CRay::StartPoint() const
 {
     return m_v3dOrigin;
 }
 
-QVector3D CRay::Direction() const
+CVector3DF CRay::Direction() const
 {
     return m_v3dDirection;
+}
+
+CVector3DF CRay::GetPointAtDistance(float fDistance) const
+{
+    CVector3DF vNewPos(m_v3dDirection);
+    vNewPos *= fDistance;
+    vNewPos += m_v3dOrigin;
+    return vNewPos;
 }

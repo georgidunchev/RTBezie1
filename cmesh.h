@@ -8,6 +8,7 @@
 #include <Utils.h>
 #include <vector>
 #include <vertex.h>
+#include <vector3df.h>
 
 class CKDTreeNode;
 
@@ -58,7 +59,7 @@ private:
     CAABox m_BoundingBox;
 
     CKDTreeNode * m_pRoot;
-    EDimiensions m_eSortingDimention;
+    CVector3DF::EDimiensions m_eSortingDimention;
 };
 
 

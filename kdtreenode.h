@@ -1,13 +1,14 @@
 #ifndef KDTREENODE_H
 #define KDTREENODE_H
 
-#include <QVector3D>
+#include <vector3df.h>
 #include <Utils.h>
 #include <AABox.h>
 #include <ray.h>
 #include <intersactioninfo.h>
 #include <vector>
 #include "SubTriangle.h"
+#include <vector3df.h>
 
 class CMesh;
 
@@ -21,7 +22,7 @@ public:
     bool Separate(std::vector<CSubTriangle*>& AllTriangles,
 					std::vector<CSubTriangle*>* pLeftTriangleIndeces,
 					std::vector<CSubTriangle*>* pRightTriangleIndeces,
-					EDimiensions eDimension,
+					CVector3DF::EDimiensions eDimension,
 					float& fBestPortion);
 
     bool Intersect(const CRay& ray, CIntersactionInfo& intersectionInfo, bool bDebug = false);

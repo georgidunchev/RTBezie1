@@ -1,6 +1,6 @@
 #include "AABox.h"
 #include <ray.h>
-#include <QVector3D>
+#include <vector3df.h>
 #include <qmath.h>
 #include <QDebug>
 #include <Utils.h>
@@ -9,18 +9,18 @@
 #include <intersactioninfo.h>
 
 CAABox::CAABox()
-	: m_vMaxVertex(QVector3D(k_fMIN,k_fMIN,k_fMIN))
-	, m_vMinVertex(QVector3D(k_fMAX,k_fMAX,k_fMAX))
+	: m_vMaxVertex(CVector3DF(k_fMIN,k_fMIN,k_fMIN))
+	, m_vMinVertex(CVector3DF(k_fMAX,k_fMAX,k_fMAX))
 {
 }
 
-CAABox::CAABox(const QVector3D &vMinVertex, const QVector3D &vMaxVertex)
+CAABox::CAABox(const CVector3DF &vMinVertex, const CVector3DF &vMaxVertex)
 {
 	m_vMinVertex = vMinVertex;
 	m_vMaxVertex = vMaxVertex;
 }
 
-void CAABox::Set(const QVector3D &vMinVertex, const QVector3D &vMaxVertex)
+void CAABox::Set(const CVector3DF &vMinVertex, const CVector3DF &vMaxVertex)
 {
 	m_vMinVertex = vMinVertex;
 	m_vMaxVertex = vMaxVertex;
@@ -28,16 +28,16 @@ void CAABox::Set(const QVector3D &vMinVertex, const QVector3D &vMaxVertex)
 
 void CAABox::Reset()
 {
-	m_vMaxVertex = QVector3D(k_fMIN,k_fMIN,k_fMIN);
-	m_vMinVertex = QVector3D(k_fMAX,k_fMAX,k_fMAX);
+	m_vMaxVertex = CVector3DF(k_fMIN,k_fMIN,k_fMIN);
+	m_vMinVertex = CVector3DF(k_fMAX,k_fMAX,k_fMAX);
 }
 
 /// Checks if a point is inside the bounding box (borders-inclusive)
-bool CAABox::IsInside(const QVector3D& vPoint) const
+bool CAABox::IsInside(const CVector3DF &vPoint) const
 {
-	bool bX = m_vMinVertex.x() - k_fSMALL <= vPoint.x() && vPoint.x() <= m_vMaxVertex.x() + k_fSMALL;
-	bool bY = m_vMinVertex.y() - k_fSMALL  <= vPoint.y() && vPoint.y() <= m_vMaxVertex.y() + k_fSMALL;
-	bool bZ = m_vMinVertex.z() - k_fSMALL  <= vPoint.z() && vPoint.z() <= m_vMaxVertex.z() + k_fSMALL;
+	bool bX = m_vMinVertex.X() - k_fSMALL <= vPoint.X() && vPoint.X() <= m_vMaxVertex.X() + k_fSMALL;
+	bool bY = m_vMinVertex.Y() - k_fSMALL  <= vPoint.Y() && vPoint.Y() <= m_vMaxVertex.Y() + k_fSMALL;
+	bool bZ = m_vMinVertex.Z() - k_fSMALL  <= vPoint.Z() && vPoint.Z() <= m_vMaxVertex.Z() + k_fSMALL;
 	return (bX && bY && bZ);
 }
 /// Checks if a point is inside the bounding box (borders-inclusive)
@@ -51,22 +51,23 @@ void CAABox::AddPoint(const CVertex& vPoint)
 	AddPoint(vPoint.GetPos());
 }
 
-void CAABox::AddPoint(const QVector3D& vPoint)
+void CAABox::AddPoint(const CVector3DF &vPoint)
 {
-	for(EDimiensions i = e_Dimension_X; i < e_Dimension_MAX; i = (EDimiensions)((int)i + 1) )
+	for(int i = CVector3DF::e_Dimension_X; i < CVector3DF::e_Dimension_MAX; ++i)
 	{
-		const float fMinVDir( CUtils::GetDimension(m_vMinVertex, i) );
-		const float fMaxVDir( CUtils::GetDimension(m_vMaxVertex, i) );
-		const float fPointDir( CUtils::GetDimension(vPoint, i) );
+	    const CVector3DF::EDimiensions eDim = (CVector3DF::EDimiensions)i;
+		const float fMinVDir( m_vMinVertex.GetDimension( eDim ) );
+		const float fMaxVDir( m_vMaxVertex.GetDimension( eDim ) );
+		const float fPointDir( vPoint.GetDimension( eDim ) );
 
 		if(fMinVDir > fPointDir)
 		{
-			CUtils::SetDimension(m_vMinVertex, i, fPointDir);
+		    m_vMinVertex.SetDimension(eDim, fPointDir);
 		}
 
 		if(fMaxVDir < fPointDir)
 		{
-			CUtils::SetDimension(m_vMaxVertex, i, fPointDir);
+		    m_vMaxVertex.SetDimension(eDim, fPointDir);
 		}
 	}
 }
@@ -93,10 +94,11 @@ bool CAABox::Intersect(const CRay &ray, bool bDebug) const
 	float aRayDir[3], aRayStart[3], aRayRevDir[3], aVMin[3], aVMax[3];
 	for (int i = 0; i < 3; ++i)
 	{
-		aRayDir[i] = CUtils::GetDimension(ray.Direction(), (EDimiensions)i);
-		aRayStart[i] = CUtils::GetDimension(ray.StartPoint(), (EDimiensions)i);
-		aVMin[i] = CUtils::GetDimension(m_vMinVertex, (EDimiensions)i);
-		aVMax[i] = CUtils::GetDimension(m_vMaxVertex, (EDimiensions)i);
+	    const CVector3DF::EDimiensions eDim = (CVector3DF::EDimiensions) i;
+		aRayDir[i] = ray.Direction().GetDimension(eDim);
+		aRayStart[i] = ray.StartPoint().GetDimension(eDim);
+		aVMin[i] = m_vMinVertex.GetDimension(eDim);
+		aVMax[i] = m_vMaxVertex.GetDimension(eDim);
 		aRayRevDir[i] = fabs(aRayDir[i]) > 1e-9 ? 1.0/ aRayDir[i] : 0.f;
 	};
 
@@ -192,28 +194,28 @@ bool CAABox::Intersect(const CRay &ray, bool bDebug) const
 	return false;
 }
 
-const QVector3D &CAABox::GetMinVertex() const
+const CVector3DF &CAABox::GetMinVertex() const
 {
 	return m_vMinVertex;
 }
 
-const QVector3D &CAABox::GetMaxVertex() const
+const CVector3DF &CAABox::GetMaxVertex() const
 {
 	return m_vMaxVertex;
 }
 
-void CAABox::Split(float fWhere, CAABox &LeftBBox, CAABox &RightBBox, EDimiensions eSplitDimension) const
+void CAABox::Split(float fWhere, CAABox &LeftBBox, CAABox &RightBBox, CVector3DF::EDimiensions eSplitDimension) const
 {
-	float fLeft = CUtils::GetDimension(m_vMinVertex, eSplitDimension);
-	float fRight = CUtils::GetDimension(m_vMaxVertex, eSplitDimension);
+	float fLeft = m_vMinVertex.GetDimension(eSplitDimension);
+	float fRight = m_vMaxVertex.GetDimension(eSplitDimension);
 	float fSplit = (1.f - fWhere)*fLeft + fWhere*fRight;
 
-	QVector3D vNewLeft(m_vMaxVertex);
-	CUtils::SetDimension(vNewLeft, eSplitDimension, fSplit + k_fSMALL);
+	CVector3DF vNewLeft(m_vMaxVertex);
+	vNewLeft.SetDimension(eSplitDimension, fSplit + k_fSMALL);
 	LeftBBox.Set(m_vMinVertex, vNewLeft);
 
-	QVector3D vNewRight(m_vMinVertex);
-	CUtils::SetDimension(vNewRight, eSplitDimension, fSplit - k_fSMALL);
+	CVector3DF vNewRight(m_vMinVertex);
+	vNewRight.SetDimension(eSplitDimension, fSplit - k_fSMALL);
 	RightBBox.Set(vNewRight, m_vMaxVertex);
 }
 
@@ -224,17 +226,17 @@ bool CAABox::Intersect_Test(const CRay &ray, CIntersactionInfo& io_IntersectionI
 //		return true;
 //	}
 
-//	std::vector<QVector3D> vVerteces;
+//	std::vector<CVector3DF> vVerteces;
 //	vVerteces.reserve(8);
 //	vVerteces.push_back(m_vMinVertex);
-//	vVerteces.push_back(QVector3D(m_vMaxVertex.x(), m_vMinVertex.y(), m_vMinVertex.z()));
-//	vVerteces.push_back(QVector3D(m_vMaxVertex.x(), m_vMinVertex.y(), m_vMaxVertex.z()));
-//	vVerteces.push_back(QVector3D(m_vMinVertex.x(), m_vMinVertex.y(), m_vMaxVertex.z()));
+//	vVerteces.push_back(CVector3DF(m_vMaxVertex.x(), m_vMinVertex.y(), m_vMinVertex.z()));
+//	vVerteces.push_back(CVector3DF(m_vMaxVertex.x(), m_vMinVertex.y(), m_vMaxVertex.z()));
+//	vVerteces.push_back(CVector3DF(m_vMinVertex.x(), m_vMinVertex.y(), m_vMaxVertex.z()));
 
-//	vVerteces.push_back(QVector3D(m_vMinVertex.x(), m_vMaxVertex.y(), m_vMinVertex.z()));
-//	vVerteces.push_back(QVector3D(m_vMaxVertex.x(), m_vMaxVertex.y(), m_vMinVertex.z()));
+//	vVerteces.push_back(CVector3DF(m_vMinVertex.x(), m_vMaxVertex.y(), m_vMinVertex.z()));
+//	vVerteces.push_back(CVector3DF(m_vMaxVertex.x(), m_vMaxVertex.y(), m_vMinVertex.z()));
 //	vVerteces.push_back(m_vMaxVertex);
-//	vVerteces.push_back(QVector3D(m_vMinVertex.x(), m_vMaxVertex.y(), m_vMaxVertex.z()));
+//	vVerteces.push_back(CVector3DF(m_vMinVertex.x(), m_vMaxVertex.y(), m_vMaxVertex.z()));
 
 //	struct bla2
 //	{

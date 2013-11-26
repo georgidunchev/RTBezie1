@@ -14,11 +14,6 @@ CSubTriangle::Intersect(ray, intersectionInfoLocal,bDebug)
 CBezierPatch::IntersectHighQuality()
 CBezierPatch::intersect(ray, intersectionInfo, GetPointFromBarycentric(m_aAdditionalPoints[i]), 15, bDebug)
 ======================================================================
-subdivide to bezier patches
-use bezier patches instead of subtriangles
-
-
-======================================================================
 
 To implement in UI:
 k_nTHREADS = 1;
@@ -43,6 +38,9 @@ Solve problem with crash when starting a render while in realtime mode.
 To add -
 Save image from application
 antialiasing
+add render triangles with full resolution
+intersect bezier single and multiple seeds
+
 
 ======================================================================
 
@@ -62,28 +60,3 @@ Load complex structures
 Intersect the complex surfaces
 Save to file
 Move camera
-
-================================================================================
-normal
-RayTracer::Render
-CMesh::Intersect
-CMesh::IntersectKDTree
-CKDTreeNode::Intersect(ray, intersectionInfo, bDebug);
-CTriangle::IntersectSubdevidedTriangles
-CTriangle::Intersect(ray, intersectionInfo, aSubTriangles)
-IntersectSubdevidedTriangles(ray, intersectionInfo, aSubTriangles, NULL, bDebug);
-CSubTriangleComponent::Intersect(ray, intersectionInfo,bDebug)
-CUtils::IntersectTriangle(ray, intersectionInfo, m_vA, m_vB, m_vC, m_vABar, m_vBBar, m_vCBar)
-CUtils::IntersectTriangle(	i_Ray, io_IntersectionInfo, i_vA, i_vB, i_vC))
-
-================================================================================
-bezier
-RayTracer::Render
-CMesh::Intersect
-CMesh::IntersectKDTree
-CTriangle::Intersect(ray, intersectionInfo, *m_pTriangles);
-CTriangle::IntersectHighQuality(ray, intersectionInfo, aSubTriangles, bDebug);
-|CTriangle::IntersectSubdevidedTriangles(ray, intersectionInfo, aSubTriangles, NULL, bDebug)
-|CTriangle::IntersectHighQuality(ray, intersectionInfo, bDebug);
-intersectSimpleBezierTriangle(ray, intersectionInfo, SubTriangle, aPointsToCheck[i], 5, bDebug)
-intersectSimpleBezierTriangle(ray, intersectionInfo, barCoord, iterations, bDebug);

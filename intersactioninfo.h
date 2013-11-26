@@ -1,7 +1,7 @@
 #ifndef INTERSACTIONINFO_H
 #define INTERSACTIONINFO_H
 
-#include <QVector3D>
+#include <vector3df.h>
 #include <color.h>
 #include "ray.h"
 
@@ -16,12 +16,12 @@ public:
 		, m_bInitialRay(true)
 		, m_bHighQuality(false)
 	{}
-    QVector3D GetFacingNormal(const CRay &ray) const;
+    CVector3DF GetFacingNormal(const CRay &ray) const;
     qreal m_fDistance;
-    QVector3D m_vIntersectionPoint;
-    QVector3D m_vNormal;
-    QVector3D m_vBarCoordsLocal;
-    QVector3D m_vBarCoordsGlobal;
+    CVector3DF m_vIntersectionPoint;
+    CVector3DF m_vNormal;
+    CVector3DF m_vBarCoordsLocal;
+    CVector3DF m_vBarCoordsGlobal;
     CColor color;
     int m_nTriangleId;
     int m_nSubTriangleId;

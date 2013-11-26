@@ -5,6 +5,7 @@
 #include <settings.h>
 #include <color.h>
 #include <qmath.h>
+#include <vector3df.h>
 
 CShader::CShader()
 {
@@ -15,11 +16,11 @@ QRgb CShader::Shade(const CRay &ray, CIntersactionInfo &intersectionInfo)
     CColor cLamber;
     const float fLow = 0.05f;
     const float fHigh = 1.0f - fLow;
-    bool bWireframe = false;
+    const bool bWireframe = false;
     if (!bWireframe ||
-	    intersectionInfo.m_vBarCoordsLocal.x() < fLow || intersectionInfo.m_vBarCoordsLocal.x() > fHigh ||
-	    intersectionInfo.m_vBarCoordsLocal.y() < fLow || intersectionInfo.m_vBarCoordsLocal.y() > fHigh ||
-	    intersectionInfo.m_vBarCoordsLocal.z() < fLow || intersectionInfo.m_vBarCoordsLocal.z() > fHigh)
+	    intersectionInfo.m_vBarCoordsLocal.X() < fLow || intersectionInfo.m_vBarCoordsLocal.X() > fHigh ||
+	    intersectionInfo.m_vBarCoordsLocal.Y() < fLow || intersectionInfo.m_vBarCoordsLocal.Y() > fHigh ||
+	    intersectionInfo.m_vBarCoordsLocal.Z() < fLow || intersectionInfo.m_vBarCoordsLocal.Z() > fHigh)
     {
 	cLamber = ShadeLambert(ray, intersectionInfo);
 	//cLamber += ShadeGloss(ray, intersectionInfo);
@@ -45,16 +46,16 @@ CColor CShader::ShadeLambert(const CRay &ray, CIntersactionInfo &intersectionInf
 
 	for (int i = 0; i < GetLightScene().GetLightsNumber(); ++i)
 	{
-		const QVector3D& vIntersection = intersectionInfo.m_vIntersectionPoint;
-		const QVector3D vLIghtDirection = GetLightScene().GetLight(i).GetPosition() - vIntersection;
-		float fCos = QVector3D::dotProduct(vLIghtDirection.normalized(), intersectionInfo.GetFacingNormal(ray));
+		const CVector3DF& vIntersection = intersectionInfo.m_vIntersectionPoint;
+		const CVector3DF vLIghtDirection = GetLightScene().GetLight(i).GetPosition() - vIntersection;
+		float fCos = vLIghtDirection.Normalized().Dot(intersectionInfo.GetFacingNormal(ray));
 
 		CColor colorForLight(1.0f, 1.0f, 1.0f);
 		colorForLight = intersectionInfo.color;
 
 		if (fCos > 0.0f)
 		{
-		    const float fLength = vLIghtDirection.length();
+		    const float fLength = vLIghtDirection.Length();
 		    fCos /= fLength;
 
 		    colorForLight *= fCos;
@@ -82,23 +83,23 @@ CColor CShader::ShadeGloss(const CRay &ray, CIntersactionInfo &intersectionInfo)
 
 	for (int i = 0; i < GetLightScene().GetLightsNumber(); ++i)
 	{
-	    const  QVector3D vNormal = intersectionInfo.GetFacingNormal(ray);
-		const QVector3D& vIntersection = intersectionInfo.m_vIntersectionPoint;
-		const QVector3D vLIghtDirection = GetLightScene().GetLight(i).GetPosition() - vIntersection;
-		const QVector3D vLightDirNorm = vLIghtDirection.normalized();
-		float fCos = QVector3D::dotProduct(vLightDirNorm, vNormal);
+	    const  CVector3DF vNormal = intersectionInfo.GetFacingNormal(ray);
+		const CVector3DF& vIntersection = intersectionInfo.m_vIntersectionPoint;
+		const CVector3DF vLIghtDirection = GetLightScene().GetLight(i).GetPosition() - vIntersection;
+		const CVector3DF vLightDirNorm = vLIghtDirection.Normalized();
+		float fCos = vLightDirNorm.Dot(vNormal);
 
 		CColor colorForLight(1.0f, 1.0f, 1.0f);
 
 		if (fCos > 0.0f)
 		{
-		    const float fLength = vLIghtDirection.length();
+		    const float fLength = vLIghtDirection.Length();
 		    fCos /= fLength;
 
-		    const QVector3D vFromLightNorm = -vLightDirNorm;
+		    const CVector3DF vFromLightNorm = -vLightDirNorm;
 
-		    const QVector3D vReflection = CUtils::Reflect(vFromLightNorm, vNormal);
-		    float fCosRefl = QVector3D::dotProduct(vReflection, vNormal);
+		    const CVector3DF vReflection = CUtils::Reflect(vFromLightNorm, vNormal);
+		    float fCosRefl = vReflection.Dot(vNormal);
 
 		    if (fCosRefl > 0.0f)
 		    {

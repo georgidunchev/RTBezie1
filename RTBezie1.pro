@@ -33,7 +33,8 @@ SOURCES += main.cpp\
     vertex.cpp \
     cview.cpp \
     SubTriangle.cpp \
-    bezierpatch.cpp
+    bezierpatch.cpp \
+    vector3df.cpp
 
 HEADERS  += mainwindow.h \
     raytracer.h \
@@ -57,7 +58,8 @@ HEADERS  += mainwindow.h \
     vertex.h \
     cview.h \
     SubTriangle.h \
-    bezierpatch.h
+    bezierpatch.h \
+    vector3df.h
 
 FORMS    += \
     mainwindow.ui

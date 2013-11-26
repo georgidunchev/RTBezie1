@@ -56,8 +56,8 @@ void RayTracer::SetCanvas(int fWidth, int fHeight)
     m_nWidth = m_nCanvasWidth / 1;
     m_nHeight = m_nCanvasHeight / 1;
 
-    m_nSmallWidth = m_nCanvasWidth / 2;
-    m_nSmallHeight = m_nCanvasHeight / 2;
+    m_nSmallWidth = m_nCanvasWidth / 1;
+    m_nSmallHeight = m_nCanvasHeight / 1;
 
     m_pImage = new QImage(m_nCanvasWidth, m_nCanvasHeight, QImage::Format_ARGB32);
 }
@@ -87,7 +87,7 @@ void RayTracer::Render()
 
 QRgb RayTracer::RenderPixel(const int x, const int y, bool bDebug)
 {
-    QRgb value = qRgb(0,0,0);
+    QRgb value = qRgb(150, 150, 150);
     const float dX = m_nCanvasWidth / m_nCrntWidth;
     const float dY = m_nCanvasHeight / m_nCrntHeight;
 

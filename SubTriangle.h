@@ -1,7 +1,7 @@
 #ifndef SUB_TRIANGLE_H
 #define SUB_TRIANGLE_H
 
-#include <QVector3D>
+#include <vector3df.h>
 #include <vector>
 #include <AABox.h>
 #include <vertex.h>
@@ -17,9 +17,9 @@ public:
     CSubTriangle(CTriangle& triangle);
     CSubTriangle(int nStartOfLongest,
 		 bool bFirst,
-		 const QVector3D& m_vABar,
-		 const QVector3D& m_vBBar,
-		 const QVector3D& m_vCBar,
+		 const CVector3DF& m_vABar,
+		 const CVector3DF& m_vBBar,
+		 const CVector3DF& m_vCBar,
 		 uint nSubdivisionLevel,
 		 CSubTriangle *Parent_SubTriangle,
 		 uint nSavePos);
@@ -33,8 +33,8 @@ public:
 
     int GetSavePos() const { return m_nSavePos; }
 
-    const QVector3D& GetVert(int i) const;
-    const QVector3D& GetVertBar(int i) const;
+    const CVector3DF& GetVert(int i) const;
+    const CVector3DF& GetVertBar(int i) const;
 
     void MakeBoundingBox();
     const CAABox& GetBoundingBox();
@@ -44,20 +44,20 @@ public:
 
     CBezierPatch* GetBezierPatch()  { return m_pBezierPatch; }
 
-    const QVector3D GetParentBar(const QVector3D& vLocalBar) const;
+    const CVector3DF GetParentBar(const CVector3DF& vLocalBar) const;
     //debug
     int m_nSubtriangleID;
 
 private:
 
-    void GetDivision(int& o_nStartOfLongest, QVector3D& o_vMidPoint, QVector3D& o_vMidPointBar) const;
+    void GetDivision(int& o_nStartOfLongest, CVector3DF& o_vMidPoint, CVector3DF& o_vMidPointBar) const;
 
 private:
     CTriangle& m_Parent;
     CSubTriangle* m_pParent_SubTriangle;
-    QVector3D m_vABar;
-    QVector3D m_vBBar;
-    QVector3D m_vCBar;
+    CVector3DF m_vABar;
+    CVector3DF m_vBBar;
+    CVector3DF m_vCBar;
     uint m_nSavePos;
     uint m_nSubdivisionLevel;
 

@@ -28,8 +28,6 @@ MainWindow::MainWindow(QWidget *parent)
 	//GetRaytracer()->GetCamera().SetCameraPos(QVector3D(0, 0.2, -0.4), QVector3D(0, 0, 1), QVector3D(0, -1, 0) );
 	GetRaytracer()->SetCanvas(500,500);
 
-	//QObject::connect(this, SIGNAL(DebugOutChanged(const QString &)), ui->Output, SLOT(setText(QString)));
-
 	GetSettings()->SetNofSubdivisions(static_cast<uint>(ui->NumberOfSubdivisions->value()));
 	//    LoadNewMesh("Triangle.obj");
 	//    LoadNewMesh("bunny_200.obj");
@@ -48,7 +46,6 @@ void MainWindow::paintEvent(QPaintEvent *pe)
 	if (m_bShouldRefreshView)
 	{
 		QMainWindow::paintEvent(pe);
-		emit DebugOutChanged(GetUtils()->strDebugOut);
 
 		if (m_bStartNormalRender)
 		{

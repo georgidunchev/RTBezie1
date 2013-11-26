@@ -1,7 +1,7 @@
 #ifndef BEZIERPATCH_H
 #define BEZIERPATCH_H
 
-#include <QVector3D>
+#include <vector3df.h>
 #include <QVector2D>
 #include <vector>
 
@@ -12,19 +12,19 @@ class CSubTriangle;
 
 struct CVertexInfo
 {
-    QVector3D* vMain;
-    QVector3D* vEnd1;
-    QVector3D* vEnd2;
-    QVector3D* vNew1;
-    QVector3D* vNew2;
-    const QVector3D* vNormal;
+    CVector3DF* vMain;
+    CVector3DF* vEnd1;
+    CVector3DF* vEnd2;
+    CVector3DF* vNew1;
+    CVector3DF* vNew2;
+    const CVector3DF* vNormal;
     CVertexInfo() {}
-    CVertexInfo(QVector3D& pMain,
-		QVector3D& pEnd1,
-		QVector3D& pNew1,
-		QVector3D& pEnd2,
-		QVector3D& pNew2,
-		const QVector3D& pNormal)
+    CVertexInfo(CVector3DF& pMain,
+		CVector3DF& pEnd1,
+		CVector3DF& pNew1,
+		CVector3DF& pEnd2,
+		CVector3DF& pNew2,
+		const CVector3DF& pNormal)
 	:vMain(&pMain)
 	,vEnd1(&pEnd1)
 	,vEnd2(&pEnd2)
@@ -40,9 +40,9 @@ public:
     CBezierPatch(CTriangle &pParent);
     CBezierPatch(CSubTriangle* pParent);
 
-    const QVector3D GetPointFromBarycentric(const QVector3D& vCoords) const;
-    const QVector3D GetPointFromBarycentric(const QVector2D& vCoords) const;
-    const QVector3D GetPointFromBarycentric(float u, float v) const;
+    const CVector3DF GetPointFromBarycentric(const CVector3DF& vCoords) const;
+    const CVector3DF GetPointFromBarycentric(const QVector2D& vCoords) const;
+    const CVector3DF GetPointFromBarycentric(float u, float v) const;
 
     // used for triangles from the mesh
     void BuildBezierPoints();
@@ -63,17 +63,17 @@ public:
 
     bool intersect(const CRay &ray,
 		   CIntersactionInfo &info,
-		   QVector3D barCoord,
+		   CVector3DF barCoord,
 		   unsigned int iterations,
 		   bool bDebug = false) const;
 
 
 
     int GetIndex(int a, int b) const;
-    QVector3D &Point(int a, int b);
-    QVector3D &Point(int idx);
-    const QVector3D &GetPoint(int a, int b) const;
-    const QVector3D &GetPoint(QVector2D bar) const;
+    CVector3DF &Point(int a, int b);
+    CVector3DF &Point(int idx);
+    const CVector3DF &GetPoint(int a, int b) const;
+    const CVector3DF &GetPoint(QVector2D bar) const;
 
 private:
 
@@ -81,19 +81,19 @@ private:
     void BuildBezierPoints_Internal();
 
     void BuildBezierPoint(CVertexInfo& o_Info);
-    void BuildBezierPoint(QVector3D& o_vNew,
-			  const QVector3D& i_vMain,
-			  const QVector3D& i_vEnd,
-			  const QVector3D& i_vNormal);
+    void BuildBezierPoint(CVector3DF& o_vNew,
+			  const CVector3DF& i_vMain,
+			  const CVector3DF& i_vEnd,
+			  const CVector3DF& i_vNormal);
 
     void Reverse(std::vector<int>& io_c, std::vector<int>& io_d);
 
     CTriangle& m_Parent_Triangle;
     CSubTriangle* m_pParent_SubTriangle;
 
-    std::vector<QVector3D> m_aAdditionalPoints;
+    std::vector<CVector3DF> m_aAdditionalPoints;
 
-    QVector3D Q30, Q03, Q21, Q12, Q20, Q02, Q11, Q10, Q01, Q00;
+    CVector3DF Q30, Q03, Q21, Q12, Q20, Q02, Q11, Q10, Q01, Q00;
 };
 
 #endif // BEZIERPATCH_H

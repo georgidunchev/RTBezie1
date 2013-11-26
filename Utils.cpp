@@ -3,52 +3,10 @@
 #include <intersactioninfo.h>
 #include <qmath.h>
 
-CUtils::CUtils(QObject *parent)
-    : QObject(parent)
+CUtils::CUtils()
 {
 }
 
-float CUtils::GetDimension(const QVector3D& pVector, EDimiensions eDimension)
-{
-    switch(eDimension)
-    {
-    case e_Dimension_X:
-    {
-	return pVector.x();
-    }
-    case e_Dimension_Y:
-    {
-	return pVector.y();
-    }
-    case e_Dimension_Z:
-    {
-	return pVector.z();
-    }
-    }
-    return 0.f;
-}
-
-void CUtils::SetDimension(QVector3D &pVector, EDimiensions eDimension, const float fValue)
-{
-    switch(eDimension)
-    {
-    case e_Dimension_X:
-    {
-	pVector.setX(fValue);
-	break;
-    }
-    case e_Dimension_Y:
-    {
-	pVector.setY(fValue);
-	break;
-    }
-    case e_Dimension_Z:
-    {
-	pVector.setZ(fValue);
-	break;
-    }
-    }
-}
 
 void CUtils::SafeDel(void *pointer)
 {
@@ -58,62 +16,13 @@ void CUtils::SafeDel(void *pointer)
     }
 }
 
-QVector3D CUtils::GetPointAtDistance(const CRay &ray, float fDistance)
-{
-    QVector3D vNewPos = ray.Direction();
-    vNewPos *= fDistance;
-    vNewPos += ray.StartPoint();
-    return vNewPos;
-}
 
-float  CUtils::Dot(QVector3D vec1, QVector3D vec2)
-{
-    return QVector3D::dotProduct(vec1, vec2);
-}
 
-QVector3D  CUtils::Cross(QVector3D vec1, QVector3D vec2)
-{
-    return QVector3D::crossProduct(vec1, vec2);
-}
 
-float CUtils::Triple(QVector3D vec1, QVector3D vec2, QVector3D vec3)
-{
-    return Dot(vec1, Cross(vec2, vec3) );
-}
-
-QVector3D CUtils::VertexMatrixMultiply(const QVector3D& v, const Matrix& m)
-{
-    return QVector3D(
-		v.x() * m[0][0] + v.y() * m[1][0] + v.z() * m[2][0],
-		v.x() * m[0][1] + v.y() * m[1][1] + v.z() * m[2][1],
-		v.x() * m[0][2] + v.y() * m[1][2] + v.z() * m[2][2] );
-}
-
-float CUtils::Cos(QVector3D vec1, QVector3D vec2)
-{
-    vec1.normalize();
-    vec2.normalize();
-    return Dot(vec1, vec2);
-}
-
-QVector3D CUtils::ProjectionOfVectorInPlane(QVector3D vVector, QVector3D vNormalOfPlane)
-{
-    QVector3D vHelper = Cross(vVector, vNormalOfPlane);
-    QVector3D vProjection = Cross(vNormalOfPlane, vHelper);
-    vProjection.normalize();
-    double fLen = Dot(vVector, vProjection);
-    return vProjection*fLen;
-}
-
-void CUtils::Normal(QVector3D &o_vNormal, const QVector3D &i_vAB, const QVector3D &i_vAC)
-{
-    o_vNormal = CUtils::Cross(i_vAB, i_vAC).normalized();
-}
-
-void CUtils::TriangleCentre(QVector3D &o_vCentre,
-			    const QVector3D &i_vA,
-			    const QVector3D &i_vB,
-			    const QVector3D &i_vC)
+void CUtils::TriangleCentre(CVector3DF &o_vCentre,
+			    const CVector3DF &i_vA,
+			    const CVector3DF &i_vB,
+			    const CVector3DF &i_vC)
 {
     o_vCentre = i_vA + i_vB + i_vC;
     o_vCentre /= 3;
@@ -121,9 +30,9 @@ void CUtils::TriangleCentre(QVector3D &o_vCentre,
 
 bool CUtils::IntersectTriangle(const CRay &i_Ray,
 			       CIntersactionInfo &io_IntersectionInfo,
-			       const QVector3D &i_vA,
-			       const QVector3D &i_vB,
-			       const QVector3D &i_vC)
+			       const CVector3DF &i_vA,
+			       const CVector3DF &i_vB,
+			       const CVector3DF &i_vC)
 {
 
     //intersect stuff
@@ -131,11 +40,11 @@ bool CUtils::IntersectTriangle(const CRay &i_Ray,
     double lambda3;
     double closestdist = io_IntersectionInfo.m_fDistance;
 
-    const QVector3D a = i_vB - i_vA;
-    const QVector3D b = i_vC - i_vA;
+    const CVector3DF a = i_vB - i_vA;
+    const CVector3DF b = i_vC - i_vA;
 
-    QVector3D c = - (i_Ray.Direction());
-    QVector3D h = i_Ray.StartPoint() - i_vA;
+    CVector3DF c = - (i_Ray.Direction());
+    CVector3DF h = i_Ray.StartPoint() - i_vA;
     /* 2. Solve the equation:
 	     *
 	     * A + lambda2 * AB + lambda3 * AC = ray.start + gamma * ray.dir
@@ -147,7 +56,7 @@ bool CUtils::IntersectTriangle(const CRay &i_Ray,
 	     */
     //
     // Find the determinant of the left part of the equation
-    const float Dcr = CUtils::Triple(a, b, c);
+    const float Dcr = CVector3DF::Triple(a, b, c);
     // check for zero; if it is zero, then the triangle and the ray are parallel
     if (fabs(Dcr) < k_fSMALL)
     {
@@ -158,19 +67,19 @@ bool CUtils::IntersectTriangle(const CRay &i_Ray,
     double rDcr = 1.0 / Dcr;
     // calculate `gamma' by substituting the right part of the equation in the third column of the matrix,
     // getting the determinant, and dividing by Dcr)
-    const double gamma = CUtils::Triple(a, b, h) * rDcr;
+    const double gamma = CVector3DF::Triple(a, b, h) * rDcr;
     // Is the intersection point behind us?  Is the intersection point worse than what we currently have?
     if (gamma <= 0 || gamma > closestdist)
     {
 	return false;
     }
-    lambda2 = CUtils::Triple(h, b, c) * rDcr;
+    lambda2 = CVector3DF::Triple(h, b, c) * rDcr;
     // Check if it is in range (barycentric coordinates)
     if (lambda2 < 0 || lambda2 > 1)
     {
 	return false;
     }
-    lambda3 = CUtils::Triple(a, h, c) * rDcr;
+    lambda3 = CVector3DF::Triple(a, h, c) * rDcr;
 
     // Calculate lambda3 and check if it is in range as well
     if (lambda3 < 0 || lambda3 > 1)
@@ -185,14 +94,14 @@ bool CUtils::IntersectTriangle(const CRay &i_Ray,
     closestdist = gamma;
     io_IntersectionInfo.m_fDistance = closestdist;
     
-    io_IntersectionInfo.m_vIntersectionPoint = CUtils::GetPointAtDistance(i_Ray, closestdist);
+    io_IntersectionInfo.m_vIntersectionPoint = i_Ray.GetPointAtDistance(closestdist);
 
-    io_IntersectionInfo.m_vBarCoordsLocal.setX(1.0f - lambda2 - lambda3);
-    io_IntersectionInfo.m_vBarCoordsLocal.setY(lambda2);
-    io_IntersectionInfo.m_vBarCoordsLocal.setZ(lambda3);
+    io_IntersectionInfo.m_vBarCoordsLocal.SetX(1.0f - lambda2 - lambda3);
+    io_IntersectionInfo.m_vBarCoordsLocal.SetY(lambda2);
+    io_IntersectionInfo.m_vBarCoordsLocal.SetZ(lambda3);
 
     //Normal to the surface
-    Normal(io_IntersectionInfo.m_vNormal, a, b);
+    io_IntersectionInfo.m_vNormal = CVector3DF::Normal(a, b);
 
     return true;
 }
@@ -200,21 +109,21 @@ bool CUtils::IntersectTriangle(const CRay &i_Ray,
 
 bool CUtils::IntersectTriangle(const CRay &i_Ray,
 			       CIntersactionInfo &io_IntersectionInfo,
-			       const QVector3D& i_vA,
-			       const QVector3D& i_vB,
-			       const QVector3D& i_vC,
-			       const QVector3D& i_vABar,
-			       const QVector3D& i_vBBar,
-			       const QVector3D& i_vCBar)
+			       const CVector3DF& i_vA,
+			       const CVector3DF& i_vB,
+			       const CVector3DF& i_vC,
+			       const CVector3DF& i_vABar,
+			       const CVector3DF& i_vBBar,
+			       const CVector3DF& i_vCBar)
 {
     if (!IntersectTriangle(i_Ray, io_IntersectionInfo, i_vA, i_vB, i_vC))
     {
 	return false;
     }
 
-    const QVector3D vPA = i_vABar * io_IntersectionInfo.m_vBarCoordsLocal.x();
-    const QVector3D vPB = i_vBBar * io_IntersectionInfo.m_vBarCoordsLocal.y();
-    const QVector3D vPC = i_vCBar * io_IntersectionInfo.m_vBarCoordsLocal.z();
+    const CVector3DF vPA = i_vABar * io_IntersectionInfo.m_vBarCoordsLocal.X();
+    const CVector3DF vPB = i_vBBar * io_IntersectionInfo.m_vBarCoordsLocal.Y();
+    const CVector3DF vPC = i_vCBar * io_IntersectionInfo.m_vBarCoordsLocal.Z();
 
     io_IntersectionInfo.m_vBarCoordsGlobal = vPA + vPB + vPC;
 
@@ -238,9 +147,9 @@ int CUtils::PowerOf2(const int nPow)
     }
 }
 
-QVector3D CUtils::Reflect(const QVector3D &toBeReflected, const QVector3D &normal)
+CVector3DF CUtils::Reflect(const CVector3DF &toBeReflected, const CVector3DF &normal)
 {
-    return toBeReflected + 2 * (Dot(normal, -toBeReflected)) * normal;
+    return toBeReflected + 2 * (normal.Dot(-toBeReflected)) * normal;
 }
 
 void CUtils::GetNextPoint(int &io_a, int &io_b, int nPos, int nMod)
@@ -254,11 +163,4 @@ void CUtils::GetNextPoint(int &io_a, int &io_b, int nPos, int nMod)
 
     io_a = point[0];
     io_b = point[1];
-}
-
-void CUtils::AddDebugString(const char* str)
-{
-    strDebugOut.append( QString(str) );
-    strDebugOut.append( "\n");
-    //emit DebugOutChanged(strDebugOut);
 }

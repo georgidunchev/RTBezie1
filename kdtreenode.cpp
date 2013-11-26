@@ -39,7 +39,7 @@ void CKDTreeNode::Process()
 	std::vector<CSubTriangle*>* pRightTriangles = new std::vector<CSubTriangle*>();
 
 	float fWhere;
-	EDimiensions eDimention = static_cast<EDimiensions>(static_cast<int>(m_nLevel) % e_Dimension_MAX);
+	CVector3DF::EDimiensions eDimention = static_cast<CVector3DF::EDimiensions>(static_cast<int>(m_nLevel) % CVector3DF::e_Dimension_MAX);
 
 	if (!Separate(*m_pTriangles, pLeftTriangles, pRightTriangles, eDimention, fWhere))
 	{
@@ -63,7 +63,7 @@ void CKDTreeNode::Process()
 bool CKDTreeNode::Separate(	std::vector<CSubTriangle*>& AllTriangles,
 							std::vector<CSubTriangle*>* pLeftTriangles,
 							std::vector<CSubTriangle*>*pRightTriangles,
-							EDimiensions eDimension, float &fBestPortion)
+							CVector3DF::EDimiensions eDimension, float &fBestPortion)
 {
 	float fPortion, fBestDivide;
 	int nMaxMinDistance = 0;
@@ -74,16 +74,16 @@ bool CKDTreeNode::Separate(	std::vector<CSubTriangle*>& AllTriangles,
 		fPortion = 1.f/k_nMAX_SPLITS_OF_NODE;//denominator
 		fPortion *= i;
 
-		float fBBLeft = CUtils::GetDimension( m_BoundingBox.GetMinVertex(), eDimension);
-		float fBBRight = CUtils::GetDimension( m_BoundingBox.GetMaxVertex(), eDimension);
+		float fBBLeft = m_BoundingBox.GetMinVertex().GetDimension(eDimension);
+		float fBBRight = m_BoundingBox.GetMaxVertex().GetDimension(eDimension);
 		float fDivide = (1.f - fPortion)*fBBLeft + fPortion * fBBRight;
 
 		int nTrianglesLeft = 0, nTrianglesRight = 0;
 
 		for(uint j = 0; j < AllTriangles.size(); ++j)
 		{
-			float fLeft =  CUtils::GetDimension( AllTriangles[j]->GetBoundingBox().GetMinVertex() , eDimension);
-			float fRight =  CUtils::GetDimension( AllTriangles[j]->GetBoundingBox().GetMaxVertex() , eDimension);
+		    float fLeft =  AllTriangles[j]->GetBoundingBox().GetMinVertex().GetDimension(eDimension);
+			float fRight = AllTriangles[j]->GetBoundingBox().GetMaxVertex().GetDimension(eDimension);
 			if (fLeft <= fDivide)
 			{
 				nTrianglesLeft++;
@@ -113,8 +113,8 @@ bool CKDTreeNode::Separate(	std::vector<CSubTriangle*>& AllTriangles,
 
 		for (uint j = 0; j < AllTriangles.size(); ++j)
 		{
-			float fLeft =  CUtils::GetDimension( AllTriangles[j]->GetBoundingBox().GetMinVertex() , eDimension);
-			float fRight =  CUtils::GetDimension( AllTriangles[j]->GetBoundingBox().GetMaxVertex() , eDimension);
+			float fLeft =  AllTriangles[j]->GetBoundingBox().GetMinVertex().GetDimension(eDimension);
+			float fRight =  AllTriangles[j]->GetBoundingBox().GetMaxVertex().GetDimension(eDimension);
 		
 			if (fLeft <= fBestDivide)
 			{

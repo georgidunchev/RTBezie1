@@ -10,30 +10,30 @@
 CBezierPatch::CBezierPatch(CTriangle& pParent)
     : m_Parent_Triangle(pParent)
     , m_pParent_SubTriangle(NULL)
-    , m_aAdditionalPoints(10, QVector3D(0, 0, 0))
+    , m_aAdditionalPoints(10, CVector3DF(0, 0, 0))
 {
 }
 
 CBezierPatch::CBezierPatch(CSubTriangle *pParent)
     : m_Parent_Triangle(pParent->GetParent())
     , m_pParent_SubTriangle(pParent)
-    , m_aAdditionalPoints(10, QVector3D(0, 0, 0))
+    , m_aAdditionalPoints(10, CVector3DF(0, 0, 0))
 {
 }
 
-const QVector3D CBezierPatch::GetPointFromBarycentric(const QVector3D& vCoords) const
+const CVector3DF CBezierPatch::GetPointFromBarycentric(const CVector3DF& vCoords) const
+{
+    return GetPointFromBarycentric(vCoords.X(), vCoords.Y());
+}
+
+const CVector3DF CBezierPatch::GetPointFromBarycentric(const QVector2D& vCoords) const
 {
     return GetPointFromBarycentric(vCoords.x(), vCoords.y());
 }
 
-const QVector3D CBezierPatch::GetPointFromBarycentric(const QVector2D& vCoords) const
+const CVector3DF CBezierPatch::GetPointFromBarycentric(float u, float v) const
 {
-    return GetPointFromBarycentric(vCoords.x(), vCoords.y());
-}
-
-const QVector3D CBezierPatch::GetPointFromBarycentric(float u, float v) const
-{
-    QVector3D B = Q30 * u*u*u
+    CVector3DF B = Q30 * u*u*u
 	    + Q03 * v*v*v
 	    + Q21 * u*u*v
 	    + Q12 * u*v*v
@@ -80,9 +80,9 @@ void CBezierPatch::BuildBezierPoints()
     CUtils::TriangleCentre( Point(1,1),
 			    Point(2,0), Point(1,2), Point(0,1));
 
-    //    QVector3D vE = Point(2,1) + Point(1,2) + Point(0,2) + Point(0,1) + Point(1,0) + Point(2,0);
+    //    CVector3DF vE = Point(2,1) + Point(1,2) + Point(0,2) + Point(0,1) + Point(1,0) + Point(2,0);
     //    vE /= 6;
-    //    QVector3D vV = Point(0,0) + Point(3,0) + Point(0,3);
+    //    CVector3DF vV = Point(0,0) + Point(3,0) + Point(0,3);
 
     //    Point(1,1) = vE + (vE - vV)*0.5f;
 
@@ -136,7 +136,7 @@ void CBezierPatch::BuildBezierPoints_Sub(int nStartOfLongest, bool bFirst)
 
     std::vector<int> c;
     std::vector<int> d;
-    QVector3D t[4];
+    CVector3DF t[4];
     //102 &012
     c.assign(2, a[2]);
     d.assign(2, b[2]);
@@ -235,14 +235,14 @@ void CBezierPatch::BuildBezierPoint(CVertexInfo &o_Info)
     BuildBezierPoint(*o_Info.vNew2, *o_Info.vMain, *o_Info.vEnd2, *o_Info.vNormal);
 }
 
-void CBezierPatch::BuildBezierPoint(QVector3D &o_vNew,
-				 const QVector3D &i_vMain,
-				 const QVector3D &i_vEnd,
-				 const QVector3D &i_vNormal)
+void CBezierPatch::BuildBezierPoint(CVector3DF &o_vNew,
+				 const CVector3DF &i_vMain,
+				 const CVector3DF &i_vEnd,
+				 const CVector3DF &i_vNormal)
 {
     o_vNew = i_vEnd - i_vMain;
     o_vNew *= k_fOneThird;
-    o_vNew = CUtils::ProjectionOfVectorInPlane(o_vNew, i_vNormal);
+    o_vNew = o_vNew.ProjectionInPlane(i_vNormal);
     o_vNew += i_vMain;
 }
 
@@ -300,22 +300,22 @@ int CBezierPatch::GetIndex(int a, int b) const
     }
 }
 
-QVector3D& CBezierPatch::Point(int a, int b)
+CVector3DF& CBezierPatch::Point(int a, int b)
 {
     return m_aAdditionalPoints[GetIndex(a,b)];
 }
 
-QVector3D &CBezierPatch::Point(int idx)
+CVector3DF &CBezierPatch::Point(int idx)
 {
     return m_aAdditionalPoints[idx];
 }
 
-const QVector3D &CBezierPatch::GetPoint(int a, int b) const
+const CVector3DF &CBezierPatch::GetPoint(int a, int b) const
 {
     return m_aAdditionalPoints[GetIndex(a,b)];
 }
 
-const QVector3D &CBezierPatch::GetPoint(QVector2D bar) const
+const CVector3DF &CBezierPatch::GetPoint(QVector2D bar) const
 {
     return m_aAdditionalPoints[GetIndex(bar.x(),bar.y())];
 }
@@ -325,38 +325,43 @@ bool CBezierPatch::IntersectHighQuality(const CRay &ray, CIntersactionInfo &inte
 //    return IntersectLowQuality(ray, intersectionInfo, bDebug);
 
 //    return false;
-    std::vector<QVector3D> aPointsToCheck;
+    std::vector<CVector3DF> aPointsToCheck;
 //    CSubTriangle& SubTriangle = * intersectionInfo.pSubTriangle;
 
-//    aPointsToCheck.push_back(QVector3D(intersectionInfo.u,intersectionInfo.v,intersectionInfo.w));
+//    aPointsToCheck.push_back(CVector3DF(intersectionInfo.u,intersectionInfo.v,intersectionInfo.w));
 //    for (int j = 0; j < 3; j++)
 //    {
 //	aPointsToCheck.push_back(SubTriangle.GetVertBar(j));
 //    }
 
-    aPointsToCheck.resize(10);
-    int u = 0, v = 0;
-    uint k = 0;
-    for (uint i = 0; i < 4; ++i)
-    {
-	if (i > 0)
-	{
-	    CUtils::GetNextPoint(u, v, 2, -1);
-	}
+//    aPointsToCheck.resize(10);
+//    int u = 0, v = 0;
+//    uint k = 0;
+//    for (uint i = 0; i < 4; ++i)
+//    {
+//	if (i > 0)
+//	{
+//	    CUtils::GetNextPoint(u, v, 2, -1);
+//	}
 
-	aPointsToCheck[k] = QVector3D(u, v, 3 - u - v);
-	aPointsToCheck[k] /= 3.0f;
-	k++;
+//	aPointsToCheck[k] = CVector3DF(u, v, 3 - u - v);
+//	aPointsToCheck[k] /= 3.0f;
+//	k++;
 
-	int u1 = u, v1 = v;
-	for (uint j = 0; j < i; ++j)
-	{
-	    CUtils::GetNextPoint(u1, v1, 0, -1);
-	    aPointsToCheck[k] = QVector3D(u1, v1, 3 - u1 - v1);
-	    aPointsToCheck[k] /= 3.0f;
-	    k++;
-	}
-    }
+//	int u1 = u, v1 = v;
+//	for (uint j = 0; j < i; ++j)
+//	{
+//	    CUtils::GetNextPoint(u1, v1, 0, -1);
+//	    aPointsToCheck[k] = CVector3DF(u1, v1, 3 - u1 - v1);
+//	    aPointsToCheck[k] /= 3.0f;
+//	    k++;
+//	}
+//    }
+    float fA = 0.33f;
+    aPointsToCheck.push_back( CVector3DF(fA, fA, 1.0f - 2 * fA) );
+    aPointsToCheck.push_back( CVector3DF(1.0f, 0.0f, 0.0f) );
+    aPointsToCheck.push_back( CVector3DF(0.0f, 1.0f, 0.0f) );
+    aPointsToCheck.push_back( CVector3DF(0.0f, 0.0f, 1.0f) );
 
 //    for (uint i = 0, n = m_aAdditionalPoints.size(); i < n; ++i)
 //    {
@@ -372,19 +377,19 @@ bool CBezierPatch::IntersectHighQuality(const CRay &ray, CIntersactionInfo &inte
     bool bezierFast = false;
     if (!bezierFast)
     {
-	for (int n = 0, i = aPointsToCheck.size()-1; i >= n; --i)
+	for (int i = 0, n = aPointsToCheck.size(); i < n; ++i)
 	{
-	    if (bDebug)
-	    {
-		qDebug() <<"Bar"<<aPointsToCheck[i];
-		qDebug() <<"Point "<< GetPointFromBarycentric(aPointsToCheck[i]);
-	    }
+//	    if (bDebug)
+//	    {
+//		qDebug() <<"Bar"<<aPointsToCheck[i];
+//		qDebug() <<"Point "<< GetPointFromBarycentric(aPointsToCheck[i]);
+//	    }
 
 	    CIntersactionInfo LocalInfo(intersectionInfo);
 	    if (intersect(ray, LocalInfo, aPointsToCheck[i], 4, bDebug))
 	    {
 		intersectionInfo = LocalInfo;
-		intersectionInfo.color = CColor(1.0f- aPointsToCheck[i].x(), 1.0f - aPointsToCheck[i].y(), 1.0f - aPointsToCheck[i].z());
+		//intersectionInfo.color = CColor(1.0f- aPointsToCheck[i].x(), 1.0f - aPointsToCheck[i].y(), 1.0f - aPointsToCheck[i].z());
 		closestdist = intersectionInfo.m_fDistance;
 		return true;
 	    }
@@ -394,13 +399,13 @@ bool CBezierPatch::IntersectHighQuality(const CRay &ray, CIntersactionInfo &inte
 //    else
 //    {
 //	int iterations = 5;
-//	QVector3D res = QVector3D(1.0/3.0, 1.0/3.0, 0);
+//	CVector3DF res = CVector3DF(1.0/3.0, 1.0/3.0, 0);
 //	intersectSimpleBezierTriangle(ray, intersectionInfo, SubTriangle, res, iterations, bDebug );
-//	res = QVector3D(1.0/6.0, 1.0/6.0, 0);
+//	res = CVector3DF(1.0/6.0, 1.0/6.0, 0);
 //	intersectSimpleBezierTriangle(ray, intersectionInfo, SubTriangle, res, iterations, bDebug );
-//	res = QVector3D(2.0/3.0, 1.0/6.0, 0);
+//	res = CVector3DF(2.0/3.0, 1.0/6.0, 0);
 //	intersectSimpleBezierTriangle(ray, intersectionInfo, SubTriangle, res, iterations, bDebug );
-//	res = QVector3D(1.0/6.0, 2.0/3.0 ,0);
+//	res = CVector3DF(1.0/6.0, 2.0/3.0 ,0);
 //	intersectSimpleBezierTriangle(ray, intersectionInfo, SubTriangle, res, iterations, bDebug );
 
 //	closestdist = intersectionInfo.m_fDistance;
@@ -422,11 +427,11 @@ bool CBezierPatch::IntersectLowQuality(const CRay &ray, CIntersactionInfo &inter
     for(int i = 0, m = aFirst.size(); i < m; ++i)
     {
 	int u = aFirst[i].x(), v = aFirst[i].y();
-	QVector3D vA = GetPoint(aFirst[i]);
+	CVector3DF vA = GetPoint(aFirst[i]);
 	CUtils::GetNextPoint(u, v, 0, -1);
-	QVector3D vB = GetPoint(u, v);
+	CVector3DF vB = GetPoint(u, v);
 	CUtils::GetNextPoint(u, v, 1, -1);
-	QVector3D vC = GetPoint(u, v);
+	CVector3DF vC = GetPoint(u, v);
 
 	if (CUtils::IntersectTriangle(ray, intersectionInfo, vA, vB, vC))
 	{
@@ -436,26 +441,26 @@ bool CBezierPatch::IntersectLowQuality(const CRay &ray, CIntersactionInfo &inter
     return false;
 }
 
-bool CBezierPatch::intersect(const CRay &ray, CIntersactionInfo &info, QVector3D barCoord, unsigned int iterations, bool bDebug) const
+bool CBezierPatch::intersect(const CRay &ray, CIntersactionInfo &info, CVector3DF barCoord, unsigned int iterations, bool bDebug) const
 {
     //    return CTriangle::Intersect(ray, info);
     //Planes along ray
-    QVector3D N1 = CUtils::Cross(ray.Direction(), QVector3D(-1.0f,-1.0f,-1.0f));
+    CVector3DF N1 = ray.Direction().Cross(CVector3DF(-1.0f,-1.0f,-1.0f));
 //    N1.normalize();
-    QVector3D N2 = CUtils::Cross(ray.Direction(), N1);
+    CVector3DF N2 = ray.Direction().Cross(N1);
 //    N2.normalize();
-    const float d1 = -CUtils::Dot(N1, ray.StartPoint());
-    const float d2 = -CUtils::Dot(N2, ray.StartPoint());
+    const float d1 = -N1.Dot(ray.StartPoint());
+    const float d2 = -N2.Dot(ray.StartPoint());
 
     float fSMall = 1e-3;
 
     for (unsigned int i = 0; i < iterations; i++)
     {
-	const double &u(barCoord.x());
-	const double &v(barCoord.y());
+	const double &u(barCoord.X());
+	const double &v(barCoord.Y());
 
 	//partial U derivative of B
-	const QVector3D dBu = 3 * Q30 * u * u
+	const CVector3DF dBu = 3 * Q30 * u * u
 		+ 2 * Q21 * u * v
 		+ Q12 * v * v
 		+ 2 * Q20 * u
@@ -463,35 +468,35 @@ bool CBezierPatch::intersect(const CRay &ray, CIntersactionInfo &info, QVector3D
 		+ Q10;
 
 	//Partial V derivative of B
-	const QVector3D dBv = 3 * Q03 * v * v
+	const CVector3DF dBv = 3 * Q03 * v * v
 		+ 2 * Q12 * u * v
 		+ Q21 * u * u
 		+ 2 * Q02 * v
 		+ Q11 * u
 		+ Q01;
 
-	const QVector3D B = GetPointFromBarycentric(barCoord);
+	const CVector3DF B = GetPointFromBarycentric(barCoord);
 
-	const QVector3D R = QVector3D(CUtils::Dot(N1, B) + d1,
-				      CUtils::Dot(N2, B) + d2,
+	const CVector3DF R = CVector3DF(N1.Dot(B) + d1,
+				      N2.Dot(B) + d2,
 				      0);
 
-	if (bDebug)
-	{
-	    qDebug() << "R: " << R;
-	}
+//	if (bDebug)
+//	{
+//	    qDebug() << "R: " << R;
+//	}
 
-	if ( ( fabs(R.x()) < fSMall ) &&
-	     ( fabs(R.y()) < fSMall ) )
+	if ( ( fabs(R.X()) < fSMall ) &&
+	     ( fabs(R.Y()) < fSMall ) )
 	{
 	    break;
 	}
 
 	//Inverse Jacobian
-	const float fN1dotdBu = CUtils::Dot(N1, dBu);
-	const float fN1dotdBv = CUtils::Dot(N1, dBv);
-	const float fN2dotdBu = CUtils::Dot(N2, dBu);
-	const float fN2dotdBv = CUtils::Dot(N2, dBv);
+	const float fN1dotdBu = N1.Dot(dBu);
+	const float fN1dotdBv = N1.Dot(dBv);
+	const float fN2dotdBu = N2.Dot(dBu);
+	const float fN2dotdBv = N2.Dot(dBv);
 
 	const float invConst = 1.0f / ( fN1dotdBu * fN2dotdBv - fN1dotdBv * fN2dotdBu );
 
@@ -511,24 +516,24 @@ bool CBezierPatch::intersect(const CRay &ray, CIntersactionInfo &info, QVector3D
 
 	//Newton Iteration
 
-	barCoord = barCoord - CUtils::VertexMatrixMultiply(R, inverseJacobian);
-	barCoord.setZ(1.0 - barCoord.x() - barCoord.y());
+	barCoord = barCoord - R.MatrixMultiply(inverseJacobian);
+	barCoord.SetZ(1.0 - barCoord.X() - barCoord.Y());
 
-	if (barCoord.x() > k_fMAX || barCoord.x() < k_fMIN
-		|| barCoord.y() > k_fMAX || barCoord.y() < k_fMIN
-		|| barCoord.z() > k_fMAX || barCoord.z() < k_fMIN)
+	if (barCoord.X() > k_fMAX || barCoord.X() < k_fMIN
+		|| barCoord.Y() > k_fMAX || barCoord.Y() < k_fMIN
+		|| barCoord.Z() > k_fMAX || barCoord.Z() < k_fMIN)
 	{
 	    return false;
 	}
 
-	if (bDebug)
-	{
-	    qDebug() << "Iteration" << i << barCoord;
-	}
+//	if (bDebug)
+//	{
+//	    qDebug() << "Iteration" << i << barCoord;
+//	}
     }
 
-    const float &u(barCoord.x());
-    const float &v(barCoord.y());
+    const float &u(barCoord.X());
+    const float &v(barCoord.Y());
     const float w(1.0 - u - v);
 
 
@@ -547,10 +552,10 @@ bool CBezierPatch::intersect(const CRay &ray, CIntersactionInfo &info, QVector3D
     }
 
     //Calculating B
-    const QVector3D B = GetPointFromBarycentric(barCoord);
+    const CVector3DF B = GetPointFromBarycentric(barCoord);
 
-    if ( ( fabs(CUtils::Dot(N1, B) + d1) > fSMall ) ||
-	 ( fabs(CUtils::Dot(N2, B) + d2) > fSMall ) )
+    if ( ( fabs(N1.Dot(B) + d1) > fSMall ) ||
+	 ( fabs(N2.Dot(B) + d2) > fSMall ) )
     {
 	if (bDebug)
 	{
@@ -560,7 +565,7 @@ bool CBezierPatch::intersect(const CRay &ray, CIntersactionInfo &info, QVector3D
     }
 
     // calculate the intersection
-    float len = (B - ray.StartPoint()).length();
+    float len = (B - ray.StartPoint()).Length();
     if (len > info.m_fDistance)
     {
 	if (bDebug)
@@ -575,7 +580,7 @@ bool CBezierPatch::intersect(const CRay &ray, CIntersactionInfo &info, QVector3D
     //    getBezierNormal(barCoord, info);
 
 //    //partial U derivative of B
-//    const QVector3D dBu = 3 * Q30 * u * u
+//    const CVector3DF dBu = 3 * Q30 * u * u
 //	    + 2 * Q21 * u * v
 //	    + Q12 * v * v
 //	    + 2 * Q20 * u
@@ -583,7 +588,7 @@ bool CBezierPatch::intersect(const CRay &ray, CIntersactionInfo &info, QVector3D
 //	    + Q10;
 
 //    //Partial V derivative of B
-//    const QVector3D dBv = 3 * Q03 * v * v
+//    const CVector3DF dBv = 3 * Q03 * v * v
 //	    + 2 * Q12 * u * v
 //	    + Q21 * u * u
 //	    + 2 * Q02 * v
@@ -592,17 +597,17 @@ bool CBezierPatch::intersect(const CRay &ray, CIntersactionInfo &info, QVector3D
 
     //CUtils::Normal(info.m_vNormal, dBu, dBv);
 
-    info.m_vBarCoordsLocal.setX(u);
-    info.m_vBarCoordsLocal.setY(v);
-    info.m_vBarCoordsLocal.setZ(w);
+    info.m_vBarCoordsLocal.SetX(u);
+    info.m_vBarCoordsLocal.SetY(v);
+    info.m_vBarCoordsLocal.SetZ(w);
 
     info.m_vBarCoordsGlobal = m_pParent_SubTriangle->GetParentBar(info.m_vBarCoordsLocal);
 
-    const QVector3D vNormalA = info.m_vBarCoordsGlobal.x() * m_Parent_Triangle.A().Normal_Get();
-    const QVector3D vNormalB = info.m_vBarCoordsGlobal.y() * m_Parent_Triangle.B().Normal_Get();
-    const QVector3D vNormalC = info.m_vBarCoordsGlobal.z() * m_Parent_Triangle.C().Normal_Get();
+    const CVector3DF vNormalA = info.m_vBarCoordsGlobal.X() * m_Parent_Triangle.A().Normal_Get();
+    const CVector3DF vNormalB = info.m_vBarCoordsGlobal.Y() * m_Parent_Triangle.B().Normal_Get();
+    const CVector3DF vNormalC = info.m_vBarCoordsGlobal.Z() * m_Parent_Triangle.C().Normal_Get();
     info.m_vNormal = vNormalA + vNormalB + vNormalC;
-    info.m_vNormal.normalize();
+    info.m_vNormal.Normalize();
 
     if (bDebug)
     {

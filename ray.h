@@ -1,22 +1,23 @@
 #ifndef CRAY_H
 #define CRAY_H
 
-#include <QVector3D>
+#include <vector3df.h>
 
 class CRay
 {
 public:
-    CRay(QVector3D v3dOrigin, QVector3D v3dDirection);
+    CRay(CVector3DF v3dOrigin, CVector3DF v3dDirection);
     ~CRay(){}
 
-    QVector3D StartPoint() const;
+    CVector3DF StartPoint() const;
 
-    QVector3D Direction() const;
+    CVector3DF Direction() const;
 
+    CVector3DF GetPointAtDistance(float fDistance) const;
 private:
-    QVector3D m_v3dOrigin;
+    CVector3DF m_v3dOrigin;
     //normalized
-    QVector3D m_v3dDirection;
+    CVector3DF m_v3dDirection;
 };
 
 #endif // CRAY_H

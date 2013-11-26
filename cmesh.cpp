@@ -82,7 +82,7 @@ void CMesh::ReadFromFile(const QString &strInputFileName)
 		aCoords.push_back(strMarker.toDouble());
 	    }
 
-	    m_aVertices.push_back(CVertex(QVector3D(aCoords[0], aCoords[1], aCoords[2]), m_aVertices.size()));
+	    m_aVertices.push_back(CVertex(CVector3DF(aCoords[0], aCoords[1], aCoords[2]), m_aVertices.size()));
 	}
 	else if (strMarker == "f" )
 	{
@@ -195,7 +195,7 @@ bool CMesh::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo, cons
 	{
 	    if (pBBox) // if bounding box is supplied, discard all intersection outside it
 	    {
-		QVector3D vIntersection = CUtils::GetPointAtDistance(ray, LastIntersection.m_fDistance);
+		CVector3DF vIntersection = ray.GetPointAtDistance(LastIntersection.m_fDistance);
 		if (!pBBox->IsInside(vIntersection))
 		{
 		    continue;
