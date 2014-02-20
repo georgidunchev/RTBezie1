@@ -90,9 +90,9 @@ void CTriangle::MakeBoundingBox()
 
     for(int i = 0; i < nSize; ++i)
     {
-	m_aSubTriangles[i]->MakeBoundingBox();
-	m_BoundingBox.AddPoint(m_aSubTriangles[i]->GetBoundingBox().GetMinVertex());
-	m_BoundingBox.AddPoint(m_aSubTriangles[i]->GetBoundingBox().GetMaxVertex());
+        m_aSubTriangles[i]->MakeBoundingBox();
+        m_BoundingBox.AddPoint(m_aSubTriangles[i]->GetBoundingBox().GetMinVertex());
+        m_BoundingBox.AddPoint(m_aSubTriangles[i]->GetBoundingBox().GetMaxVertex());
     }
     //    qDebug()<<"min"<<m_BoundingBox.GetMinVertex()<<"max"<<m_BoundingBox.GetMaxVertex();
     m_bHasBoundingBox = true;
@@ -105,7 +105,7 @@ const CAABox& CTriangle::GetBoundingBox()
 
 void CTriangle::BuildBezierPoints()
 {
-    m_BezierPatch.BuildBezierPoints();   
+    m_BezierPatch.BuildBezierPoints();
 }
 
 void CTriangle::Subdivide()
@@ -118,7 +118,7 @@ void CTriangle::Subdivide()
     int nSize = m_aSubTriangles.size();
     for (int i = 0; i < nSize; ++i)
     {
-	m_aSubTriangles[i]->m_nSubtriangleID = i;
+        m_aSubTriangles[i]->m_nSubtriangleID = i;
     }
 }
 
@@ -127,7 +127,7 @@ void CTriangle::AddSubTriangle(CSubTriangle* subTriangle)
     int nSavePos = subTriangle->GetSavePos();
     if (m_aSubTriangles[nSavePos])
     {
-	delete m_aSubTriangles[nSavePos];
+        delete m_aSubTriangles[nSavePos];
     }
     m_aSubTriangles[nSavePos] = subTriangle;
     m_aSubTriangles[nSavePos]->Subdivide();
@@ -137,14 +137,14 @@ bool CTriangle::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo, 
 {
     if (intersectionInfo.m_bHighQuality)
     {
-	return CTriangle::IntersectHighQuality(ray, intersectionInfo, aSubTriangles, bDebug);
+        return CTriangle::IntersectHighQuality(ray, intersectionInfo, aSubTriangles, bDebug);
     }
     else
     {
-	//return GetRaytracer()->GetMesh().IntersectKDTree(ray, intersectionInfo, bDebug);
+        //return GetRaytracer()->GetMesh().IntersectKDTree(ray, intersectionInfo, bDebug);
 
-	return IntersectSubdevidedTriangles(ray, intersectionInfo, aSubTriangles, NULL, bDebug);
-	//return IntersectFast(ray, intersectionInfo);
+        return IntersectSubdevidedTriangles(ray, intersectionInfo, aSubTriangles, NULL, bDebug);
+        //return IntersectFast(ray, intersectionInfo);
     }
 }
 bool CTriangle::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo, bool bDebug) const
@@ -155,7 +155,7 @@ bool CTriangle::IntersectHighQuality(const CRay &ray, CIntersactionInfo &interse
 {
     if (CTriangle::IntersectSubdevidedTriangles(ray, intersectionInfo, aSubTriangles, NULL, bDebug))
     {
-	return CTriangle::IntersectHighQuality(ray, intersectionInfo, bDebug);
+        return CTriangle::IntersectHighQuality(ray, intersectionInfo, bDebug);
     }
     return false;
 }
@@ -168,7 +168,7 @@ bool CTriangle::IntersectHighQuality(const CRay &ray, CIntersactionInfo &interse
     aPointsToCheck.push_back(intersectionInfo.m_vBarCoordsLocal);
     for (int j = 0; j < 3; j++)
     {
-	aPointsToCheck.push_back(SubTriangle.GetVertBar(j));
+        aPointsToCheck.push_back(SubTriangle.GetVertBar(j));
     }
 
     float fU = intersectionInfo.m_vBarCoordsLocal.X();
@@ -180,47 +180,47 @@ bool CTriangle::IntersectHighQuality(const CRay &ray, CIntersactionInfo &interse
     bool bezierFast = false;
     if (!bezierFast)
     {
-	int nSize = aPointsToCheck.size();
-	if (nSize > 0)
-	{
-	    for (int i = 0; i < nSize; i++)
-	    {
-		if (intersectSimpleBezierTriangle(ray, intersectionInfo, SubTriangle, aPointsToCheck[i], 15, bDebug))
-		{
-		    closestdist = intersectionInfo.m_fDistance;
-		    return true;
-		}
+        int nSize = aPointsToCheck.size();
+        if (nSize > 0)
+        {
+            for (int i = 0; i < nSize; i++)
+            {
+                if (intersectSimpleBezierTriangle(ray, intersectionInfo, SubTriangle, aPointsToCheck[i], 15, bDebug))
+                {
+                    closestdist = intersectionInfo.m_fDistance;
+                    return true;
+                }
 
-	    }
-	    return false;
-	}
-	else
-	{
-	    CVector3DF res = CVector3DF(fU, fV, 0);
-	    if (intersectSimpleBezierTriangle(ray, intersectionInfo, SubTriangle, res, 5, bDebug))
-	    {
-		closestdist = intersectionInfo.m_fDistance;
-		return true;
-	    }
-	    else
-	    {
-		return false;
-	    }
-	}
+            }
+            return false;
+        }
+        else
+        {
+            CVector3DF res = CVector3DF(fU, fV, 0);
+            if (intersectSimpleBezierTriangle(ray, intersectionInfo, SubTriangle, res, 5, bDebug))
+            {
+                closestdist = intersectionInfo.m_fDistance;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
     }
     else
     {
-	int iterations = 5;
-	CVector3DF res = CVector3DF(1.0/3.0, 1.0/3.0, 0);
-	intersectSimpleBezierTriangle(ray, intersectionInfo, SubTriangle, res, iterations, bDebug );
-	res = CVector3DF(1.0/6.0, 1.0/6.0, 0);
-	intersectSimpleBezierTriangle(ray, intersectionInfo, SubTriangle, res, iterations, bDebug );
-	res = CVector3DF(2.0/3.0, 1.0/6.0, 0);
-	intersectSimpleBezierTriangle(ray, intersectionInfo, SubTriangle, res, iterations, bDebug );
-	res = CVector3DF(1.0/6.0, 2.0/3.0 ,0);
-	intersectSimpleBezierTriangle(ray, intersectionInfo, SubTriangle, res, iterations, bDebug );
+        int iterations = 5;
+        CVector3DF res = CVector3DF(1.0/3.0, 1.0/3.0, 0);
+        intersectSimpleBezierTriangle(ray, intersectionInfo, SubTriangle, res, iterations, bDebug );
+        res = CVector3DF(1.0/6.0, 1.0/6.0, 0);
+        intersectSimpleBezierTriangle(ray, intersectionInfo, SubTriangle, res, iterations, bDebug );
+        res = CVector3DF(2.0/3.0, 1.0/6.0, 0);
+        intersectSimpleBezierTriangle(ray, intersectionInfo, SubTriangle, res, iterations, bDebug );
+        res = CVector3DF(1.0/6.0, 2.0/3.0 ,0);
+        intersectSimpleBezierTriangle(ray, intersectionInfo, SubTriangle, res, iterations, bDebug );
 
-	closestdist = intersectionInfo.m_fDistance;
+        closestdist = intersectionInfo.m_fDistance;
     }
 
     return fabs(closestdist - k_fMAX) > k_fMIN;
@@ -236,10 +236,10 @@ bool CTriangle::IntersectFast(const CRay &ray, CIntersactionInfo &intersectionIn
 {
     for (int i = 0; i < 9; i++)
     {
-//	if (GetBezierPatch().intersect(ray, intersectionInfo, i, bDebug))
-	{
-	    return true;
-	}
+        //	if (GetBezierPatch().intersect(ray, intersectionInfo, i, bDebug))
+        {
+            return true;
+        }
     }
 
     return false;
@@ -259,35 +259,35 @@ bool CTriangle::IntersectSubdevidedTriangles(const CRay &ray, CIntersactionInfo 
 
     for (int i = 0; i < nSize; i++)
     {
-	CIntersactionInfo intersectionInfoLocal(intersectionInfo);
-	if( aSubTriangles[i]->Intersect(ray, intersectionInfoLocal,bDebug) )
-	{
-	    int nId = aSubTriangles[i]->m_nSubtriangleID;
+        CIntersactionInfo intersectionInfoLocal(intersectionInfo);
+        if( aSubTriangles[i]->Intersect(ray, intersectionInfoLocal,bDebug) )
+        {
+            int nId = aSubTriangles[i]->m_nSubtriangleID;
 
-	    if (false)
-	    {
-		int nSubtriangleId = aSubTriangles[i]->m_nSubtriangleID;
-		bool bR = ((nSubtriangleId / 4) > 0);
-		bool bG = (((nSubtriangleId % 4) / 2) > 0);
-		bool bB = (((nSubtriangleId % 4) % 2) > 0);
+            if (false)
+            {
+                int nSubtriangleId = aSubTriangles[i]->m_nSubtriangleID;
+                bool bR = ((nSubtriangleId / 4) > 0);
+                bool bG = (((nSubtriangleId % 4) / 2) > 0);
+                bool bB = (((nSubtriangleId % 4) % 2) > 0);
 
-		float fR = bR ? fModifier * static_cast<float>(nSubtriangleId) * 0.125f : 0.0f;
-		float fG = bG ? fModifier * static_cast<float>(nSubtriangleId) * 0.125f : 0.0f;
-		float fB = bB ? fModifier * static_cast<float>(nSubtriangleId) * 0.125f : 0.0f;
+                float fR = bR ? fModifier * static_cast<float>(nSubtriangleId) * 0.125f : 0.0f;
+                float fG = bG ? fModifier * static_cast<float>(nSubtriangleId) * 0.125f : 0.0f;
+                float fB = bB ? fModifier * static_cast<float>(nSubtriangleId) * 0.125f : 0.0f;
 
-		intersectionInfoLocal.color = CColor(fR, fG, fB);
-	    }
+                intersectionInfoLocal.color = CColor(fR, fG, fB);
+            }
 
-	    intersectionInfoLocal.pSubTriangle = aSubTriangles[i];
+            intersectionInfoLocal.pSubTriangle = aSubTriangles[i];
 
-	    intersectionInfoLocal.m_nSubTriangleId = nId;
+            intersectionInfoLocal.m_nSubTriangleId = nId;
 
-	    if (intersectionInfoLocal.m_fDistance < intersectionInfo.m_fDistance)
-	    {
-		intersectionInfo = intersectionInfoLocal;
-		bIntersected = true;
-	    }
-	}
+            if (intersectionInfoLocal.m_fDistance < intersectionInfo.m_fDistance)
+            {
+                intersectionInfo = intersectionInfoLocal;
+                bIntersected = true;
+            }
+        }
     }
     return bIntersected;
 }
@@ -298,13 +298,13 @@ bool CTriangle::Intersect(const CVector3DF &vStart, const CVector3DF &vEnd) cons
     CRay Ray(vStart, vEnd);
     if (!Intersect(Ray, Intersection))
     {
-	return false;
+        return false;
     }
 
     float fLength = (vEnd - vStart).Length();
     if (Intersection.m_fDistance < fLength)
     {
-	return true;
+        return true;
     }
     return false;
 }

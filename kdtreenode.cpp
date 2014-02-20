@@ -145,7 +145,7 @@ bool CKDTreeNode::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo
 	{
 		bool bIntersect = CSubTriangle::IntersectSubdevidedTriangles(ray, intersectionInfo, *m_pTriangles, bDebug);
 		//bool bIntersect = CTriangle::Intersect(ray, intersectionInfo, *m_pTriangles);
-		if (!bIntersect && k_bSHOW_KDTREE)
+        if (!bIntersect && GetSettings()->m_bShowKDTtee)
 		{
 			return m_BoundingBox.Intersect(ray, intersectionInfo, bDebug);
 		}
@@ -203,7 +203,7 @@ bool CKDTreeNode::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo
 				}
 			}
 
-			if (k_bSHOW_KDTREE)
+            if (GetSettings()->m_bShowKDTtee)
 			{
 				intersectionInfo.color += CColor(fR, fG, fB);
 			}

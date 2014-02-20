@@ -13,17 +13,27 @@ CShader::CShader()
 
 QRgb CShader::Shade(const CRay &ray, CIntersactionInfo &intersectionInfo)
 {
-    CColor cLamber;
+    CColor cLamber(0.0f, 1.0f, 0.5f);
     const float fLow = 0.05f;
     const float fHigh = 1.0f - fLow;
-    const bool bWireframe = false;
-    if (!bWireframe ||
-	    intersectionInfo.m_vBarCoordsLocal.X() < fLow || intersectionInfo.m_vBarCoordsLocal.X() > fHigh ||
-	    intersectionInfo.m_vBarCoordsLocal.Y() < fLow || intersectionInfo.m_vBarCoordsLocal.Y() > fHigh ||
-	    intersectionInfo.m_vBarCoordsLocal.Z() < fLow || intersectionInfo.m_vBarCoordsLocal.Z() > fHigh)
+    if (GetSettings()->m_bWireframe)
     {
-	cLamber = ShadeLambert(ray, intersectionInfo);
-	//cLamber += ShadeGloss(ray, intersectionInfo);
+        if (intersectionInfo.m_vBarCoordsLocal.X() < fLow || intersectionInfo.m_vBarCoordsLocal.X() > fHigh ||
+            intersectionInfo.m_vBarCoordsLocal.Y() < fLow || intersectionInfo.m_vBarCoordsLocal.Y() > fHigh ||
+            intersectionInfo.m_vBarCoordsLocal.Z() < fLow || intersectionInfo.m_vBarCoordsLocal.Z() > fHigh)
+        {
+
+        }
+        else
+        {
+            cLamber = ShadeLambert(ray, intersectionInfo);
+            //cLamber += ShadeGloss(ray, intersectionInfo);
+        }
+    }
+    else
+    {
+        cLamber = ShadeLambert(ray, intersectionInfo);
+        //cLamber += ShadeGloss(ray, intersectionInfo);
     }
 
     return cLamber.GetRGB();
@@ -66,8 +76,8 @@ CColor CShader::ShadeLambert(const CRay &ray, CIntersactionInfo &intersectionInf
 		}
 		else
 		{
-		     colorForLight *= 0.0f;
-		     fLightColor *= 0.0f;
+             colorForLight = 0.0f;
+             fLightColor = 0.0f;
 		}
 
 //		intersectionInfo.color += colorForLight;

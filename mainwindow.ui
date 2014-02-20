@@ -39,6 +39,19 @@
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
        <widget class="CView" name="Image">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
@@ -77,7 +90,7 @@
            <x>0</x>
            <y>0</y>
            <width>250</width>
-           <height>473</height>
+           <height>500</height>
           </rect>
          </property>
          <attribute name="label">
@@ -106,7 +119,7 @@
           <property name="geometry">
            <rect>
             <x>170</x>
-            <y>210</y>
+            <y>440</y>
             <width>75</width>
             <height>23</height>
            </rect>
@@ -121,8 +134,8 @@
           </property>
           <property name="geometry">
            <rect>
-            <x>170</x>
-            <y>180</y>
+            <x>20</x>
+            <y>440</y>
             <width>75</width>
             <height>23</height>
            </rect>
@@ -138,10 +151,16 @@
           <property name="geometry">
            <rect>
             <x>20</x>
-            <y>240</y>
+            <y>470</y>
             <width>221</width>
-            <height>231</height>
+            <height>21</height>
            </rect>
+          </property>
+          <property name="verticalScrollBarPolicy">
+           <enum>Qt::ScrollBarAlwaysOff</enum>
+          </property>
+          <property name="horizontalScrollBarPolicy">
+           <enum>Qt::ScrollBarAlwaysOff</enum>
           </property>
          </widget>
          <widget class="QLabel" name="labelFileName">
@@ -170,39 +189,29 @@
            <string>Refresh</string>
           </property>
          </widget>
-        </widget>
-        <widget class="QWidget" name="Settings">
-         <property name="geometry">
-          <rect>
-           <x>0</x>
-           <y>0</y>
-           <width>98</width>
-           <height>28</height>
-          </rect>
-         </property>
-         <attribute name="label">
-          <string>Settings</string>
-         </attribute>
-         <widget class="QCheckBox" name="RenderBezierCheckBox">
+         <widget class="QCheckBox" name="UseKDTreeCheckbox">
           <property name="geometry">
            <rect>
-            <x>0</x>
-            <y>10</y>
-            <width>211</width>
-            <height>18</height>
+            <x>20</x>
+            <y>60</y>
+            <width>124</width>
+            <height>17</height>
            </rect>
           </property>
           <property name="text">
-           <string>Bezier</string>
+           <string>Use KD Tree</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
           </property>
          </widget>
          <widget class="QCheckBox" name="NormalSmoothingCheckBox">
           <property name="geometry">
            <rect>
-            <x>0</x>
-            <y>30</y>
-            <width>131</width>
-            <height>20</height>
+            <x>20</x>
+            <y>100</y>
+            <width>167</width>
+            <height>17</height>
            </rect>
           </property>
           <property name="minimumSize">
@@ -214,146 +223,82 @@
           <property name="text">
            <string>Normal Smoothing</string>
           </property>
-         </widget>
-         <widget class="QSpinBox" name="NumberOfThreads">
-          <property name="geometry">
-           <rect>
-            <x>0</x>
-            <y>60</y>
-            <width>46</width>
-            <height>22</height>
-           </rect>
-          </property>
-         </widget>
-         <widget class="QCheckBox" name="checkBox">
-          <property name="geometry">
-           <rect>
-            <x>10</x>
-            <y>100</y>
-            <width>111</width>
-            <height>18</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string>Use KD Tree</string>
-          </property>
-         </widget>
-         <widget class="QCheckBox" name="checkBox_2">
-          <property name="geometry">
-           <rect>
-            <x>10</x>
-            <y>130</y>
-            <width>111</width>
-            <height>18</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string>Show KD Tree</string>
-          </property>
-         </widget>
-         <widget class="QSpinBox" name="MaxLevelOfTree">
-          <property name="geometry">
-           <rect>
-            <x>10</x>
-            <y>170</y>
-            <width>46</width>
-            <height>22</height>
-           </rect>
-          </property>
-         </widget>
-         <widget class="QLabel" name="labelMaxLvlOfTree">
-          <property name="geometry">
-           <rect>
-            <x>80</x>
-            <y>170</y>
-            <width>151</width>
-            <height>16</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string>Max Level of Tree</string>
-          </property>
-         </widget>
-         <widget class="QSpinBox" name="MinNumberOfTriangleToSplit">
-          <property name="geometry">
-           <rect>
-            <x>10</x>
-            <y>210</y>
-            <width>46</width>
-            <height>22</height>
-           </rect>
-          </property>
-         </widget>
-         <widget class="QLabel" name="labelMinNofTrianglesToSplit">
-          <property name="geometry">
-           <rect>
-            <x>80</x>
-            <y>210</y>
-            <width>151</width>
-            <height>16</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string>Min Number of Triangles to Split</string>
-          </property>
-         </widget>
-         <widget class="QSpinBox" name="NumberOfSplitsPerNode">
-          <property name="geometry">
-           <rect>
-            <x>10</x>
-            <y>240</y>
-            <width>46</width>
-            <height>22</height>
-           </rect>
-          </property>
-         </widget>
-         <widget class="QLabel" name="labelNofSplitsPerNode">
-          <property name="geometry">
-           <rect>
-            <x>80</x>
-            <y>240</y>
-            <width>151</width>
-            <height>16</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string>Number of Splits per Node</string>
+          <property name="checked">
+           <bool>true</bool>
           </property>
          </widget>
          <widget class="QSpinBox" name="NumberOfSubdivisions">
           <property name="geometry">
            <rect>
-            <x>10</x>
-            <y>280</y>
-            <width>46</width>
-            <height>22</height>
+            <x>20</x>
+            <y>250</y>
+            <width>31</width>
+            <height>20</height>
            </rect>
           </property>
          </widget>
          <widget class="QLabel" name="labelNofSubdivisions">
           <property name="geometry">
            <rect>
-            <x>80</x>
-            <y>280</y>
-            <width>151</width>
-            <height>16</height>
+            <x>60</x>
+            <y>250</y>
+            <width>111</width>
+            <height>21</height>
            </rect>
           </property>
           <property name="text">
            <string>Number of Subdivisions</string>
           </property>
          </widget>
-         <widget class="QLabel" name="labelNofThreads">
+         <widget class="QCheckBox" name="MultiSeedCheckBox">
           <property name="geometry">
            <rect>
-            <x>60</x>
-            <y>60</y>
-            <width>151</width>
-            <height>16</height>
+            <x>20</x>
+            <y>120</y>
+            <width>167</width>
+            <height>17</height>
+           </rect>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Multiple Seeds</string>
+          </property>
+         </widget>
+         <widget class="QCheckBox" name="ShowKDTreeCheckbox">
+          <property name="geometry">
+           <rect>
+            <x>20</x>
+            <y>80</y>
+            <width>124</width>
+            <height>17</height>
            </rect>
           </property>
           <property name="text">
-           <string>Number of threads</string>
+           <string>Show KD Tree</string>
+          </property>
+         </widget>
+         <widget class="QCheckBox" name="WireframeCheckBox">
+          <property name="geometry">
+           <rect>
+            <x>20</x>
+            <y>140</y>
+            <width>167</width>
+            <height>17</height>
+           </rect>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Wireframe</string>
           </property>
          </widget>
         </widget>

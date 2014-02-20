@@ -18,7 +18,7 @@ public:
     ~MainWindow();
     
     void paintEvent(QPaintEvent * pe);
-    void DisplayText(const std::string& strOutput);
+    void DisplayText(const QString &strOutput);
 
 signals:
     void EnableRenderButton(bool bEnable);
@@ -42,6 +42,16 @@ private slots:
 
     void on_butRefresh_clicked();
 
+    void on_NormalSmoothingCheckBox_clicked(bool checked);
+
+    void on_MultiSeedCheckBox_clicked(bool checked);
+
+    void on_UseKDTreeCheckbox_clicked(bool checked);
+
+    void on_ShowKDTreeCheckbox_clicked(bool checked);
+
+    void on_WireframeCheckBox_clicked(bool checked);
+
 private:
     void StartSingleRender();
     void StartRender(bool bHighQuality = true);
@@ -52,8 +62,6 @@ private:
 	bool m_bStartNormalRender;
 	bool m_bShouldRefreshView;
 	bool m_bRendering;
-
-	std::string m_strOutput;
 };
 
 #endif // MAINWINDOW_H

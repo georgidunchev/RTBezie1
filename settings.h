@@ -4,9 +4,9 @@
 #include <QObject>
 
 //number of threads
-static const uint k_nTHREADS = 4;
+static const uint k_nTHREADS = 12;
 
-static const bool k_bUSE_KDTREE = true;
+//static const bool k_bUSE_KDTREE = true;
 static const bool k_bSHOW_KDTREE = false;
 
 //end criteria for kd-tree construction
@@ -30,9 +30,15 @@ public:
     void SetNofSubdivisions(uint nValue);
     uint GetNofSubdivisions();
 
+    bool m_bNormalSmoothing;
+    bool m_bMultipleSeeds;
+    bool m_bUseKDTtee;
+    bool m_bShowKDTtee;
+    bool m_bWireframe;
+
 private:
     bool m_bINTERSECT_BEZIER;
-    bool m_bNormalSmoothing;
+
 
     uint m_nNofSubdivisions;
 signals:

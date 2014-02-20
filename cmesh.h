@@ -54,8 +54,6 @@ private:
     std::vector<CVertex> m_aVertices;
     std::vector<CTriangle*> m_aTriangles;
 
-    std::vector<CTriangle*> m_aBezierTriangles;
-
     CAABox m_BoundingBox;
 
     CKDTreeNode * m_pRoot;

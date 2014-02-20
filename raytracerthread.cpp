@@ -39,7 +39,7 @@ void CRaytracerThread::run()
 		//{
 		//	qDebug() << "bucket id " << m_nBucketId;
 		//}
-		QRgb value = qRgb(150, 150, 150);
+        QRgb value = qRgb(255, 255, 255);
 		CIntersactionInfo intersectionInfo;
 
 		CRay Ray = GetRaytracer()->GetCamera().GetScreenRay(i, j);
