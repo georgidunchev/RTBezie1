@@ -379,6 +379,7 @@ bool CBezierPatch::IntersectHighQuality(const CRay &ray, CIntersactionInfo &inte
     float closestdist = k_fMAX;
     intersectionInfo.m_fDistance = k_fMAX;
 
+    const int nIterations = GetSettings()->m_nIterations;
     bool bezierFast = false;
     if (!bezierFast)
     {
@@ -391,7 +392,7 @@ bool CBezierPatch::IntersectHighQuality(const CRay &ray, CIntersactionInfo &inte
             //	    }
 
             CIntersactionInfo LocalInfo(intersectionInfo);
-            if (intersect(ray, LocalInfo, aPointsToCheck[i], 4, bDebug))
+            if (intersect(ray, LocalInfo, aPointsToCheck[i], nIterations, bDebug))
             {
                 intersectionInfo = LocalInfo;
                 //intersectionInfo.color = CColor(1.0f- aPointsToCheck[i].x(), 1.0f - aPointsToCheck[i].y(), 1.0f - aPointsToCheck[i].z());
@@ -417,6 +418,34 @@ bool CBezierPatch::IntersectHighQuality(const CRay &ray, CIntersactionInfo &inte
     //    }
 
     return fabs(closestdist - k_fMAX) > k_fMIN;
+}
+
+bool CBezierPatch::IntersectHighQuality(const CRay &ray, CIntersactionInfo &intersectionInfo, const CSubTriangle& SubTriangle, bool bDebug) const
+{
+    CVector3DF aPointsToCheck[4];
+
+    aPointsToCheck[0] = CVector3DF(0.0f, 0.0f, 0.0f);
+    for (int i = 0; i < 3; ++i)
+    {
+        aPointsToCheck[i+1] = SubTriangle.GetVertBar(i);
+        aPointsToCheck[0] += aPointsToCheck[i+1];
+    }
+    aPointsToCheck[0] /=  3.0f;
+
+    CIntersactionInfo LocalInfo(intersectionInfo);
+
+    const int nIterations = GetSettings()->m_nIterations;
+    for (int i = 0, n = 4; i < n; ++i)
+    {
+        if (intersect(ray, LocalInfo, aPointsToCheck[i], nIterations, bDebug))
+        {
+            intersectionInfo = LocalInfo;
+            return true;
+        }
+        if (!GetSettings()->m_bMultipleSeeds)
+            break;
+    }
+    return false;
 }
 
 bool CBezierPatch::IntersectLowQuality(const CRay &ray, CIntersactionInfo &intersectionInfo, bool bDebug) const
@@ -608,14 +637,18 @@ bool CBezierPatch::intersect(const CRay &ray, CIntersactionInfo &info, CVector3D
     info.m_vBarCoordsLocal.SetY(v);
     info.m_vBarCoordsLocal.SetZ(w);
 
-    info.m_vBarCoordsGlobal = m_pParent_SubTriangle->GetParentBar(info.m_vBarCoordsLocal);
+    info.m_vBarCoordsGlobal = info.m_vBarCoordsLocal;
+//    info.m_vBarCoordsGlobal = m_pParent_SubTriangle->GetParentBar(info.m_vBarCoordsLocal);
 
     if (GetSettings()->m_bNormalSmoothing)
     {
         //Smoothed normal
-        const CVector3DF vNormalA = info.m_vBarCoordsGlobal.X() * m_Parent_Triangle.A().Normal_Get();
-        const CVector3DF vNormalB = info.m_vBarCoordsGlobal.Y() * m_Parent_Triangle.B().Normal_Get();
-        const CVector3DF vNormalC = info.m_vBarCoordsGlobal.Z() * m_Parent_Triangle.C().Normal_Get();
+//        const CVector3DF vNormalA = info.m_vBarCoordsGlobal.X() * m_Parent_Triangle.A().Normal_Get();
+//        const CVector3DF vNormalB = info.m_vBarCoordsGlobal.Y() * m_Parent_Triangle.B().Normal_Get();
+//        const CVector3DF vNormalC = info.m_vBarCoordsGlobal.Z() * m_Parent_Triangle.C().Normal_Get();
+        const CVector3DF vNormalA = u * m_Parent_Triangle.A().Normal_Get();
+        const CVector3DF vNormalB = v * m_Parent_Triangle.B().Normal_Get();
+        const CVector3DF vNormalC = w * m_Parent_Triangle.C().Normal_Get();
         info.m_vNormal = vNormalA + vNormalB + vNormalC;
         info.m_vNormal.Normalize();
     }

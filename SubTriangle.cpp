@@ -215,45 +215,44 @@ bool CSubTriangle::IntersectSubdevidedTriangles(const CRay &ray, CIntersactionIn
 
 bool CSubTriangle::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo, bool bDebug) const
 {
-    bool bIntersect = false;
-
-    CIntersactionInfo localInfo(intersectionInfo);
-    bIntersect = CUtils::IntersectTriangle(ray, localInfo, GetVert(0), GetVert(1), GetVert(2), m_vABar, m_vBBar, m_vCBar);
-    if (bIntersect && bDebug)
-    {
-        //	qDebug()<<"TRIANGLE INTERSECTION " << localInfo.m_vIntersectionPoint;
-        //	qDebug()<<"TRIANGLE INTERSECTION Bar " << localInfo.m_vBarCoordsLocal;
-    }
-
     if (intersectionInfo.m_bHighQuality)
     {
-        bIntersect = m_pBezierPatch->IntersectHighQuality(ray, intersectionInfo, bDebug);
+        return  m_Parent.GetBezierPatch().IntersectHighQuality(ray, intersectionInfo, *this, bDebug);
+        CVector3DF vecPoint = m_vABar + m_vBBar + m_vCBar;
+        vecPoint /= 3.0f;
+
+        return m_Parent.GetBezierPatch().intersect(ray, intersectionInfo, vecPoint, 4, bDebug);
     }
     else
     {
-        intersectionInfo=localInfo;
-        //	bIntersect = CUtils::IntersectTriangle(ray, intersectionInfo, GetVert(0), GetVert(1), GetVert(2), m_vABar, m_vBBar, m_vCBar);
-    }
-
-    if (bIntersect)
-    {
-        if (GetSettings()->m_bNormalSmoothing)
+        bool bIntersect = false;
+//         CIntersactionInfo localInfo(intersectionInfo);
+        bIntersect = CUtils::IntersectTriangle(ray, intersectionInfo, GetVert(0), GetVert(1), GetVert(2), m_vABar, m_vBBar, m_vCBar);
+        //    if (bIntersect && bDebug)
+        //    {
+        //	qDebug()<<"TRIANGLE INTERSECTION " << localInfo.m_vIntersectionPoint;
+        //	qDebug()<<"TRIANGLE INTERSECTION Bar " << localInfo.m_vBarCoordsLocal;
+        //    }
+        if (bIntersect)
         {
-            //Smoothed normal
-            CVector3DF vNormalA = intersectionInfo.m_vBarCoordsGlobal.X() * m_Parent.A().Normal_Get();
-            CVector3DF vNormalB = intersectionInfo.m_vBarCoordsGlobal.Y() * m_Parent.B().Normal_Get();
-            CVector3DF vNormalC = intersectionInfo.m_vBarCoordsGlobal.Z() * m_Parent.C().Normal_Get();
-            intersectionInfo.m_vNormal = vNormalA + vNormalB + vNormalC;
-            intersectionInfo.m_vNormal.Normalize();
+            if (GetSettings()->m_bNormalSmoothing)
+            {
+                //Smoothed normal
+                CVector3DF vNormalA = intersectionInfo.m_vBarCoordsGlobal.X() * m_Parent.A().Normal_Get();
+                CVector3DF vNormalB = intersectionInfo.m_vBarCoordsGlobal.Y() * m_Parent.B().Normal_Get();
+                CVector3DF vNormalC = intersectionInfo.m_vBarCoordsGlobal.Z() * m_Parent.C().Normal_Get();
+                intersectionInfo.m_vNormal = vNormalA + vNormalB + vNormalC;
+                intersectionInfo.m_vNormal.Normalize();
+            }
+            else
+            {
+                CVector3DF m_vAB = GetVert(1)- GetVert(0);
+                CVector3DF m_vAC = GetVert(2)- GetVert(0);
+                intersectionInfo.m_vNormal = CVector3DF::Normal(m_vAB, m_vAC);
+            }
         }
-        else
-        {
-            CVector3DF m_vAB = GetVert(1)- GetVert(0);
-            CVector3DF m_vAC = GetVert(2)- GetVert(0);
-            intersectionInfo.m_vNormal = CVector3DF::Normal(m_vAB, m_vAC);
-        }
+        return bIntersect;
     }
-    return bIntersect;
 }
 
 void CSubTriangle::MakeBoundingBox()

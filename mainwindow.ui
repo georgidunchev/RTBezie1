@@ -232,7 +232,7 @@
            <rect>
             <x>20</x>
             <y>250</y>
-            <width>31</width>
+            <width>51</width>
             <height>20</height>
            </rect>
           </property>
@@ -240,7 +240,7 @@
          <widget class="QLabel" name="labelNofSubdivisions">
           <property name="geometry">
            <rect>
-            <x>60</x>
+            <x>80</x>
             <y>250</y>
             <width>111</width>
             <height>21</height>
@@ -299,6 +299,67 @@
           </property>
           <property name="text">
            <string>Wireframe</string>
+          </property>
+         </widget>
+         <widget class="QSpinBox" name="NofThreadsSpinBox">
+          <property name="geometry">
+           <rect>
+            <x>20</x>
+            <y>280</y>
+            <width>51</width>
+            <height>20</height>
+           </rect>
+          </property>
+          <property name="minimum">
+           <number>1</number>
+          </property>
+          <property name="value">
+           <number>12</number>
+          </property>
+         </widget>
+         <widget class="QLabel" name="NofThreadsLabel">
+          <property name="geometry">
+           <rect>
+            <x>80</x>
+            <y>280</y>
+            <width>111</width>
+            <height>21</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Number of Threads</string>
+          </property>
+         </widget>
+         <widget class="QSpinBox" name="NofIterationsSpinBox">
+          <property name="geometry">
+           <rect>
+            <x>20</x>
+            <y>310</y>
+            <width>51</width>
+            <height>20</height>
+           </rect>
+          </property>
+          <property name="minimum">
+           <number>1</number>
+          </property>
+          <property name="maximum">
+           <number>999</number>
+          </property>
+          <property name="value">
+           <number>4</number>
+          </property>
+         </widget>
+         <widget class="QLabel" name="NewtonIterationsLabel">
+          <property name="geometry">
+           <rect>
+            <x>80</x>
+            <y>310</y>
+            <width>111</width>
+            <height>21</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Newton Iterations</string>
           </property>
          </widget>
         </widget>

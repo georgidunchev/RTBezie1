@@ -29,11 +29,14 @@ MainWindow::MainWindow(QWidget *parent)
     GetRaytracer()->SetCanvas(500,500);
 
     GetSettings()->SetNofSubdivisions(static_cast<uint>(ui->NumberOfSubdivisions->value()));
+    GetSettings()->m_nThreads = ui->NofThreadsSpinBox->value();
+    GetSettings()->m_nIterations = ui->NofIterationsSpinBox->value();
+
     GetSettings()->m_bUseKDTtee = ui->UseKDTreeCheckbox->isChecked();
     GetSettings()->m_bShowKDTtee = ui->ShowKDTreeCheckbox->isChecked();;
     GetSettings()->m_bNormalSmoothing = ui->NormalSmoothingCheckBox->isChecked();
     GetSettings()->m_bMultipleSeeds = ui->MultiSeedCheckBox->isChecked();
-    GetSettings()->m_bWireframe = ui->WireframeCheckBox->isCheckable();
+    GetSettings()->m_bWireframe = ui->WireframeCheckBox->isChecked();
 
     //    LoadNewMesh("Triangle.obj");
     //    LoadNewMesh("bunny_200.obj");
@@ -194,6 +197,11 @@ void MainWindow::StartRender(bool bHighQuality)
     {
         return;
     }
+
+    GetSettings()->SetNofSubdivisions(static_cast<uint>(ui->NumberOfSubdivisions->value()));
+    GetSettings()->m_nThreads = ui->NofThreadsSpinBox->value();
+    GetSettings()->m_nIterations = ui->NofIterationsSpinBox->value();
+
     m_bRendering = true;
     GetRaytracer()->GetTimer().start();
     GetRaytracer()->BeginFrame(bHighQuality);
@@ -208,7 +216,7 @@ void MainWindow::DisplayText(const QString& strOutput)
 
 void MainWindow::on_NumberOfSubdivisions_valueChanged(int arg1)
 {
-    GetSettings()->SetNofSubdivisions(static_cast<uint>(arg1));
+//    GetSettings()->SetNofSubdivisions(static_cast<uint>(arg1));
 }
 
 void MainWindow::on_butRefresh_clicked()

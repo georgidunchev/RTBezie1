@@ -3,16 +3,9 @@
 
 #include <QObject>
 
-//number of threads
-static const uint k_nTHREADS = 12;
-
-//static const bool k_bUSE_KDTREE = true;
-static const bool k_bSHOW_KDTREE = false;
-
 //end criteria for kd-tree construction
 static const int k_nMAX_LEVEL_OF_TREE = 20;
 static const int k_nMIN_NUMBER_OF_TRIANGLES_TO_SPLIT = 6;
-
 static const int k_nMAX_SPLITS_OF_NODE = 10;
 
 class CSettings : public QObject
@@ -35,6 +28,8 @@ public:
     bool m_bUseKDTtee;
     bool m_bShowKDTtee;
     bool m_bWireframe;
+    int m_nThreads;
+    int m_nIterations;
 
 private:
     bool m_bINTERSECT_BEZIER;

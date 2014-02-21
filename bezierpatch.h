@@ -59,6 +59,8 @@ public:
 //    };
 
     bool IntersectHighQuality(const CRay& ray, CIntersactionInfo& intersectionInfo, bool bDebug = false) const;
+    bool IntersectHighQuality(const CRay &ray, CIntersactionInfo &intersectionInfo, const CSubTriangle &SubTriangle, bool bDebug) const;
+
     bool IntersectLowQuality(const CRay& ray, CIntersactionInfo& intersectionInfo, bool bDebug = false) const;
 
     bool intersect(const CRay &ray,

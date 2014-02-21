@@ -7,6 +7,7 @@
 #include <settings.h>
 #include <QDebug>
 #include <QMutexLocker>
+#include "main.h"
 
 RayTracer::RayTracer(QObject *parent)
     : QObject(parent)
@@ -131,7 +132,7 @@ void RayTracer::RenderThreaded()
 {
     m_nNextBucket = 0;
 
-    for( uint j = 0; j < k_nTHREADS; ++j)
+    for( uint j = 0; j < GetSettings()->m_nThreads; ++j)
     {
 	CRaytracerThread* pThread;
 	if ( m_arrThreads.size() <= j)
