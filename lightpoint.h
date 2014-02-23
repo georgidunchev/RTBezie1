@@ -1,6 +1,6 @@
 #ifndef LIGNTPOINT_H
 #define LIGNTPOINT_H
-#include <light.h>
+#include "light.h"
 
 class CLightPoint : public ILight
 {

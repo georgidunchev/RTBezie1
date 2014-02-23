@@ -5,9 +5,9 @@
 #include <QFile>
 #include "kdtreenode.h"
 #include "AABox.h"
-#include <main.h>
-#include <raytracer.h>
-#include <settings.h>
+#include "main.h"
+#include "raytracer.h"
+#include "settings.h"
 #include "SubTriangle.h"
 
 CMesh::CMesh(QObject *parent)
@@ -256,7 +256,8 @@ std::vector<CVertex> &CMesh::Vertices()
 void CMesh::GenerateKDTree()
 {
     //initialize an array containing all triangles
-    int nNumberOfSubTriangles = CUtils::PowerOf2(GetSettings()->GetNofSubdivisions());
+    int nSubdivisionLevel = GetSettings()->GetNofSubdivisions();
+    int nNumberOfSubTriangles = (nSubdivisionLevel+1)*(nSubdivisionLevel+1);
     int nNumberOfPrimitives = GetPrimitives()->size();
 
     std::vector<CSubTriangle*>* pAllSubTriangles = new std::vector<CSubTriangle*>;

@@ -1,11 +1,11 @@
 #include "shader.h"
-#include <main.h>
-#include <raytracer.h>
-#include <ray.h>
-#include <settings.h>
-#include <color.h>
-#include <qmath.h>
-#include <vector3df.h>
+#include "main.h"
+#include "raytracer.h"
+#include "ray.h"
+#include "settings.h"
+#include "color.h"
+#include "qmath.h"
+#include "vector3df.h"
 
 CShader::CShader()
 {

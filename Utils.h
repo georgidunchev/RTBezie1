@@ -1,7 +1,7 @@
 #ifndef UTILS
 #define UTILS
 
-#include <vector3df.h>
+#include "vector3df.h"
 class CRay;
 class CIntersactionInfo;
 

@@ -1,11 +1,11 @@
 #include "primitive.h"
-#include <intersactioninfo.h>
-#include <ray.h>
-#include <QVector3D>
-#include <vector>
-#include <qmath.h>
-#include <QDebug>
-#include <Utils.h>
+#include "intersactioninfo.h"
+#include "ray.h"
+#include "QVector3D"
+#include "vector"
+#include "qmath.h"
+#include "QDebug"
+#include "Utils.h"
 
 CPrimitive::CPrimitive(const std::vector<CVertex> &aVertecis)
     :m_aVertecis(aVertecis)

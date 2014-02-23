@@ -1,17 +1,18 @@
+#include <QDebug>
+
 #include "SubTriangle.h"
 #include "triangle.h"
 #include "bezierpatch.h"
-#include <intersactioninfo.h>
-#include <ray.h>
-#include <vector>
-#include <qmath.h>
-#include <QDebug>
-#include <Utils.h>
-#include <main.h>
-#include <raytracer.h>
-#include <cmesh.h>
-#include <vector>
-#include <settings.h>
+#include "intersactioninfo.h"
+#include "ray.h"
+#include "vector"
+#include "qmath.h"
+#include "Utils.h"
+#include "main.h"
+#include "raytracer.h"
+#include "cmesh.h"
+#include "vector"
+#include "settings.h"
 
 CSubTriangle::CSubTriangle(CTriangle& triangle)
     : m_Parent(triangle)
@@ -48,6 +49,22 @@ CSubTriangle::CSubTriangle(int nStartOfLongest,
     //	     << m_Parent.GetBezierPatch().GetPointFromBarycentric(m_vCBar)
     //	     << "Longest" << nStartOfLongest;
     //    qDebug() << "2" <<m_pBezierPatch->GetPoint(3,0) << m_pBezierPatch->GetPoint(0,3) << m_pBezierPatch->GetPoint(0,0) << "Longest" << nStartOfLongest;
+}
+
+CSubTriangle::CSubTriangle(CTriangle &triangle,
+                           const CVector3DF &m_vABar,
+                           const CVector3DF &m_vBBar,
+                           const CVector3DF &m_vCBar)
+    : m_Parent(triangle)
+    , m_pParent_SubTriangle(NULL)
+    , m_vABar(m_vABar)
+    , m_vBBar(m_vBBar)
+    , m_vCBar(m_vCBar)
+    , m_nSavePos(0)
+    , m_nSubdivisionLevel(1)
+{
+    m_pBezierPatch = new CBezierPatch(this);
+    m_pBezierPatch->BuildBezierPoints_Sub2();
 }
 
 const CVector3DF& CSubTriangle::GetVert(int i) const
@@ -152,7 +169,7 @@ void CSubTriangle::GetDivision(int& o_nStartOfLongest, CVector3DF& o_vMidPoint, 
     }
 }
 
-bool CSubTriangle::IntersectSubdevidedTriangles(const CRay &ray, CIntersactionInfo &intersectionInfo, const std::vector<CSubTriangle*>& aSubTriangles, bool bDebug)
+/*static*/ bool CSubTriangle::IntersectSubdevidedTriangles(const CRay &ray, CIntersactionInfo &intersectionInfo, const std::vector<CSubTriangle*>& aSubTriangles, bool bDebug)
 {
     int nSize = aSubTriangles.size();
     float fModifier = 8.0f / static_cast<float>(nSize);

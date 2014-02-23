@@ -9,9 +9,9 @@
 #include <QtWidgets/QProgressDialog>
 #include <qmutex.h>
 
-#include <lightsscene.h>
-#include <camera.h>
-#include <shader.h>
+#include "lightsscene.h"
+#include "camera.h"
+#include "shader.h"
 
 class CRaytracerThread;
 class CMesh;

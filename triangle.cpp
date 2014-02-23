@@ -1,18 +1,18 @@
 #include "triangle.h"
-#include <intersactioninfo.h>
-#include <ray.h>
-#include <QVector2D>
-#include <vector>
-#include <qmath.h>
-#include <QDebug>
-#include <Utils.h>
-#include <main.h>
-#include <raytracer.h>
-#include <cmesh.h>
-#include <vector>
-#include <settings.h>
-#include <SubTriangle.h>
-#include <color.h>
+#include "intersactioninfo.h"
+#include "ray.h"
+#include "QVector2D"
+#include "vector"
+#include "qmath.h"
+#include "QDebug"
+#include "Utils.h"
+#include "main.h"
+#include "raytracer.h"
+#include "cmesh.h"
+#include "vector"
+#include "settings.h"
+#include "SubTriangle.h"
+#include "color.h"
 
 
 CTriangle::CTriangle()
@@ -110,15 +110,56 @@ void CTriangle::BuildBezierPoints()
 
 void CTriangle::Subdivide()
 {
-    m_aSubTriangles.resize(CUtils::PowerOf2(GetSettings()->GetNofSubdivisions()));
-
-    m_aSubTriangles[0] = new CSubTriangle(*this);
-    m_aSubTriangles[0]->Subdivide();
-
-    int nSize = m_aSubTriangles.size();
-    for (int i = 0; i < nSize; ++i)
+    if(true)
     {
-        m_aSubTriangles[i]->m_nSubtriangleID = i;
+        //New test subdivision
+        int nSubdivisionLevel = GetSettings()->GetNofSubdivisions();
+        m_aSubTriangles.resize((nSubdivisionLevel + 1)*(nSubdivisionLevel + 1));
+
+        if (nSubdivisionLevel == 0)
+        {
+            const CVector3DF v100(0.1f, 0.0f, 0.0f);
+            const CVector3DF v010(0.0f, 0.1f, 0.0f);
+            const CVector3DF v001(0.0f, 0.0f, 0.1f);
+            m_aSubTriangles[0] = new CSubTriangle(*this);
+            return;
+        }
+
+        const float fDenom = 1.0f / (float(nSubdivisionLevel + 1));
+
+        for (int i = 0, k = 0; i <= nSubdivisionLevel; ++i)
+        {
+            for (int j = 0; j <= nSubdivisionLevel - i; ++j)
+            {
+                const float f100 = ((float)(nSubdivisionLevel + 1 - i - j)) * fDenom;
+                const float f010 = ((float)j) * fDenom;
+                const float f001 = ((float)i) * fDenom;
+                const CVector3DF v100(f100, f010, f001);
+                const CVector3DF v010(v100 + CVector3DF(-fDenom, fDenom, 0.0f));
+                const CVector3DF v001(v100 + CVector3DF(-fDenom, 0.0f, fDenom));
+                m_aSubTriangles[k] = new CSubTriangle(*this, v100, v010, v001);
+                k++;
+                if (i > 0)
+                {
+                    const CVector3DF v00_1(v100 + CVector3DF(0.0f, fDenom, -fDenom));
+                    m_aSubTriangles[k] = new CSubTriangle(*this, v100, v010, v00_1);
+                    k++;
+                }
+            }
+        }
+    }
+    else
+    {
+        m_aSubTriangles.resize(CUtils::PowerOf2(GetSettings()->GetNofSubdivisions()));
+
+        m_aSubTriangles[0] = new CSubTriangle(*this);
+        m_aSubTriangles[0]->Subdivide();
+
+        int nSize = m_aSubTriangles.size();
+        for (int i = 0; i < nSize; ++i)
+        {
+            m_aSubTriangles[i]->m_nSubtriangleID = i;
+        }
     }
 }
 

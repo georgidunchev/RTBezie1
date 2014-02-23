@@ -1,12 +1,13 @@
-#include "AABox.h"
-#include <ray.h>
-#include <vector3df.h>
-#include <qmath.h>
 #include <QDebug>
-#include <Utils.h>
-#include <settings.h>
-#include <vertex.h>
-#include <intersactioninfo.h>
+
+#include "AABox.h"
+#include "ray.h"
+#include "vector3df.h"
+#include "qmath.h"
+#include "Utils.h"
+#include "settings.h"
+#include "vertex.h"
+#include "intersactioninfo.h"
 
 CAABox::CAABox()
 	: m_vMaxVertex(CVector3DF(k_fMIN,k_fMIN,k_fMIN))

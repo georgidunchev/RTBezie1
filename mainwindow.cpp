@@ -1,12 +1,13 @@
+#include <QDebug>
+#include <QFileDialog>
+#include <QProgressDialog>
+
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "raytracer.h"
 #include "main.h"
-#include <cmesh.h>
-#include <QDebug>
-#include <QFileDialog>
-#include <QProgressDialog>
-#include <settings.h>
+#include "cmesh.h"
+#include "settings.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -198,7 +199,6 @@ void MainWindow::StartRender(bool bHighQuality)
         return;
     }
 
-    GetSettings()->SetNofSubdivisions(static_cast<uint>(ui->NumberOfSubdivisions->value()));
     GetSettings()->m_nThreads = ui->NofThreadsSpinBox->value();
     GetSettings()->m_nIterations = ui->NofIterationsSpinBox->value();
 
@@ -222,6 +222,7 @@ void MainWindow::on_NumberOfSubdivisions_valueChanged(int arg1)
 void MainWindow::on_butRefresh_clicked()
 {
     const std::string& strFilename = GetRaytracer()->GetOpenFileName();
+    GetSettings()->SetNofSubdivisions(static_cast<uint>(ui->NumberOfSubdivisions->value()));
 
     if (strFilename.empty())
     {

@@ -1,9 +1,9 @@
 #ifndef BEZIERPATCH_H
 #define BEZIERPATCH_H
 
-#include <vector3df.h>
-#include <QVector2D>
-#include <vector>
+#include "vector3df.h"
+#include "QVector2D"
+#include "vector"
 
 class CRay;
 class CIntersactionInfo;
@@ -51,6 +51,8 @@ public:
     // used for sub triangles
     void BuildBezierPoints_Sub(int nStartOfLongest, bool bFirst);
 
+    void BuildBezierPoints_Sub2();
+
     void Subdivide();
 //    void AddSubTriangle(CSubTriangle* subTriangle);
 //    CSubTriangle* GetSubTriangle(int n) const
@@ -89,6 +91,8 @@ private:
 			  const CVector3DF& i_vNormal);
 
     void Reverse(std::vector<int>& io_c, std::vector<int>& io_d);
+
+    CVector3DF CalculateBezierPoint(int u, int v, int w) const;
 
     CTriangle& m_Parent_Triangle;
     CSubTriangle* m_pParent_SubTriangle;

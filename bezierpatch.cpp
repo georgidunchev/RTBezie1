@@ -1,13 +1,13 @@
 #include "bezierpatch.h"
-#include <intersactioninfo.h>
-#include <ray.h>
-#include <Utils.h>
-#include <qmath.h>
-#include <QDebug>
+#include "intersactioninfo.h"
+#include "ray.h"
+#include "Utils.h"
+#include "qmath.h"
+#include "QDebug"
 #include "triangle.h"
 #include "SubTriangle.h"
-#include <settings.h>
-#include <main.h>
+#include "settings.h"
+#include "main.h"
 
 CBezierPatch::CBezierPatch(CTriangle& pParent)
     : m_Parent_Triangle(pParent)
@@ -217,6 +217,82 @@ void CBezierPatch::BuildBezierPoints_Sub(int nStartOfLongest, bool bFirst)
     BuildBezierPoints_Internal();
 }
 
+void CBezierPatch::BuildBezierPoints_Sub2()
+{
+//    return;
+//    int nSubdivisionLevel = GetSettings()->GetNofSubdivisions();
+    int nN = 3;
+    for (int l = nN; l >= 0; --l)
+    {
+        for (int m = 0; m <= l; ++m)
+        {
+            int u = l-m;
+            int v = m;
+            int w = nN - l;
+            Point(u, v) = CalculateBezierPoint(u, v, w);
+        }
+    }
+    BuildBezierPoints_Internal();
+}
+
+CVector3DF CBezierPatch::CalculateBezierPoint(int u, int v, int w) const
+{
+    CVector3DF aPoints[10];
+    int nN = 3;
+    for (int i = nN, k = 0; i >= 0; --i)
+    {
+        for (int j = 0; j <= i; ++j)
+        {
+            aPoints[k] = m_Parent_Triangle.GetBezierPatch().GetPoint(i-j, j);
+            k++;
+        }
+    }
+
+    const CVector3DF vU = m_pParent_SubTriangle->GetVertBar(0);
+    const CVector3DF vV = m_pParent_SubTriangle->GetVertBar(1);
+    const CVector3DF vW = m_pParent_SubTriangle->GetVertBar(2);
+
+    for (int k = nN; k > 0; --k)
+    {
+        const CVector3DF* vUsed;
+        if (u > 0)
+        {
+            vUsed = &vU;
+            u--;
+        }
+        else if (v > 0)
+        {
+            vUsed = &vV;
+            v--;
+        }
+        else
+        {
+            vUsed = &vW;
+            w--;
+        }
+
+        int nC = 0;
+        int nB = 0;
+        for (int j = k; j > 0; --j)
+        {
+            for (int i = 0; i < j; ++i)
+            {
+                int a = nB;
+                int b = nB+1;
+                int c = nB + j + 1;
+                aPoints[nC] = aPoints[a] * vUsed->X()
+                            + aPoints[b] * vUsed->Y()
+                            + aPoints[c] * vUsed->Z();
+                nC++;
+                nB++;
+            }
+            nB++;
+        }
+    }
+
+    return aPoints[0];
+}
+
 void CBezierPatch::BuildBezierPoints_Internal()
 {
     Q30 = Point(3,0) - Point(0,0) - 3 * Point(2,0) + 3 * Point(1,0);
@@ -299,6 +375,10 @@ int CBezierPatch::GetIndex(int a, int b) const
     else if( a == 1 && b == 1 )
     {
         return 9;
+    }
+    else
+    {
+        Q_ASSERT(false);
     }
 }
 

@@ -2,9 +2,9 @@
 #include <vector>
 #include "Utils.h"
 #include "settings.h"
-#include <cmesh.h>
-#include <main.h>
-#include <raytracer.h>
+#include "cmesh.h"
+#include "main.h"
+#include "raytracer.h"
 #include "AABox.h"
 #include <qdebug.h>
 

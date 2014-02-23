@@ -3,7 +3,7 @@
 
 #include <QObject>
 
-#include <ray.h>
+#include "ray.h"
 
 class Camera : public QObject
 {

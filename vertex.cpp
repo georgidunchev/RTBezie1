@@ -1,6 +1,6 @@
 #include "vertex.h"
-#include <Utils.h>
-#include <settings.h>
+#include "Utils.h"
+#include "settings.h"
 
 CVertex::CVertex()
     :m_vPos(0.f,  0.f, 0.f)

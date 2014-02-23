@@ -2,13 +2,13 @@
 #define CMESH_H
 
 #include <QObject>
-#include <ray.h>
-#include <intersactioninfo.h>
-#include <triangle.h>
-#include <Utils.h>
-#include <vector>
-#include <vertex.h>
-#include <vector3df.h>
+#include "ray.h"
+#include "intersactioninfo.h"
+#include "triangle.h"
+#include "Utils.h"
+#include "vector"
+#include "vertex.h"
+#include "vector3df.h"
 
 class CKDTreeNode;
 

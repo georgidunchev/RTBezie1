@@ -65,7 +65,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QToolBox" name="toolBox">
+       <widget class="QGroupBox" name="groupBox">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
           <horstretch>0</horstretch>
@@ -81,260 +81,238 @@
         <property name="layoutDirection">
          <enum>Qt::LeftToRight</enum>
         </property>
-        <property name="currentIndex">
-         <number>0</number>
-        </property>
-        <widget class="QWidget" name="Controls">
+        <widget class="QPushButton" name="openMeshButton">
          <property name="geometry">
           <rect>
-           <x>0</x>
-           <y>0</y>
-           <width>250</width>
-           <height>500</height>
+           <x>160</x>
+           <y>10</y>
+           <width>75</width>
+           <height>23</height>
           </rect>
          </property>
-         <attribute name="label">
-          <string>Controls</string>
-         </attribute>
-         <widget class="QPushButton" name="openMeshButton">
-          <property name="geometry">
-           <rect>
-            <x>170</x>
-            <y>0</y>
-            <width>75</width>
-            <height>23</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string>Browse</string>
-          </property>
-          <property name="checkable">
-           <bool>false</bool>
-          </property>
-         </widget>
-         <widget class="QPushButton" name="StartRender">
-          <property name="enabled">
-           <bool>true</bool>
-          </property>
-          <property name="geometry">
-           <rect>
-            <x>170</x>
-            <y>440</y>
-            <width>75</width>
-            <height>23</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string>Render</string>
-          </property>
-         </widget>
-         <widget class="QPushButton" name="AutoRender">
-          <property name="enabled">
-           <bool>true</bool>
-          </property>
-          <property name="geometry">
-           <rect>
-            <x>20</x>
-            <y>440</y>
-            <width>75</width>
-            <height>23</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string>Continuous</string>
-          </property>
-          <property name="checkable">
-           <bool>true</bool>
-          </property>
-         </widget>
-         <widget class="QTextBrowser" name="Output">
-          <property name="geometry">
-           <rect>
-            <x>20</x>
-            <y>470</y>
-            <width>221</width>
-            <height>21</height>
-           </rect>
-          </property>
-          <property name="verticalScrollBarPolicy">
-           <enum>Qt::ScrollBarAlwaysOff</enum>
-          </property>
-          <property name="horizontalScrollBarPolicy">
-           <enum>Qt::ScrollBarAlwaysOff</enum>
-          </property>
-         </widget>
-         <widget class="QLabel" name="labelFileName">
-          <property name="geometry">
-           <rect>
-            <x>20</x>
-            <y>0</y>
-            <width>141</width>
-            <height>21</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string>Open File</string>
-          </property>
-         </widget>
-         <widget class="QPushButton" name="butRefresh">
-          <property name="geometry">
-           <rect>
-            <x>170</x>
-            <y>30</y>
-            <width>75</width>
-            <height>23</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string>Refresh</string>
-          </property>
-         </widget>
-         <widget class="QCheckBox" name="UseKDTreeCheckbox">
-          <property name="geometry">
-           <rect>
-            <x>20</x>
-            <y>60</y>
-            <width>124</width>
-            <height>17</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string>Use KD Tree</string>
-          </property>
-          <property name="checked">
-           <bool>true</bool>
-          </property>
-         </widget>
-         <widget class="QCheckBox" name="NormalSmoothingCheckBox">
-          <property name="geometry">
-           <rect>
-            <x>20</x>
-            <y>100</y>
-            <width>167</width>
-            <height>17</height>
-           </rect>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>0</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>Normal Smoothing</string>
-          </property>
-          <property name="checked">
-           <bool>true</bool>
-          </property>
-         </widget>
-         <widget class="QSpinBox" name="NumberOfSubdivisions">
-          <property name="geometry">
-           <rect>
-            <x>20</x>
-            <y>250</y>
-            <width>51</width>
-            <height>20</height>
-           </rect>
-          </property>
-         </widget>
-         <widget class="QLabel" name="labelNofSubdivisions">
-          <property name="geometry">
-           <rect>
-            <x>80</x>
-            <y>250</y>
-            <width>111</width>
-            <height>21</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string>Number of Subdivisions</string>
-          </property>
-         </widget>
-         <widget class="QCheckBox" name="MultiSeedCheckBox">
-          <property name="geometry">
-           <rect>
-            <x>20</x>
-            <y>120</y>
-            <width>167</width>
-            <height>17</height>
-           </rect>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>0</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>Multiple Seeds</string>
-          </property>
-         </widget>
-         <widget class="QCheckBox" name="ShowKDTreeCheckbox">
-          <property name="geometry">
-           <rect>
-            <x>20</x>
-            <y>80</y>
-            <width>124</width>
-            <height>17</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string>Show KD Tree</string>
-          </property>
-         </widget>
-         <widget class="QCheckBox" name="WireframeCheckBox">
-          <property name="geometry">
-           <rect>
-            <x>20</x>
-            <y>140</y>
-            <width>167</width>
-            <height>17</height>
-           </rect>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>0</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>Wireframe</string>
-          </property>
-         </widget>
-         <widget class="QSpinBox" name="NofThreadsSpinBox">
-          <property name="geometry">
-           <rect>
-            <x>20</x>
-            <y>280</y>
-            <width>51</width>
-            <height>20</height>
-           </rect>
-          </property>
-          <property name="minimum">
-           <number>1</number>
-          </property>
-          <property name="value">
-           <number>12</number>
-          </property>
-         </widget>
-         <widget class="QLabel" name="NofThreadsLabel">
-          <property name="geometry">
-           <rect>
-            <x>80</x>
-            <y>280</y>
-            <width>111</width>
-            <height>21</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string>Number of Threads</string>
-          </property>
-         </widget>
+         <property name="text">
+          <string>Browse</string>
+         </property>
+         <property name="checkable">
+          <bool>false</bool>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="StartRender">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
+         <property name="geometry">
+          <rect>
+           <x>170</x>
+           <y>440</y>
+           <width>75</width>
+           <height>23</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Render</string>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="AutoRender">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>440</y>
+           <width>75</width>
+           <height>23</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Continuous</string>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+        </widget>
+        <widget class="QTextBrowser" name="Output">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>470</y>
+           <width>231</width>
+           <height>21</height>
+          </rect>
+         </property>
+         <property name="verticalScrollBarPolicy">
+          <enum>Qt::ScrollBarAlwaysOff</enum>
+         </property>
+         <property name="horizontalScrollBarPolicy">
+          <enum>Qt::ScrollBarAlwaysOff</enum>
+         </property>
+        </widget>
+        <widget class="QLabel" name="labelFileName">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>10</y>
+           <width>141</width>
+           <height>21</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Open File</string>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="butRefresh">
+         <property name="geometry">
+          <rect>
+           <x>160</x>
+           <y>40</y>
+           <width>75</width>
+           <height>23</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Refresh</string>
+         </property>
+        </widget>
+        <widget class="QCheckBox" name="UseKDTreeCheckbox">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>60</y>
+           <width>124</width>
+           <height>17</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Use KD Tree</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+        <widget class="QCheckBox" name="NormalSmoothingCheckBox">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>100</y>
+           <width>167</width>
+           <height>17</height>
+          </rect>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>Normal Smoothing</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+        <widget class="QSpinBox" name="NumberOfSubdivisions">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>140</y>
+           <width>51</width>
+           <height>20</height>
+          </rect>
+         </property>
+        </widget>
+        <widget class="QLabel" name="labelNofSubdivisions">
+         <property name="geometry">
+          <rect>
+           <x>70</x>
+           <y>140</y>
+           <width>111</width>
+           <height>21</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Number of Subdivisions</string>
+         </property>
+        </widget>
+        <widget class="QCheckBox" name="ShowKDTreeCheckbox">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>80</y>
+           <width>124</width>
+           <height>17</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Show KD Tree</string>
+         </property>
+        </widget>
+        <widget class="QCheckBox" name="WireframeCheckBox">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>120</y>
+           <width>167</width>
+           <height>17</height>
+          </rect>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>Wireframe</string>
+         </property>
+        </widget>
+        <widget class="QSpinBox" name="NofThreadsSpinBox">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>170</y>
+           <width>51</width>
+           <height>20</height>
+          </rect>
+         </property>
+         <property name="minimum">
+          <number>1</number>
+         </property>
+         <property name="value">
+          <number>12</number>
+         </property>
+        </widget>
+        <widget class="QLabel" name="NofThreadsLabel">
+         <property name="geometry">
+          <rect>
+           <x>70</x>
+           <y>170</y>
+           <width>111</width>
+           <height>21</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Number of Threads</string>
+         </property>
+        </widget>
+        <widget class="QGroupBox" name="groupBox">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>200</y>
+           <width>231</width>
+           <height>80</height>
+          </rect>
+         </property>
+         <property name="title">
+          <string>Bezier</string>
+         </property>
          <widget class="QSpinBox" name="NofIterationsSpinBox">
           <property name="geometry">
            <rect>
-            <x>20</x>
-            <y>310</y>
+            <x>10</x>
+            <y>50</y>
             <width>51</width>
             <height>20</height>
            </rect>
@@ -352,8 +330,8 @@
          <widget class="QLabel" name="NewtonIterationsLabel">
           <property name="geometry">
            <rect>
-            <x>80</x>
-            <y>310</y>
+            <x>70</x>
+            <y>50</y>
             <width>111</width>
             <height>21</height>
            </rect>
@@ -362,37 +340,31 @@
            <string>Newton Iterations</string>
           </property>
          </widget>
+         <widget class="QCheckBox" name="MultiSeedCheckBox">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>20</y>
+            <width>167</width>
+            <height>17</height>
+           </rect>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Multiple Seeds</string>
+          </property>
+         </widget>
         </widget>
        </widget>
       </item>
      </layout>
     </item>
    </layout>
-  </widget>
-  <widget class="QMenuBar" name="menuBar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>800</width>
-     <height>21</height>
-    </rect>
-   </property>
-   <widget class="QMenu" name="menuFiles">
-    <property name="title">
-     <string>File</string>
-    </property>
-   </widget>
-   <addaction name="menuFiles"/>
-  </widget>
-  <widget class="QToolBar" name="mainToolBar">
-   <attribute name="toolBarArea">
-    <enum>TopToolBarArea</enum>
-   </attribute>
-   <attribute name="toolBarBreak">
-    <bool>false</bool>
-   </attribute>
-   <addaction name="separator"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
  </widget>

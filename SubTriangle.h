@@ -1,10 +1,10 @@
 #ifndef SUB_TRIANGLE_H
 #define SUB_TRIANGLE_H
 
-#include <vector3df.h>
-#include <vector>
-#include <AABox.h>
-#include <vertex.h>
+#include "vector3df.h"
+#include "vector"
+#include "AABox.h"
+#include "vertex.h"
 #include "bezierpatch.h"
 
 class CRay;
@@ -23,6 +23,10 @@ public:
 		 uint nSubdivisionLevel,
 		 CSubTriangle *Parent_SubTriangle,
 		 uint nSavePos);
+    CSubTriangle(CTriangle& triangle,
+                 const CVector3DF& m_vABar,
+                 const CVector3DF& m_vBBar,
+                 const CVector3DF& m_vCBar);
 
     virtual ~CSubTriangle() {}
 

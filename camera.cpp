@@ -1,7 +1,7 @@
 #include "camera.h"
 #include "qmath.h"
 #include <QDebug>
-#include <Utils.h>
+#include "Utils.h"
 #include <QQuaternion>
 
 Camera::Camera(QObject *parent) :

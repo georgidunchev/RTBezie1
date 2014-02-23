@@ -1,11 +1,11 @@
 #ifndef PRIMITIVE_H
 #define PRIMITIVE_H
 
-#include <QVector3D>
-#include <vector>
-#include <AABox.h>
-#include <primitive.h>
-#include <vertex.h>
+#include "QVector3D"
+#include "vector"
+#include "AABox.h"
+#include "primitive.h"
+#include "vertex.h"
 
 class CRay;
 class CIntersactionInfo;

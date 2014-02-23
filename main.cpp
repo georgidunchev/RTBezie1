@@ -7,7 +7,7 @@
 #include "mainwindow.h"
 #include "main.h"
 #include "raytracer.h"
-#include <settings.h>
+#include "settings.h"
 #include "Utils.h"
 
 RayTracer * raytracer_instace;

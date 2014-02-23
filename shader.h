@@ -3,9 +3,9 @@
 
 #include <QRgb>
 
-#include <cmesh.h>
-#include <intersactioninfo.h>
-#include <lightsscene.h>
+#include "cmesh.h"
+#include "intersactioninfo.h"
+#include "lightsscene.h"
 
 class CShader
 {

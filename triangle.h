@@ -1,10 +1,10 @@
 #ifndef TRIANGLE_H
 #define TRIANGLE_H
 
-#include <vector3df.h>
-#include <vector>
-#include <AABox.h>
-#include <vertex.h>
+#include "vector3df.h"
+#include "vector"
+#include "AABox.h"
+#include "vertex.h"
 #include "bezierpatch.h"
 
 class CRay;

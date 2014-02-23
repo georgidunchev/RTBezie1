@@ -1,10 +1,10 @@
-#include <raytracer.h>
-#include <cmesh.h>
-#include <triangle.h>
-#include <ray.h>
-#include <camera.h>
-#include <raytracerthread.h>
-#include <settings.h>
+#include "raytracer.h"
+#include "cmesh.h"
+#include "triangle.h"
+#include "ray.h"
+#include "camera.h"
+#include "raytracerthread.h"
+#include "settings.h"
 #include <QDebug>
 #include <QMutexLocker>
 #include "main.h"

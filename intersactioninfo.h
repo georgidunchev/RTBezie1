@@ -1,8 +1,8 @@
 #ifndef INTERSACTIONINFO_H
 #define INTERSACTIONINFO_H
 
-#include <vector3df.h>
-#include <color.h>
+#include "vector3df.h"
+#include "color.h"
 #include "ray.h"
 
 class CSubTriangle;

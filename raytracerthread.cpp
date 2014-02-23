@@ -1,6 +1,6 @@
 #include "raytracerthread.h"
-#include <raytracer.h>
-#include <main.h>
+#include "raytracer.h"
+#include "main.h"
 #include <QMutex>
 #include <QDebug>
 #include "intersactioninfo.h"

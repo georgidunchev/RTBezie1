@@ -1,7 +1,7 @@
 #ifndef CRAY_H
 #define CRAY_H
 
-#include <vector3df.h>
+#include "vector3df.h"
 
 class CRay
 {

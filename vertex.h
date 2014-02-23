@@ -1,7 +1,7 @@
 #ifndef VERTEX_H
 #define VERTEX_H
 
-#include <vector3df.h>
+#include "vector3df.h"
 
 class CVertex
 {

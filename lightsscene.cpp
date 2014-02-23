@@ -1,9 +1,9 @@
 #include "lightsscene.h"
 
-#include <main.h>
-#include <raytracer.h>
-#include <light.h>
-#include <lightpoint.h>
+#include "main.h"
+#include "raytracer.h"
+#include "light.h"
+#include "lightpoint.h"
 
 CLightsScene::CLightsScene()
 {
