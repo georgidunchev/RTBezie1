@@ -255,21 +255,25 @@ std::vector<CVertex> &CMesh::Vertices()
 
 void CMesh::GenerateKDTree()
 {
-    //initialize an array containing all triangles
-    int nSubdivisionLevel = GetSettings()->GetNofSubdivisions();
-    int nNumberOfSubTriangles = (nSubdivisionLevel+1)*(nSubdivisionLevel+1);
+    std::vector<CSubTriangle*>* pAllSubTriangles = new std::vector<CSubTriangle*>;
+
     int nNumberOfPrimitives = GetPrimitives()->size();
 
-    std::vector<CSubTriangle*>* pAllSubTriangles = new std::vector<CSubTriangle*>;
-    pAllSubTriangles->reserve(nNumberOfSubTriangles * nNumberOfPrimitives);
-
-    for (int j = 0; j < nNumberOfPrimitives; j++)
+    if (nNumberOfPrimitives > 0)
     {
-        for (int i = 0; i < nNumberOfSubTriangles; ++i)
+        int nNumberOfSubTriangles = GetPrimitive(0)->GetNumberOfSubTriangle();
+
+        pAllSubTriangles->reserve(nNumberOfSubTriangles * nNumberOfPrimitives);
+
+        for (int j = 0; j < nNumberOfPrimitives; j++)
         {
-            pAllSubTriangles->push_back(GetPrimitive(j)->GetSubTriangle(i));
+            for (int i = 0; i < nNumberOfSubTriangles; ++i)
+            {
+                pAllSubTriangles->push_back(GetPrimitive(j)->GetSubTriangle(i));
+            }
         }
     }
+
     CUtils::SafeDel(m_pRoot);
     m_pRoot = new CKDTreeNode(pAllSubTriangles, 0, m_BoundingBox);
     m_pRoot->Process();

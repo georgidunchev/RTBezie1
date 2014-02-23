@@ -30,6 +30,7 @@ public:
     bool m_bWireframe;
     int m_nThreads;
     int m_nIterations;
+    bool m_bHalfSubdvision;
 
 private:
     bool m_bINTERSECT_BEZIER;

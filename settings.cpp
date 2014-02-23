@@ -4,6 +4,7 @@ CSettings::CSettings(QObject *parent) :
     QObject(parent)
   , m_bINTERSECT_BEZIER(false)
   , m_bNormalSmoothing(false)
+  , m_bHalfSubdvision(true)
 
 {
 }

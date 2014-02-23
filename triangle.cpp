@@ -110,7 +110,7 @@ void CTriangle::BuildBezierPoints()
 
 void CTriangle::Subdivide()
 {
-    if(true)
+    if(!GetSettings()->m_bHalfSubdvision)
     {
         //New test subdivision
         int nSubdivisionLevel = GetSettings()->GetNofSubdivisions();

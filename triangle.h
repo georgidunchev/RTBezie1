@@ -55,7 +55,11 @@ public:
     void AddSubTriangle(CSubTriangle* subTriangle);
     CSubTriangle* GetSubTriangle(int n) const
     {
-	return m_aSubTriangles[n];
+        return m_aSubTriangles[n];
+    }
+    int GetNumberOfSubTriangle() const
+    {
+        return m_aSubTriangles.size();
     }
 
     CBezierPatch& GetBezierPatch()  { return m_BezierPatch; }

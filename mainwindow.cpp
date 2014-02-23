@@ -38,6 +38,7 @@ MainWindow::MainWindow(QWidget *parent)
     GetSettings()->m_bNormalSmoothing = ui->NormalSmoothingCheckBox->isChecked();
     GetSettings()->m_bMultipleSeeds = ui->MultiSeedCheckBox->isChecked();
     GetSettings()->m_bWireframe = ui->WireframeCheckBox->isChecked();
+    GetSettings()->m_bHalfSubdvision = ui->HalfRB->isChecked();
 
     //    LoadNewMesh("Triangle.obj");
     //    LoadNewMesh("bunny_200.obj");
@@ -84,6 +85,9 @@ void MainWindow::on_openMeshButton_clicked()
     {
         return;
     }
+
+    GetSettings()->SetNofSubdivisions(static_cast<uint>(ui->NumberOfSubdivisions->value()));
+    GetSettings()->m_bHalfSubdvision = ui->HalfRB->isChecked();
 
     GetRaytracer()->LoadNewMesh(strFileName);
 
@@ -223,6 +227,7 @@ void MainWindow::on_butRefresh_clicked()
 {
     const std::string& strFilename = GetRaytracer()->GetOpenFileName();
     GetSettings()->SetNofSubdivisions(static_cast<uint>(ui->NumberOfSubdivisions->value()));
+    GetSettings()->m_bHalfSubdvision = ui->HalfRB->isChecked();
 
     if (strFilename.empty())
     {
