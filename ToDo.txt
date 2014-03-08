@@ -1,3 +1,27 @@
+Bunny 200 
+7subd
+regular 
+5.5sec
+
+7subd
+regular
+multiple seeds
+302.5sec
+
+7subd
+regular
+single seed
+82.5
+
+0subd
+single seed
+24.5
+
+0subd
+multiple seed
+86.5
+
+
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 Git patches:
 git diff --cached > mypatch.patch

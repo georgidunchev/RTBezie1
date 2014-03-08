@@ -34,6 +34,8 @@ public:
 
     void Split(float fWhere, CAABox& LeftBBox, CAABox& RightBBox, CVector3DF::EDimiensions eSplitDimension) const;
 
+    CVector3DF GetCentre() const;
+
 signals:
     
 public slots:

@@ -12,7 +12,7 @@ void CUtils::SafeDel(void *pointer)
 {
     if (pointer)
     {
-	delete pointer;
+        delete pointer;
     }
 }
 
@@ -20,19 +20,19 @@ void CUtils::SafeDel(void *pointer)
 
 
 void CUtils::TriangleCentre(CVector3DF &o_vCentre,
-			    const CVector3DF &i_vA,
-			    const CVector3DF &i_vB,
-			    const CVector3DF &i_vC)
+                            const CVector3DF &i_vA,
+                            const CVector3DF &i_vB,
+                            const CVector3DF &i_vC)
 {
     o_vCentre = i_vA + i_vB + i_vC;
     o_vCentre /= 3;
 }
 
 bool CUtils::IntersectTriangle(const CRay &i_Ray,
-			       CIntersactionInfo &io_IntersectionInfo,
-			       const CVector3DF &i_vA,
-			       const CVector3DF &i_vB,
-			       const CVector3DF &i_vC)
+                               CIntersactionInfo &io_IntersectionInfo,
+                               const CVector3DF &i_vA,
+                               const CVector3DF &i_vB,
+                               const CVector3DF &i_vC)
 {
 
     //intersect stuff
@@ -46,21 +46,21 @@ bool CUtils::IntersectTriangle(const CRay &i_Ray,
     CVector3DF c = - (i_Ray.Direction());
     CVector3DF h = i_Ray.StartPoint() - i_vA;
     /* 2. Solve the equation:
-	     *
-	     * A + lambda2 * AB + lambda3 * AC = ray.start + gamma * ray.dir
-	     *
-	     * which can be rearranged as:
-	     * lambda2 * AB + lambda3 * AC - gamma * ray.dir = ray.start - A
-	     *
-	     * Which is a linear system of three rows and three unknowns, which we solve using Carmer's rule
-	     */
+         *
+         * A + lambda2 * AB + lambda3 * AC = ray.start + gamma * ray.dir
+         *
+         * which can be rearranged as:
+         * lambda2 * AB + lambda3 * AC - gamma * ray.dir = ray.start - A
+         *
+         * Which is a linear system of three rows and three unknowns, which we solve using Carmer's rule
+         */
     //
     // Find the determinant of the left part of the equation
     const float Dcr = CVector3DF::Triple(a, b, c);
     // check for zero; if it is zero, then the triangle and the ray are parallel
     if (fabs(Dcr) < k_fSMALL)
     {
-	return false;
+        return false;
     }
     // find the reciprocal of the determinant. We would use this quantity later in order
     // to multiply by rDcr instead of divide by Dcr (division is much slower)
@@ -71,24 +71,24 @@ bool CUtils::IntersectTriangle(const CRay &i_Ray,
     // Is the intersection point behind us?  Is the intersection point worse than what we currently have?
     if (gamma <= 0 || gamma > closestdist)
     {
-	return false;
+        return false;
     }
     lambda2 = CVector3DF::Triple(h, b, c) * rDcr;
     // Check if it is in range (barycentric coordinates)
     if (lambda2 < 0 || lambda2 > 1)
     {
-	return false;
+        return false;
     }
     lambda3 = CVector3DF::Triple(a, h, c) * rDcr;
 
     // Calculate lambda3 and check if it is in range as well
     if (lambda3 < 0 || lambda3 > 1)
     {
-	return false;
+        return false;
     }
     if (lambda2 + lambda3 > 1)
     {
-	return false;
+        return false;
     }
 
     closestdist = gamma;
@@ -108,17 +108,17 @@ bool CUtils::IntersectTriangle(const CRay &i_Ray,
 
 
 bool CUtils::IntersectTriangle(const CRay &i_Ray,
-			       CIntersactionInfo &io_IntersectionInfo,
-			       const CVector3DF& i_vA,
-			       const CVector3DF& i_vB,
-			       const CVector3DF& i_vC,
-			       const CVector3DF& i_vABar,
-			       const CVector3DF& i_vBBar,
-			       const CVector3DF& i_vCBar)
+                               CIntersactionInfo &io_IntersectionInfo,
+                               const CVector3DF& i_vA,
+                               const CVector3DF& i_vB,
+                               const CVector3DF& i_vC,
+                               const CVector3DF& i_vABar,
+                               const CVector3DF& i_vBBar,
+                               const CVector3DF& i_vCBar)
 {
     if (!IntersectTriangle(i_Ray, io_IntersectionInfo, i_vA, i_vB, i_vC))
     {
-	return false;
+        return false;
     }
 
     const CVector3DF vPA = i_vABar * io_IntersectionInfo.m_vBarCoordsLocal.X();
@@ -135,15 +135,15 @@ int CUtils::PowerOf2(const int nPow)
 {
     if (nPow > 1)
     {
-	return 2 << (nPow -1);
+        return 2 << (nPow -1);
     }
     else if (nPow < 1)
     {
-	return 2 >> (1 - nPow);
+        return 2 >> (1 - nPow);
     }
     else
     {
-	return 2;
+        return 2;
     }
 }
 

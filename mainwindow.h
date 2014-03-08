@@ -52,6 +52,10 @@ private slots:
 
     void on_WireframeCheckBox_clicked(bool checked);
 
+    void on_butResetCamera_clicked();
+
+    void on_butLookAtCentre_clicked();
+
 private:
     void StartSingleRender();
     void StartRender(bool bHighQuality = true);

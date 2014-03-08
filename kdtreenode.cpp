@@ -19,8 +19,15 @@ CKDTreeNode::CKDTreeNode(std::vector<CSubTriangle*>*pTriangles, int nLevel, cons
 
 CKDTreeNode::~CKDTreeNode()
 {
-	CUtils::SafeDel(m_pLeftNode);
-	CUtils::SafeDel(m_pRightNode);
+    if (m_pLeftNode)
+    {
+        delete m_pLeftNode;
+    }
+    if (m_pRightNode)
+    {
+        delete m_pRightNode;
+    }
+    delete m_pTriangles;
 }
 
 void CKDTreeNode::Process()

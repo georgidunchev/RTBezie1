@@ -217,7 +217,12 @@ void CAABox::Split(float fWhere, CAABox &LeftBBox, CAABox &RightBBox, CVector3DF
 
 	CVector3DF vNewRight(m_vMinVertex);
 	vNewRight.SetDimension(eSplitDimension, fSplit - k_fSMALL);
-	RightBBox.Set(vNewRight, m_vMaxVertex);
+    RightBBox.Set(vNewRight, m_vMaxVertex);
+}
+
+CVector3DF CAABox::GetCentre() const
+{
+    return (m_vMaxVertex + m_vMinVertex)*0.5f;
 }
 
 bool CAABox::Intersect_Test(const CRay &ray, CIntersactionInfo& io_IntersectionInfo, bool bDebug) const

@@ -44,6 +44,12 @@ public:
     const CVector3DF GetPointFromBarycentric(const QVector2D& vCoords) const;
     const CVector3DF GetPointFromBarycentric(float u, float v) const;
 
+    const CVector3DF GetdBu(float u, float v) const;
+    const CVector3DF GetdBv(float u, float v) const;
+
+    const CVector3DF GetSmoothedNormal(const CVector3DF& vCoords) const;
+    const CVector3DF GetSubSurfSmoothedNormal(const CVector3DF& vCoords) const;
+
     // used for triangles from the mesh
     void BuildBezierPoints();
     // used for initial sub triangles created from triangle

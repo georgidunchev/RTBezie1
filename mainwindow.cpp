@@ -25,7 +25,7 @@ MainWindow::MainWindow(QWidget *parent)
     QObject::connect(&GetRaytracer()->GetMesh(), SIGNAL(sigLoadingStepDone(int)), &progress, SLOT(setValue(int)), Qt::UniqueConnection);
     QObject::connect(&GetRaytracer()->GetMesh(), SIGNAL(sigLoadingFinished()), this, SLOT(slotLoadingFinished()), Qt::UniqueConnection);
 
-    GetRaytracer()->GetCamera().SetCameraPos(QVector3D(0, 0, -0.4), QVector3D(0, 0, 1), QVector3D(0, -1, 0) );
+    GetRaytracer()->GetCamera().Reset();//SetCameraPos(QVector3D(0, 0.1, -0.4), QVector3D(0, 0, 0), QVector3D(0, -1, 0) );
     //GetRaytracer()->GetCamera().SetCameraPos(QVector3D(0, 0.2, -0.4), QVector3D(0, 0, 1), QVector3D(0, -1, 0) );
     GetRaytracer()->SetCanvas(500,500);
 
@@ -260,4 +260,14 @@ void MainWindow::on_ShowKDTreeCheckbox_clicked(bool checked)
 void MainWindow::on_WireframeCheckBox_clicked(bool checked)
 {
     GetSettings()->m_bWireframe = checked;
+}
+
+void MainWindow::on_butResetCamera_clicked()
+{
+    GetRaytracer()->GetCamera().Reset();
+}
+
+void MainWindow::on_butLookAtCentre_clicked()
+{
+    GetRaytracer()->GetCamera().LookAtCentre();
 }

@@ -4,6 +4,7 @@
 #include <QObject>
 
 #include "ray.h"
+#include "vector3df.h"
 
 class Camera : public QObject
 {
@@ -12,6 +13,7 @@ public:
     explicit Camera(QObject *parent = 0);
     
     void SetCameraPos(QVector3D vPos, QVector3D vTarget, QVector3D vUp);
+    CVector3DF GetCameraPos() const;
     CRay GetScreenRay(int x, int y);
     void SetAspectRatio(qreal fAspectRatio);
     void SetCameraResolution(qreal fWidth, qreal fHeight);
@@ -21,6 +23,9 @@ public:
     void Rotate(float fX, float fY);
 	void MoveTarget(float fX, float fY);	
 	void Zoom(float fZoom);
+
+    void Reset();
+    void LookAtCentre();
 
 signals:
     

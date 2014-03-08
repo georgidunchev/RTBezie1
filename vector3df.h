@@ -63,6 +63,11 @@ public:
     friend const CVector3DF operator*(const CVector3DF &v1, const CVector3DF& v2);
     friend const CVector3DF operator/(const CVector3DF &vector, float divisor);
 
+     const QVector3D& GetQVector() const
+     {
+         return m_vVector;
+     }
+
 private:
     QVector3D m_vVector;
 };

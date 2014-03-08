@@ -48,6 +48,48 @@ const CVector3DF CBezierPatch::GetPointFromBarycentric(float u, float v) const
     return B;
 }
 
+const CVector3DF CBezierPatch::GetdBu(float u, float v) const
+{
+    //partial U derivative of B
+    CVector3DF dBu = 3 * Q30 * u * u
+            + 2 * Q21 * u * v
+            + Q12 * v * v
+            + 2 * Q20 * u
+            + Q11 * v
+            + Q10;
+    return dBu;
+}
+
+const CVector3DF CBezierPatch::GetdBv(float u, float v) const
+{
+    //Partial V derivative of B
+    CVector3DF dBv = 3 * Q03 * v * v
+            + 2 * Q12 * u * v
+            + Q21 * u * u
+            + 2 * Q02 * v
+            + Q11 * u
+            + Q01;
+    return dBv;
+}
+
+const CVector3DF CBezierPatch::GetSmoothedNormal(const CVector3DF &vCoords) const
+{
+    const CVector3DF vNormalA = vCoords.X() * m_Parent_Triangle.A().Normal_Get();
+    const CVector3DF vNormalB = vCoords.Y() * m_Parent_Triangle.B().Normal_Get();
+    const CVector3DF vNormalC = vCoords.Z() * m_Parent_Triangle.C().Normal_Get();
+    return (vNormalA + vNormalB + vNormalC).Normalized();
+}
+
+const CVector3DF CBezierPatch::GetSubSurfSmoothedNormal(const CVector3DF &vCoords) const
+{
+    const CVector3DF vLocalCoords ;//= GetSubBar(vCoords);
+    const CVector3DF vNormalA = vLocalCoords.X() * CVector3DF::Normal(GetdBu(1.0f,0.0f), GetdBv(1.0f,0.0f));
+    const CVector3DF vNormalB = vLocalCoords.Y() * CVector3DF::Normal(GetdBu(0.0f,1.0f), GetdBv(0.0f,1.0f));
+    const CVector3DF vNormalC = vLocalCoords.Z() * CVector3DF::Normal(GetdBu(0.0f,0.0f), GetdBv(0.0f,0.0f));
+
+    return (vNormalA + vNormalB + vNormalC).Normalized();
+}
+
 void CBezierPatch::BuildBezierPoints()
 {
     m_aAdditionalPoints[0] = m_Parent_Triangle.A().GetPos();
@@ -557,12 +599,9 @@ bool CBezierPatch::IntersectLowQuality(const CRay &ray, CIntersactionInfo &inter
 
 bool CBezierPatch::intersect(const CRay &ray, CIntersactionInfo &info, CVector3DF barCoord, unsigned int iterations, bool bDebug) const
 {
-    //    return CTriangle::Intersect(ray, info);
     //Planes along ray
     CVector3DF N1 = ray.Direction().Cross(CVector3DF(-1.0f,-1.0f,-1.0f));
-    //    N1.normalize();
     CVector3DF N2 = ray.Direction().Cross(N1);
-    //    N2.normalize();
     const float d1 = -N1.Dot(ray.StartPoint());
     const float d2 = -N2.Dot(ray.StartPoint());
 
@@ -576,31 +615,16 @@ bool CBezierPatch::intersect(const CRay &ray, CIntersactionInfo &info, CVector3D
         const double &v(barCoord.Y());
 
         //partial U derivative of B
-        dBu = 3 * Q30 * u * u
-                + 2 * Q21 * u * v
-                + Q12 * v * v
-                + 2 * Q20 * u
-                + Q11 * v
-                + Q10;
+        dBu = GetdBu(u,v);
 
         //Partial V derivative of B
-        dBv = 3 * Q03 * v * v
-                + 2 * Q12 * u * v
-                + Q21 * u * u
-                + 2 * Q02 * v
-                + Q11 * u
-                + Q01;
+        dBv = GetdBv(u,v);
 
         const CVector3DF B = GetPointFromBarycentric(barCoord);
 
         const CVector3DF R = CVector3DF(N1.Dot(B) + d1,
                                         N2.Dot(B) + d2,
                                         0);
-
-        //	if (bDebug)
-        //	{
-        //	    qDebug() << "R: " << R;
-        //	}
 
         if ( ( fabs(R.X()) < fSMall ) &&
              ( fabs(R.Y()) < fSMall ) )
@@ -640,18 +664,12 @@ bool CBezierPatch::intersect(const CRay &ray, CIntersactionInfo &info, CVector3D
                 || barCoord.Z() > k_fMAX || barCoord.Z() < k_fMIN)
         {
             return false;
-        }
-
-        //	if (bDebug)
-        //	{
-        //	    qDebug() << "Iteration" << i << barCoord;
-        //	}
+        }        
     }
 
     const float &u(barCoord.X());
     const float &v(barCoord.Y());
     const float w(1.0 - u - v);
-
 
     if (u < -k_fSMALL || u > 1.0f + k_fSMALL
             || v < -k_fSMALL || v > 1.0f + k_fSMALL
@@ -693,48 +711,21 @@ bool CBezierPatch::intersect(const CRay &ray, CIntersactionInfo &info, CVector3D
 
     info.m_vIntersectionPoint = B;
     info.m_fDistance = len;
-    //    getBezierNormal(barCoord, info);
-
-    //    //partial U derivative of B
-    //    const CVector3DF dBu = 3 * Q30 * u * u
-    //	    + 2 * Q21 * u * v
-    //	    + Q12 * v * v
-    //	    + 2 * Q20 * u
-    //	    + Q11 * v
-    //	    + Q10;
-
-    //    //Partial V derivative of B
-    //    const CVector3DF dBv = 3 * Q03 * v * v
-    //	    + 2 * Q12 * u * v
-    //	    + Q21 * u * u
-    //	    + 2 * Q02 * v
-    //	    + Q11 * u
-    //	    + Q01;
-
-    //CUtils::Normal(info.m_vNormal, dBu, dBv);
 
     info.m_vBarCoordsLocal.SetX(u);
     info.m_vBarCoordsLocal.SetY(v);
     info.m_vBarCoordsLocal.SetZ(w);
 
     info.m_vBarCoordsGlobal = info.m_vBarCoordsLocal;
-//    info.m_vBarCoordsGlobal = m_pParent_SubTriangle->GetParentBar(info.m_vBarCoordsLocal);
 
     if (GetSettings()->m_bNormalSmoothing)
     {
-        //Smoothed normal
-//        const CVector3DF vNormalA = info.m_vBarCoordsGlobal.X() * m_Parent_Triangle.A().Normal_Get();
-//        const CVector3DF vNormalB = info.m_vBarCoordsGlobal.Y() * m_Parent_Triangle.B().Normal_Get();
-//        const CVector3DF vNormalC = info.m_vBarCoordsGlobal.Z() * m_Parent_Triangle.C().Normal_Get();
-        const CVector3DF vNormalA = u * m_Parent_Triangle.A().Normal_Get();
-        const CVector3DF vNormalB = v * m_Parent_Triangle.B().Normal_Get();
-        const CVector3DF vNormalC = w * m_Parent_Triangle.C().Normal_Get();
-        info.m_vNormal = vNormalA + vNormalB + vNormalC;
-        info.m_vNormal.Normalize();
+        info.m_vNormal = GetSmoothedNormal(barCoord);
     }
     else
     {
-          info.m_vNormal = CVector3DF::Normal(dBu, dBv);
+//        info.m_vNormal = GetSmoothedNormal(barCoord);
+        info.m_vNormal = CVector3DF::Normal(dBu, dBv);
     }
 
     if (bDebug)

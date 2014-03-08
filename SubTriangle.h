@@ -28,7 +28,7 @@ public:
                  const CVector3DF& m_vBBar,
                  const CVector3DF& m_vCBar);
 
-    virtual ~CSubTriangle() {}
+    virtual ~CSubTriangle();
 
     void Subdivide();
 
@@ -49,8 +49,12 @@ public:
     CBezierPatch* GetBezierPatch()  { return m_pBezierPatch; }
 
     const CVector3DF GetParentBar(const CVector3DF& vLocalBar) const;
+    const CVector3DF GetSubBar(const CVector3DF& vParentBar) const;
     //debug
     int m_nSubtriangleID;
+
+
+//    const CVector3DF GetSubSurfSmoothedNormal(const CVector3DF& vCoords) const;
 
 private:
 

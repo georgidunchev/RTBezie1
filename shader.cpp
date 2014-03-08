@@ -13,7 +13,7 @@ CShader::CShader()
 
 QRgb CShader::Shade(const CRay &ray, CIntersactionInfo &intersectionInfo)
 {
-    CColor cLamber(0.0f, 1.0f, 0.5f);
+    CColor cLamber(0.3f, 0.3f, 0.3f);
     const float fLow = 0.05f;
     const float fHigh = 1.0f - fLow;
     if (GetSettings()->m_bWireframe)
@@ -22,18 +22,18 @@ QRgb CShader::Shade(const CRay &ray, CIntersactionInfo &intersectionInfo)
             intersectionInfo.m_vBarCoordsLocal.Y() < fLow || intersectionInfo.m_vBarCoordsLocal.Y() > fHigh ||
             intersectionInfo.m_vBarCoordsLocal.Z() < fLow || intersectionInfo.m_vBarCoordsLocal.Z() > fHigh)
         {
-
+            cLamber = CColor(0.0f, 1.0f, 0.5f);
         }
         else
         {
-            cLamber = ShadeLambert(ray, intersectionInfo);
-            //cLamber += ShadeGloss(ray, intersectionInfo);
+            cLamber += ShadeLambert(ray, intersectionInfo);
+  //          cLamber += ShadeGloss(ray, intersectionInfo);
         }
     }
     else
     {
-        cLamber = ShadeLambert(ray, intersectionInfo);
-        //cLamber += ShadeGloss(ray, intersectionInfo);
+        cLamber += ShadeLambert(ray, intersectionInfo);
+//        cLamber += ShadeGloss(ray, intersectionInfo);
     }
 
     return cLamber.GetRGB();
@@ -57,7 +57,7 @@ CColor CShader::ShadeLambert(const CRay &ray, CIntersactionInfo &intersectionInf
 	for (int i = 0; i < GetLightScene().GetLightsNumber(); ++i)
 	{
 		const CVector3DF& vIntersection = intersectionInfo.m_vIntersectionPoint;
-		const CVector3DF vLIghtDirection = GetLightScene().GetLight(i).GetPosition() - vIntersection;
+        const CVector3DF vLIghtDirection = GetRaytracer()->GetCamera().GetCameraPos() - vIntersection;
 		float fCos = vLIghtDirection.Normalized().Dot(intersectionInfo.GetFacingNormal(ray));
 
 		CColor colorForLight(1.0f, 1.0f, 1.0f);
@@ -65,7 +65,7 @@ CColor CShader::ShadeLambert(const CRay &ray, CIntersactionInfo &intersectionInf
 
 		if (fCos > 0.0f)
 		{
-		    const float fLength = vLIghtDirection.Length();
+            const float fLength = 2.f;//vLIghtDirection.Length()*10;
 		    fCos /= fLength;
 
 		    colorForLight *= fCos;
@@ -95,7 +95,8 @@ CColor CShader::ShadeGloss(const CRay &ray, CIntersactionInfo &intersectionInfo)
 	{
 	    const  CVector3DF vNormal = intersectionInfo.GetFacingNormal(ray);
 		const CVector3DF& vIntersection = intersectionInfo.m_vIntersectionPoint;
-		const CVector3DF vLIghtDirection = GetLightScene().GetLight(i).GetPosition() - vIntersection;
+        const CVector3DF vLIghtDirection = GetRaytracer()->GetCamera().GetCameraPos() - vIntersection;
+//		const CVector3DF vLIghtDirection = GetLightScene().GetLight(i).GetPosition() - vIntersection;
 		const CVector3DF vLightDirNorm = vLIghtDirection.Normalized();
 		float fCos = vLightDirNorm.Dot(vNormal);
 
@@ -103,8 +104,8 @@ CColor CShader::ShadeGloss(const CRay &ray, CIntersactionInfo &intersectionInfo)
 
 		if (fCos > 0.0f)
 		{
-		    const float fLength = vLIghtDirection.Length();
-		    fCos /= fLength;
+//            const float fLength = vLIghtDirection.Length();
+//            fCos *= 500.0f / fLength;
 
 		    const CVector3DF vFromLightNorm = -vLightDirNorm;
 
@@ -113,24 +114,24 @@ CColor CShader::ShadeGloss(const CRay &ray, CIntersactionInfo &intersectionInfo)
 
 		    if (fCosRefl > 0.0f)
 		    {
-			fCosRefl = qPow(fCosRefl, 8);
+            fCosRefl = qPow(fCosRefl, 3);
 			colorForLight *= fCosRefl;
 			fLightColor *= fCosRefl;
 		    }
 		    else
 		    {
-			colorForLight *= 0.0f;
-			fLightColor *= 0.0f;
+            colorForLight *= 0.3f;
+            fLightColor *= 0.3f;
 		    }
 		}
 		else
 		{
-		     colorForLight *= 0.0f;
-		     fLightColor *= 0.0f;
+             colorForLight *= 0.3f;
+             fLightColor *= 0.3f;
 		}
 
 //		intersectionInfo.color += colorForLight;
-		cLamber = colorForLight;// * fLightColor;
+        cLamber = colorForLight;// * fLightColor;
 	}
 	return cLamber;
 }

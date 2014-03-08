@@ -52,6 +52,10 @@ void CMesh::ReadFromFile(const QString &strInputFileName)
     QString strLine;
 
     m_aVertices.clear();
+    for (int i = 0, m = m_aTriangles.size(); i < m; ++i)
+    {
+        delete m_aTriangles[i];
+    }
     m_aTriangles.clear();
 
     m_aVertices.push_back( CVertex() );
@@ -274,7 +278,10 @@ void CMesh::GenerateKDTree()
         }
     }
 
-    CUtils::SafeDel(m_pRoot);
+    if (m_pRoot)
+    {
+        delete m_pRoot;
+    }
     m_pRoot = new CKDTreeNode(pAllSubTriangles, 0, m_BoundingBox);
     m_pRoot->Process();
 }

@@ -37,6 +37,10 @@ CTriangle::CTriangle( const std::vector<CVertex> &aVertecis, int v1, int v2, int
 
 CTriangle::~CTriangle()
 {
+    for (int i = 0, m = m_aSubTriangles.size(); i < m; ++i)
+    {
+        delete m_aSubTriangles[i];
+    }
     m_aSubTriangles.clear();
 }
 
@@ -118,9 +122,6 @@ void CTriangle::Subdivide()
 
         if (nSubdivisionLevel == 0)
         {
-            const CVector3DF v100(0.1f, 0.0f, 0.0f);
-            const CVector3DF v010(0.0f, 0.1f, 0.0f);
-            const CVector3DF v001(0.0f, 0.0f, 0.1f);
             m_aSubTriangles[0] = new CSubTriangle(*this);
             return;
         }
@@ -174,7 +175,7 @@ void CTriangle::AddSubTriangle(CSubTriangle* subTriangle)
     m_aSubTriangles[nSavePos]->Subdivide();
 }
 
-bool CTriangle::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo, const std::vector<CSubTriangle*>& aSubTriangles, bool bDebug)
+/*static*/ bool CTriangle::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo, const std::vector<CSubTriangle*>& aSubTriangles, bool bDebug)
 {
     if (intersectionInfo.m_bHighQuality)
     {
@@ -188,11 +189,13 @@ bool CTriangle::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo, 
         //return IntersectFast(ray, intersectionInfo);
     }
 }
+
 bool CTriangle::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo, bool bDebug) const
 {
     return CTriangle::Intersect(ray, intersectionInfo, m_aSubTriangles, bDebug);
 }
-bool CTriangle::IntersectHighQuality(const CRay &ray, CIntersactionInfo &intersectionInfo, const std::vector<CSubTriangle*>& aSubTriangles, bool bDebug)
+
+/*static*/ bool CTriangle::IntersectHighQuality(const CRay &ray, CIntersactionInfo &intersectionInfo, const std::vector<CSubTriangle*>& aSubTriangles, bool bDebug)
 {
     if (CTriangle::IntersectSubdevidedTriangles(ray, intersectionInfo, aSubTriangles, NULL, bDebug))
     {
@@ -201,7 +204,7 @@ bool CTriangle::IntersectHighQuality(const CRay &ray, CIntersactionInfo &interse
     return false;
 }
 
-bool CTriangle::IntersectHighQuality(const CRay &ray, CIntersactionInfo &intersectionInfo, bool bDebug)
+/*static*/ bool CTriangle::IntersectHighQuality(const CRay &ray, CIntersactionInfo &intersectionInfo, bool bDebug)
 {
     std::vector<CVector3DF> aPointsToCheck;
     CSubTriangle& SubTriangle = * intersectionInfo.pSubTriangle;
@@ -267,7 +270,7 @@ bool CTriangle::IntersectHighQuality(const CRay &ray, CIntersactionInfo &interse
     return fabs(closestdist - k_fMAX) > k_fMIN;
 }
 
-bool CTriangle::intersectSimpleBezierTriangle(const CRay &ray, CIntersactionInfo &info, CSubTriangle& SubTriangle, CVector3DF &barCoord, unsigned int iterations, bool bDebug)
+/*static*/ bool CTriangle::intersectSimpleBezierTriangle(const CRay &ray, CIntersactionInfo &info, CSubTriangle& SubTriangle, CVector3DF &barCoord, unsigned int iterations, bool bDebug)
 {
     return SubTriangle.GetParent().GetBezierPatch().intersect(ray, info, barCoord, iterations, bDebug);
 }
@@ -291,7 +294,7 @@ bool CTriangle::IntersectSubdevidedTriangles(const CRay &ray, CIntersactionInfo 
     return IntersectSubdevidedTriangles(ray, intersectionInfo, m_aSubTriangles, aPointsToCheck, bDebug);
 }
 
-bool CTriangle::IntersectSubdevidedTriangles(const CRay &ray, CIntersactionInfo &intersectionInfo, const std::vector<CSubTriangle*>& aSubTriangles, std::vector<CVector3DF>* aPointsToCheck, bool bDebug)
+/*static*/ bool CTriangle::IntersectSubdevidedTriangles(const CRay &ray, CIntersactionInfo &intersectionInfo, const std::vector<CSubTriangle*>& aSubTriangles, std::vector<CVector3DF>* aPointsToCheck, bool bDebug)
 {
     int nSize = aSubTriangles.size();
     float fModifier = 8.0f / static_cast<float>(nSize);

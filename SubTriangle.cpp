@@ -67,6 +67,11 @@ CSubTriangle::CSubTriangle(CTriangle &triangle,
     m_pBezierPatch->BuildBezierPoints_Sub2();
 }
 
+CSubTriangle::~CSubTriangle()
+{
+    delete m_pBezierPatch;
+}
+
 const CVector3DF& CSubTriangle::GetVert(int i) const
 {
     i %= 3;
@@ -234,22 +239,18 @@ bool CSubTriangle::Intersect(const CRay &ray, CIntersactionInfo &intersectionInf
 {
     if (intersectionInfo.m_bHighQuality)
     {
-        return  m_Parent.GetBezierPatch().IntersectHighQuality(ray, intersectionInfo, *this, bDebug);
-        CVector3DF vecPoint = m_vABar + m_vBBar + m_vCBar;
-        vecPoint /= 3.0f;
+        bool b = m_Parent.GetBezierPatch().IntersectHighQuality(ray, intersectionInfo, *this, bDebug);
 
-        return m_Parent.GetBezierPatch().intersect(ray, intersectionInfo, vecPoint, 4, bDebug);
+//        if (b && GetSettings()->m_bNormalSmoothing)
+//        {
+//            intersectionInfo.m_vNormal = GetSubSurfSmoothedNormal(intersectionInfo.m_vBarCoordsGlobal);
+//        }
+        return b;
     }
     else
     {
-        bool bIntersect = false;
-//         CIntersactionInfo localInfo(intersectionInfo);
-        bIntersect = CUtils::IntersectTriangle(ray, intersectionInfo, GetVert(0), GetVert(1), GetVert(2), m_vABar, m_vBBar, m_vCBar);
-        //    if (bIntersect && bDebug)
-        //    {
-        //	qDebug()<<"TRIANGLE INTERSECTION " << localInfo.m_vIntersectionPoint;
-        //	qDebug()<<"TRIANGLE INTERSECTION Bar " << localInfo.m_vBarCoordsLocal;
-        //    }
+        bool bIntersect = CUtils::IntersectTriangle(ray, intersectionInfo, GetVert(0), GetVert(1), GetVert(2), m_vABar, m_vBBar, m_vCBar);
+
         if (bIntersect)
         {
             if (GetSettings()->m_bNormalSmoothing)
@@ -296,3 +297,24 @@ const CVector3DF CSubTriangle::GetParentBar(const CVector3DF &vLocalBar) const
     const CVector3DF vBarCoord = vPA + vPB + vPC;
     return vBarCoord;
 }
+
+const CVector3DF CSubTriangle::GetSubBar(const CVector3DF &vParentBar) const
+{
+    const float fDetCr = CVector3DF::Triple(m_vABar, m_vBBar, m_vCBar);
+    if (fDetCr <= k_fSMALL)
+        return CVector3DF(1.f/3.f, 1.f/3.f, 1.f/3.f);
+    const float fDetX = CVector3DF::Triple(vParentBar, m_vBBar, m_vCBar);
+    const float fDetY = CVector3DF::Triple(m_vABar, vParentBar, m_vCBar);
+    const float fDetZ = CVector3DF::Triple(m_vABar, m_vBBar, vParentBar);
+    return CVector3DF(fDetX/fDetCr, fDetY/fDetCr, fDetZ/fDetCr);
+}
+
+//const CVector3DF CSubTriangle::GetSubSurfSmoothedNormal(const CVector3DF &vCoords) const
+//{
+//    const CVector3DF vLocalCoords = GetSubBar(vCoords);
+//    const CVector3DF vNormalA = vLocalCoords.X() * CVector3DF::Normal(m_Parent.GetBezierPatch().GetdBu(1.0f,0.0f), m_Parent.GetBezierPatch().GetdBv(1.0f,0.0f));
+//    const CVector3DF vNormalB = vLocalCoords.Y() * CVector3DF::Normal(m_Parent.GetBezierPatch().GetdBu(0.0f,1.0f), m_Parent.GetBezierPatch().GetdBv(0.0f,1.0f));
+//    const CVector3DF vNormalC = vLocalCoords.Z() * CVector3DF::Normal(m_Parent.GetBezierPatch().GetdBu(0.0f,0.0f), m_Parent.GetBezierPatch().GetdBv(0.0f,0.0f));
+
+//    return (vNormalA + vNormalB + vNormalC).Normalized();
+//}

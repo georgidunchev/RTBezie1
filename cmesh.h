@@ -37,6 +37,11 @@ public:
 
     bool IntersectKDTree(const CRay &ray, CIntersactionInfo &intersectionInfo, bool bDebug = false);
 
+    const CAABox& GetAABB() const
+    {
+        return m_BoundingBox;
+    }
+
 signals:
     void sigLoadingStarted(int value);
     void sigLoadingStepDone(int value);
