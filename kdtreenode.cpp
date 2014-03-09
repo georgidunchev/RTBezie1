@@ -143,64 +143,32 @@ bool CKDTreeNode::Separate(	std::vector<CSubTriangle*>& AllTriangles,
 
 bool CKDTreeNode::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo, bool bDebug)
 {
-//    intersectionInfo.m_nAABBTime = intersectionInfo.m_nObjTime = 0;
-//    intersectionInfo.m_nAABBIntersections = intersectionInfo.m_nBezierIntersections = 0;
+    QElapsedTimer timer;
+    timer.start();
+    // discard intersection in ray does not cross the BBox of the node
+    bool b = m_BoundingBox.Intersect(ray, bDebug);
+    intersectionInfo.m_nAABBIntersections += 1;
+    intersectionInfo.m_nAABBTime += timer.nsecsElapsed();
 
-//    qint64 nAABBTime;
+    if (!b)
     {
-        QElapsedTimer timer;
-        timer.start();
-        // discard intersection in ray does not cross the BBox of the node
-        bool b = m_BoundingBox.Intersect(ray, bDebug);
-        intersectionInfo.m_nAABBIntersections += 1;
-        intersectionInfo.m_nAABBTime += timer.nsecsElapsed();
-//        nAABBTime = timer.nsecsElapsed();
-
-        if (!b)
-        {
-
-//            intersectionInfo.m_nAABBTime = nAABBTime;
-            return false;
-        }
+        return false;
     }
 	
 	//end criteria - the node is a leaf and we intersect the contained triangles
 	if (!m_pLeftNode || !m_pRightNode)
 	{
         intersectionInfo.m_nBezierIntersections += m_pTriangles->size();
-        QElapsedTimer timer2;
-        timer2.start();
+        timer.restart();
 		bool bIntersect = CSubTriangle::IntersectSubdevidedTriangles(ray, intersectionInfo, *m_pTriangles, bDebug);
-        intersectionInfo.m_nObjTime += timer2.nsecsElapsed();
-//        intersectionInfo.m_nAABBTime += nAABBTime;
-//        intersectionInfo.m_nAABBIntersections = 1;
+        intersectionInfo.m_nObjTime += timer.nsecsElapsed();
 
-//        if (!bIntersect && GetSettings()->m_bShowKDTtee)
-//        {
-//            return m_BoundingBox.Intersect(ray, intersectionInfo, bDebug);
-//        }
 		return bIntersect;
 	}
 	else
-	{
-//        CIntersactionInfo intersectionInfoLeft(intersectionInfo);
+    {
         bool bIntersectLeft = m_pLeftNode->Intersect(ray, intersectionInfo, bDebug);
-
-//        CIntersactionInfo intersectionInfoRight(intersectionInfo);
         bool bIntersectRight = m_pRightNode->Intersect(ray, intersectionInfo, bDebug);
-
-
-//        intersectionInfoLeft.m_nAABBIntersections   = intersectionInfoRight.m_nAABBIntersections
-//                = 1 + intersectionInfoLeft.m_nAABBIntersections + intersectionInfoRight.m_nAABBIntersections;
-
-//        intersectionInfoLeft.m_nAABBTime            = intersectionInfoRight.m_nAABBTime
-//                = nAABBTime + intersectionInfoLeft.m_nAABBTime + intersectionInfoRight.m_nAABBTime;
-
-//        intersectionInfoLeft.m_nBezierIntersections = intersectionInfoRight.m_nBezierIntersections
-//                = intersectionInfoLeft.m_nBezierIntersections + intersectionInfoRight.m_nBezierIntersections;
-
-//        intersectionInfoLeft.m_nObjTime             = intersectionInfoRight.m_nObjTime
-//                = intersectionInfoLeft.m_nObjTime + intersectionInfoRight.m_nObjTime;
 
 		if (!bIntersectLeft && !bIntersectRight)
 		{
@@ -213,28 +181,12 @@ bool CKDTreeNode::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo
 
             if(!bIntersectRight)
 			{
-				fR += fColorIncrement;
-//				intersectionInfo = intersectionInfoLeft;
+                fR += fColorIncrement;
 			}
-            else //if(!bIntersectLeft && bIntersectRight)
+            else
 			{
-				fB += fColorIncrement;
-//				intersectionInfo = intersectionInfoRight;
-			}
-//			else
-//			{
-//				// two intersection, choose the closest one
-//				if (intersectionInfoLeft.m_fDistance < intersectionInfoRight.m_fDistance)
-//				{
-//					fR += fColorIncrement;
-////					intersectionInfo = intersectionInfoLeft;
-//				}
-//				else
-//				{
-//					fB += fColorIncrement;
-////					intersectionInfo = intersectionInfoRight;
-//				}
-//			}
+                fB += fColorIncrement;
+            }
 
             if (GetSettings()->m_bShowKDTtee)
 			{

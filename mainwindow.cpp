@@ -147,7 +147,7 @@ void MainWindow::slotRenderFinished()
         int c = GetRaytracer()->m_nAABBTime.fetchAndStoreRelaxed(0);
         int d = GetRaytracer()->m_nObjTime.fetchAndStoreRelaxed(0);
         int e = GetRaytracer()->m_nTotalTime.fetchAndStoreRelaxed(0);
-        stream << "Intersections - AABB: " << a << " Obj: " << b
+        stream << "Intersections - AABB: " << a << "\nObj: " << b
                << "\nTime - AABB: "<< c << " Obj: "<< d << " " << c+d
                << "\nSubTriangles: " << GetRaytracer()->GetMesh().m_nNOfSubtriangles << " AABBs: " << GetRaytracer()->GetMesh().n_mLeafs
                << "\nRender Finished in: " << GetRaytracer()->GetTimer().elapsed() << " / " << e;

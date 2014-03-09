@@ -178,8 +178,6 @@ void CSubTriangle::GetDivision(int& o_nStartOfLongest, CVector3DF& o_vMidPoint, 
 {    
     int nSize = aSubTriangles.size();
 
-    intersectionInfo.m_nBezierIntersections += nSize;
-
     float fModifier = 8.0f / static_cast<float>(nSize);
 
     if (bDebug)
@@ -191,8 +189,7 @@ void CSubTriangle::GetDivision(int& o_nStartOfLongest, CVector3DF& o_vMidPoint, 
 
     for (int i = 0; i < nSize; i++)
     {
-        CIntersactionInfo intersectionInfoLocal(intersectionInfo);
-        if( aSubTriangles[i]->Intersect(ray, intersectionInfoLocal,bDebug) )
+        if( aSubTriangles[i]->Intersect(ray, intersectionInfo,bDebug) )
         {
             int nId = aSubTriangles[i]->m_nSubtriangleID;
 
@@ -207,7 +204,7 @@ void CSubTriangle::GetDivision(int& o_nStartOfLongest, CVector3DF& o_vMidPoint, 
                 float fG = bG ? fModifier * static_cast<float>(nSubtriangleId) * 0.125f : 0.0f;
                 float fB = bB ? fModifier * static_cast<float>(nSubtriangleId) * 0.125f : 0.0f;
 
-                intersectionInfoLocal.color = CColor(fR, fG, fB);
+                intersectionInfo.color = CColor(fR, fG, fB);
             }
 
             if (false)
@@ -221,18 +218,14 @@ void CSubTriangle::GetDivision(int& o_nStartOfLongest, CVector3DF& o_vMidPoint, 
                 float fG = bG ? 1.0f : 0.0f;
                 float fB = bB ? 1.0f : 0.0f;
 
-                intersectionInfoLocal.color = CColor(fR, fG, fB);
+                intersectionInfo.color = CColor(fR, fG, fB);
             }
 
-            intersectionInfoLocal.pSubTriangle = aSubTriangles[i];
+            intersectionInfo.pSubTriangle = aSubTriangles[i];
 
-            intersectionInfoLocal.m_nSubTriangleId = nId;
+            intersectionInfo.m_nSubTriangleId = nId;
 
-            if (intersectionInfoLocal.m_fDistance < intersectionInfo.m_fDistance)
-            {
-                intersectionInfo = intersectionInfoLocal;
-                bIntersected = true;
-            }
+            bIntersected = true;
         }
     }
     return bIntersected;
@@ -240,19 +233,23 @@ void CSubTriangle::GetDivision(int& o_nStartOfLongest, CVector3DF& o_vMidPoint, 
 
 bool CSubTriangle::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo, bool bDebug) const
 {
+//    intersectionInfo.m_nBezierIntersections += 1;
+//    QElapsedTimer timer;
+//    timer.start();
+
+    bool bIntersect = false;
     if (intersectionInfo.m_bHighQuality)
     {
-        bool b = m_Parent.GetBezierPatch().IntersectHighQuality(ray, intersectionInfo, *this, bDebug);
+       bIntersect = m_Parent.GetBezierPatch().IntersectHighQuality(ray, intersectionInfo, *this, bDebug);
 
 //        if (b && GetSettings()->m_bNormalSmoothing)
 //        {
 //            intersectionInfo.m_vNormal = GetSubSurfSmoothedNormal(intersectionInfo.m_vBarCoordsGlobal);
 //        }
-        return b;
     }
     else
     {
-        bool bIntersect = CUtils::IntersectTriangle(ray, intersectionInfo, GetVert(0), GetVert(1), GetVert(2), m_vABar, m_vBBar, m_vCBar);
+        bIntersect = CUtils::IntersectTriangle(ray, intersectionInfo, GetVert(0), GetVert(1), GetVert(2), m_vABar, m_vBBar, m_vCBar);
 
         if (bIntersect)
         {
@@ -272,8 +269,10 @@ bool CSubTriangle::Intersect(const CRay &ray, CIntersactionInfo &intersectionInf
                 intersectionInfo.m_vNormal = CVector3DF::Normal(m_vAB, m_vAC);
             }
         }
-        return bIntersect;
     }
+
+//    intersectionInfo.m_nObjTime += timer.nsecsElapsed();
+    return bIntersect;
 }
 
 void CSubTriangle::MakeBoundingBox()

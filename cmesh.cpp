@@ -185,61 +185,21 @@ bool CMesh::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo, bool
 bool CMesh::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo, const std::vector<int>& aTriangles, CAABox* pBBox, bool bDebug)
 {
     bool bIntersected = false;
-    int nIntersections = 0;
-    qint64 nTime = 0;
-    QElapsedTimer timer;
-    timer.start();
-
     for (uint i = 0; i < aTriangles.size(); ++i)
     {
         CTriangle* Triangle = GetPrimitive(aTriangles[i]);
-        CIntersactionInfo LastIntersection(intersectionInfo);
-        LastIntersection.m_nBezierIntersections = 0;
-        if (bDebug)
-        {
-            qDebug() << "Intersecting Triangle: " << i;
-        }
 
-        if ( Triangle->Intersect(ray, LastIntersection, bDebug) )
+        if ( Triangle->Intersect(ray, intersectionInfo, bDebug) )
         {
-//            if (pBBox) // if bounding box is supplied, discard all intersection outside it
-//            {
-//                CVector3DF vIntersection = ray.GetPointAtDistance(LastIntersection.m_fDistance);
-//                if (!pBBox->IsInside(vIntersection))
-//                {
-//                    continue;
-//                }
-//            }
-            if ( !bIntersected )
-            {
-                intersectionInfo = LastIntersection;
-                bIntersected = true;
-            }
-            else
-            {
-                if (intersectionInfo.m_fDistance > LastIntersection.m_fDistance)
-                {
-                    intersectionInfo = LastIntersection;
-                }
-            }
+            bIntersected = true;
         }
-
-        nIntersections += LastIntersection.m_nBezierIntersections;
     }
-    intersectionInfo.m_nObjTime = timer.nsecsElapsed();
-    intersectionInfo.m_nBezierIntersections = nIntersections;
     return bIntersected;
 }
 
 bool CMesh::IntersectKDTree(const CRay &ray, CIntersactionInfo &intersectionInfo, bool bDebug)
 {
-//    QElapsedTimer timer;
-//    timer.start();
-
-    bool b = m_pRoot->Intersect(ray, intersectionInfo, bDebug);
-//    intersectionInfo.m_nObjTime += timer.nsecsElapsed();
-//    intersectionInfo.m_nAABBTime += m_pRoot->m_ntimer;
-    return b;
+   return m_pRoot->Intersect(ray, intersectionInfo, bDebug);
 }
 
 std::vector<CTriangle*> *CMesh::GetPrimitives()
