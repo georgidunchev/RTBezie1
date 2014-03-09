@@ -18,22 +18,10 @@ public:
     CTriangle( const std::vector<CVertex> & aVertecis, int v1, int v2, int v3, int nTriangleId = -1);
     virtual ~CTriangle();
 
-    static bool Intersect(const CRay& ray, CIntersactionInfo& intersectionInfo, const std::vector<CSubTriangle*>& aSubTriangles, bool bDebug = false);
-    static bool IntersectSubdevidedTriangles(const CRay &ray, CIntersactionInfo &intersectionInfo, const std::vector<CSubTriangle*>& aSubTriangles, std::vector<CVector3DF>* aPointsToCheck = NULL, bool bDebug = false);
-    static bool IntersectHighQuality(const CRay& ray, CIntersactionInfo& intersectionInfo, const std::vector<CSubTriangle*>& aSubTriangles, bool bDebug = false);
-    static bool IntersectHighQuality(const CRay& ray, CIntersactionInfo& intersectionInfo, bool bDebug = false);
-    static bool intersectSimpleBezierTriangle(const CRay &ray, CIntersactionInfo &info, CSubTriangle& SubTriangle, CVector3DF &barCoord, unsigned int iterations, bool bDebug = false);
-
-
     virtual bool Intersect(const CRay& ray, CIntersactionInfo& intersectionInfo, bool bDebug = false) const;
+
     bool IntersectSubdevidedTriangles(const CRay &ray, CIntersactionInfo &intersectionInfo, std::vector<CVector3DF>* aPointsToCheck = NULL, bool bDebug = false) const;
-
-    //not used///////////////////////////////////////////////////////////////////
-    virtual bool IntersectFast(const CRay& ray, CIntersactionInfo& intersectionInfo, bool bDebug = false) const;
-    bool IntersectBezierSubTriangle(const CRay& ray, CIntersactionInfo& intersectionInfo, int i_nTriangleId, bool bDebug = false) const;
-    /////////////////////////////////////////////////////////////////////////
-
-
+    static bool IntersectSubdevidedTriangles(const CRay &ray, CIntersactionInfo &intersectionInfo, const std::vector<CSubTriangle*>& aSubTriangles, std::vector<CVector3DF>* aPointsToCheck = NULL, bool bDebug = false);
 
     virtual bool Intersect(const CVector3DF& vStart, const CVector3DF& vEnd) const;
 

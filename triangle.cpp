@@ -175,18 +175,6 @@ void CTriangle::AddSubTriangle(CSubTriangle* subTriangle)
     m_aSubTriangles[nSavePos]->Subdivide();
 }
 
-/*static*/ bool CTriangle::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo, const std::vector<CSubTriangle*>& aSubTriangles, bool bDebug)
-{
-    if (intersectionInfo.m_bHighQuality)
-    {
-        return CTriangle::IntersectHighQuality(ray, intersectionInfo, aSubTriangles, bDebug);
-    }
-    else
-    {
-        return CSubTriangle::IntersectSubdevidedTriangles(ray, intersectionInfo, aSubTriangles, bDebug);
-    }
-}
-
 bool CTriangle::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo, bool bDebug) const
 {
     QElapsedTimer timer;
@@ -198,100 +186,6 @@ bool CTriangle::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo, 
     intersectionInfo.m_nBezierIntersections += m_aSubTriangles.size();
 
     return bIntersected;
-}
-
-/*static*/ bool CTriangle::IntersectHighQuality(const CRay &ray, CIntersactionInfo &intersectionInfo, const std::vector<CSubTriangle*>& aSubTriangles, bool bDebug)
-{
-    if (CTriangle::IntersectSubdevidedTriangles(ray, intersectionInfo, aSubTriangles, NULL, bDebug))
-    {
-        return CTriangle::IntersectHighQuality(ray, intersectionInfo, bDebug);
-    }
-    return false;
-}
-
-/*static*/ bool CTriangle::IntersectHighQuality(const CRay &ray, CIntersactionInfo &intersectionInfo, bool bDebug)
-{
-    std::vector<CVector3DF> aPointsToCheck;
-    CSubTriangle& SubTriangle = * intersectionInfo.pSubTriangle;
-
-    aPointsToCheck.push_back(intersectionInfo.m_vBarCoordsLocal);
-    for (int j = 0; j < 3; j++)
-    {
-        aPointsToCheck.push_back(SubTriangle.GetVertBar(j));
-    }
-
-    float fU = intersectionInfo.m_vBarCoordsLocal.X();
-    float fV = intersectionInfo.m_vBarCoordsLocal.Y();
-
-    float closestdist = k_fMAX;
-    intersectionInfo.m_fDistance = k_fMAX;
-
-    bool bezierFast = false;
-    if (!bezierFast)
-    {
-        int nSize = aPointsToCheck.size();
-        if (nSize > 0)
-        {
-            for (int i = 0; i < nSize; i++)
-            {
-                if (intersectSimpleBezierTriangle(ray, intersectionInfo, SubTriangle, aPointsToCheck[i], 15, bDebug))
-                {
-                    closestdist = intersectionInfo.m_fDistance;
-                    return true;
-                }
-
-            }
-            return false;
-        }
-        else
-        {
-            CVector3DF res = CVector3DF(fU, fV, 0);
-            if (intersectSimpleBezierTriangle(ray, intersectionInfo, SubTriangle, res, 5, bDebug))
-            {
-                closestdist = intersectionInfo.m_fDistance;
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-    }
-    else
-    {
-        int iterations = 5;
-        CVector3DF res = CVector3DF(1.0/3.0, 1.0/3.0, 0);
-        intersectSimpleBezierTriangle(ray, intersectionInfo, SubTriangle, res, iterations, bDebug );
-        res = CVector3DF(1.0/6.0, 1.0/6.0, 0);
-        intersectSimpleBezierTriangle(ray, intersectionInfo, SubTriangle, res, iterations, bDebug );
-        res = CVector3DF(2.0/3.0, 1.0/6.0, 0);
-        intersectSimpleBezierTriangle(ray, intersectionInfo, SubTriangle, res, iterations, bDebug );
-        res = CVector3DF(1.0/6.0, 2.0/3.0 ,0);
-        intersectSimpleBezierTriangle(ray, intersectionInfo, SubTriangle, res, iterations, bDebug );
-
-        closestdist = intersectionInfo.m_fDistance;
-    }
-
-    return fabs(closestdist - k_fMAX) > k_fMIN;
-}
-
-/*static*/ bool CTriangle::intersectSimpleBezierTriangle(const CRay &ray, CIntersactionInfo &info, CSubTriangle& SubTriangle, CVector3DF &barCoord, unsigned int iterations, bool bDebug)
-{
-    return SubTriangle.GetParent().GetBezierPatch().intersect(ray, info, barCoord, iterations, bDebug);
-}
-
-//not used
-bool CTriangle::IntersectFast(const CRay &ray, CIntersactionInfo &intersectionInfo, bool bDebug) const
-{
-    for (int i = 0; i < 9; i++)
-    {
-        //	if (GetBezierPatch().intersect(ray, intersectionInfo, i, bDebug))
-        {
-            return true;
-        }
-    }
-
-    return false;
 }
 
 bool CTriangle::IntersectSubdevidedTriangles(const CRay &ray, CIntersactionInfo &intersectionInfo, std::vector<CVector3DF>* aPointsToCheck, bool bDebug) const
