@@ -53,6 +53,13 @@ public:
 	bool IsHighQuality() const;
 
 	std::string GetOpenFileName() const;
+
+    QAtomicInt m_nAABBIntersections;
+    QAtomicInt m_nObjIntersections;
+    QAtomicInt m_nAABBTime;
+    QAtomicInt m_nObjTime;
+    QAtomicInt m_nTotalTime;
+
 private:
     Camera m_Camera;
     CLightsScene m_LightScene;

@@ -30,7 +30,7 @@ CKDTreeNode::~CKDTreeNode()
     delete m_pTriangles;
 }
 
-void CKDTreeNode::Process()
+int CKDTreeNode::Process()
 {
 	// divide the input triangles;
 	// create two child nodes using the separated triangles;
@@ -39,7 +39,7 @@ void CKDTreeNode::Process()
 	if (m_nLevel >= k_nMAX_LEVEL_OF_TREE
 		|| m_pTriangles->size() <= k_nMIN_NUMBER_OF_TRIANGLES_TO_SPLIT)
 	{
-		return;
+        return 1;
 	}
 
 	std::vector<CSubTriangle*>* pLeftTriangles = new std::vector<CSubTriangle*>();
@@ -50,7 +50,7 @@ void CKDTreeNode::Process()
 
 	if (!Separate(*m_pTriangles, pLeftTriangles, pRightTriangles, eDimention, fWhere))
 	{
-		return;
+        return 1;
 	}
 
 	//splitbounding box
@@ -59,12 +59,14 @@ void CKDTreeNode::Process()
 
 	//qDebug() << "Split level:" << m_nLevel << "Left" << pLeftTriangles->size() << "Right"<< pRightTriangles->size();
 
+    int nLeafs = 0;
 	m_pLeftNode = new CKDTreeNode(pLeftTriangles, m_nLevel+1, LeftBBox);
-	m_pLeftNode->Process();
+    nLeafs += m_pLeftNode->Process();
 	m_pRightNode = new CKDTreeNode(pRightTriangles, m_nLevel+1, RightBBox);
-	m_pRightNode->Process();
+    nLeafs += m_pRightNode->Process();
 
 	m_pTriangles->clear();
+    return nLeafs;
 }
 
 bool CKDTreeNode::Separate(	std::vector<CSubTriangle*>& AllTriangles,
@@ -141,40 +143,64 @@ bool CKDTreeNode::Separate(	std::vector<CSubTriangle*>& AllTriangles,
 
 bool CKDTreeNode::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo, bool bDebug)
 {
-	// discard intersection in ray does not cross the BBox of the node
-	if ( !m_BoundingBox.Intersect(ray, bDebug) )
-	{
-		return false;
-	}
+//    intersectionInfo.m_nAABBTime = intersectionInfo.m_nObjTime = 0;
+//    intersectionInfo.m_nAABBIntersections = intersectionInfo.m_nBezierIntersections = 0;
+
+//    qint64 nAABBTime;
+    {
+        QElapsedTimer timer;
+        timer.start();
+        // discard intersection in ray does not cross the BBox of the node
+        bool b = m_BoundingBox.Intersect(ray, bDebug);
+        intersectionInfo.m_nAABBIntersections += 1;
+        intersectionInfo.m_nAABBTime += timer.nsecsElapsed();
+//        nAABBTime = timer.nsecsElapsed();
+
+        if (!b)
+        {
+
+//            intersectionInfo.m_nAABBTime = nAABBTime;
+            return false;
+        }
+    }
 	
 	//end criteria - the node is a leaf and we intersect the contained triangles
 	if (!m_pLeftNode || !m_pRightNode)
 	{
+        intersectionInfo.m_nBezierIntersections += m_pTriangles->size();
+        QElapsedTimer timer2;
+        timer2.start();
 		bool bIntersect = CSubTriangle::IntersectSubdevidedTriangles(ray, intersectionInfo, *m_pTriangles, bDebug);
-		//bool bIntersect = CTriangle::Intersect(ray, intersectionInfo, *m_pTriangles);
-        if (!bIntersect && GetSettings()->m_bShowKDTtee)
-		{
-			return m_BoundingBox.Intersect(ray, intersectionInfo, bDebug);
-		}
+        intersectionInfo.m_nObjTime += timer2.nsecsElapsed();
+//        intersectionInfo.m_nAABBTime += nAABBTime;
+//        intersectionInfo.m_nAABBIntersections = 1;
+
+//        if (!bIntersect && GetSettings()->m_bShowKDTtee)
+//        {
+//            return m_BoundingBox.Intersect(ray, intersectionInfo, bDebug);
+//        }
 		return bIntersect;
 	}
 	else
 	{
-		if (bDebug)
-		{
-			qDebug() << "Left";
-		}
+//        CIntersactionInfo intersectionInfoLeft(intersectionInfo);
+        bool bIntersectLeft = m_pLeftNode->Intersect(ray, intersectionInfo, bDebug);
 
-		CIntersactionInfo intersectionInfoLeft(intersectionInfo);
-		bool bIntersectLeft = m_pLeftNode->Intersect(ray, intersectionInfoLeft, bDebug);
-		
-		if (bDebug)
-		{
-			qDebug() << "Right";
-		}
+//        CIntersactionInfo intersectionInfoRight(intersectionInfo);
+        bool bIntersectRight = m_pRightNode->Intersect(ray, intersectionInfo, bDebug);
 
-		CIntersactionInfo intersectionInfoRight(intersectionInfo);
-		bool bIntersectRight = m_pRightNode->Intersect(ray, intersectionInfoRight, bDebug);
+
+//        intersectionInfoLeft.m_nAABBIntersections   = intersectionInfoRight.m_nAABBIntersections
+//                = 1 + intersectionInfoLeft.m_nAABBIntersections + intersectionInfoRight.m_nAABBIntersections;
+
+//        intersectionInfoLeft.m_nAABBTime            = intersectionInfoRight.m_nAABBTime
+//                = nAABBTime + intersectionInfoLeft.m_nAABBTime + intersectionInfoRight.m_nAABBTime;
+
+//        intersectionInfoLeft.m_nBezierIntersections = intersectionInfoRight.m_nBezierIntersections
+//                = intersectionInfoLeft.m_nBezierIntersections + intersectionInfoRight.m_nBezierIntersections;
+
+//        intersectionInfoLeft.m_nObjTime             = intersectionInfoRight.m_nObjTime
+//                = intersectionInfoLeft.m_nObjTime + intersectionInfoRight.m_nObjTime;
 
 		if (!bIntersectLeft && !bIntersectRight)
 		{
@@ -185,30 +211,30 @@ bool CKDTreeNode::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo
 			float fR = 0.0f, fG = 0.0f, fB = 0.0f;
 			static const float fColorIncrement = 1.0f / static_cast<float>(k_nMAX_LEVEL_OF_TREE);
 
-			if(bIntersectLeft && !bIntersectRight)
+            if(!bIntersectRight)
 			{
 				fR += fColorIncrement;
-				intersectionInfo = intersectionInfoLeft;
+//				intersectionInfo = intersectionInfoLeft;
 			}
-			else if(!bIntersectLeft && bIntersectRight)
+            else //if(!bIntersectLeft && bIntersectRight)
 			{
 				fB += fColorIncrement;
-				intersectionInfo = intersectionInfoRight;
+//				intersectionInfo = intersectionInfoRight;
 			}
-			else
-			{
-				// two intersection, choose the closest one
-				if (intersectionInfoLeft.m_fDistance < intersectionInfoRight.m_fDistance)
-				{
-					fR += fColorIncrement;
-					intersectionInfo = intersectionInfoLeft;
-				}
-				else
-				{
-					fB += fColorIncrement;
-					intersectionInfo = intersectionInfoRight;
-				}
-			}
+//			else
+//			{
+//				// two intersection, choose the closest one
+//				if (intersectionInfoLeft.m_fDistance < intersectionInfoRight.m_fDistance)
+//				{
+//					fR += fColorIncrement;
+////					intersectionInfo = intersectionInfoLeft;
+//				}
+//				else
+//				{
+//					fB += fColorIncrement;
+////					intersectionInfo = intersectionInfoRight;
+//				}
+//			}
 
             if (GetSettings()->m_bShowKDTtee)
 			{
@@ -217,8 +243,7 @@ bool CKDTreeNode::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo
 
 			return true;
 		}
-	}
-	return false;
+    }
 }
 
 CMesh &CKDTreeNode::GetMesh()

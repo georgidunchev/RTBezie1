@@ -8,6 +8,7 @@
 #include "main.h"
 #include "cmesh.h"
 #include "settings.h"
+#include "kdtreenode.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -45,7 +46,7 @@ MainWindow::MainWindow(QWidget *parent)
     //    LoadNewMesh("SimpleBezierTriangle1.obj");
     //GetRaytracer()->LoadNewMesh("triangle2.obj");
 
-    GetRaytracer()->LoadNewMesh("SimpleBezierTriangle1.obj");
+//    GetRaytracer()->LoadNewMesh("SimpleBezierTriangle1.obj");
 }
 
 void MainWindow::paintEvent(QPaintEvent *pe)
@@ -141,7 +142,15 @@ void MainWindow::slotRenderFinished()
         QString str;
         QTextStream stream;
         stream.setString(&str);
-        stream << "Render Finished in: " << GetRaytracer()->GetTimer().elapsed() / 1000.f;
+        int a = GetRaytracer()->m_nAABBIntersections.fetchAndStoreRelaxed(0);
+        int b = GetRaytracer()->m_nObjIntersections.fetchAndStoreRelaxed(0);
+        int c = GetRaytracer()->m_nAABBTime.fetchAndStoreRelaxed(0);
+        int d = GetRaytracer()->m_nObjTime.fetchAndStoreRelaxed(0);
+        int e = GetRaytracer()->m_nTotalTime.fetchAndStoreRelaxed(0);
+        stream << "Intersections - AABB: " << a << " Obj: " << b
+               << "\nTime - AABB: "<< c << " Obj: "<< d << " " << c+d
+               << "\nSubTriangles: " << GetRaytracer()->GetMesh().m_nNOfSubtriangles << " AABBs: " << GetRaytracer()->GetMesh().n_mLeafs
+               << "\nRender Finished in: " << GetRaytracer()->GetTimer().elapsed() << " / " << e;
         GetRaytracer()->GetTimer().invalidate();
         DisplayText(str);
     }
@@ -166,15 +175,15 @@ void MainWindow::slotLoadingFinished()
     progress.setVisible(false);
 }
 
-void MainWindow::on_RenderBezierCheckBox_toggled(bool checked)
-{
-    GetSettings()->SetIntersectBezier(checked);
-}
+//void MainWindow::on_RenderBezierCheckBox_toggled(bool checked)
+//{
+//    GetSettings()->SetIntersectBezier(checked);
+//}
 
-void MainWindow::on_NormalSmoothingCheckBox_toggled(bool checked)
-{
+//void MainWindow::on_NormalSmoothingCheckBox_toggled(bool checked)
+//{
 
-}
+//}
 
 void MainWindow::StartSingleRender()
 {
@@ -198,6 +207,7 @@ void MainWindow::StartSingleRender()
 
 void MainWindow::StartRender(bool bHighQuality)
 {
+    bHighQuality = ui->BezierRB_3->isChecked();
     if(m_bRendering)
     {
         return;

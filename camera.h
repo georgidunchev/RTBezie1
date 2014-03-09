@@ -27,6 +27,8 @@ public:
     void Reset();
     void LookAtCentre();
 
+    QVector3D m_vUp;
+
 signals:
     
 public slots:
@@ -34,7 +36,7 @@ public slots:
 private:
     QVector3D m_vPos, m_vTempPos;
     QVector3D m_vTarget, m_vTempTarget;
-    QVector3D m_vUp;
+
 
 	qreal m_fAspectRatio;
     qreal m_fWidth;

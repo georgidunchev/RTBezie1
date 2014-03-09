@@ -42,6 +42,9 @@ public:
         return m_BoundingBox;
     }
 
+    int m_nNOfSubtriangles;
+    int n_mLeafs;
+
 signals:
     void sigLoadingStarted(int value);
     void sigLoadingStepDone(int value);

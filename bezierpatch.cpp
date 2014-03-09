@@ -554,14 +554,14 @@ bool CBezierPatch::IntersectHighQuality(const CRay &ray, CIntersactionInfo &inte
     }
     aPointsToCheck[0] /=  3.0f;
 
-    CIntersactionInfo LocalInfo(intersectionInfo);
+//    CIntersactionInfo LocalInfo(intersectionInfo);
 
     const int nIterations = GetSettings()->m_nIterations;
     for (int i = 0, n = 4; i < n; ++i)
     {
-        if (intersect(ray, LocalInfo, aPointsToCheck[i], nIterations, bDebug))
+        if (intersect(ray, intersectionInfo, aPointsToCheck[i], nIterations, bDebug))
         {
-            intersectionInfo = LocalInfo;
+//            intersectionInfo = LocalInfo;
             return true;
         }
         if (!GetSettings()->m_bMultipleSeeds)

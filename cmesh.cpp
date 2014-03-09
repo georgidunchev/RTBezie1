@@ -13,6 +13,7 @@
 CMesh::CMesh(QObject *parent)
     : QObject(parent)
     , m_pRoot(NULL)
+    , n_mLeafs(0)
 {
 
 }
@@ -138,7 +139,7 @@ bool CMesh::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo, bool
     intersectionInfo.m_bHighQuality = GetRaytracer()->IsHighQuality();
 
     bool bResult = false;
-    if (GetSettings()->m_bUseKDTtee)
+    if (GetSettings()->UseKDTree())
     {
         bResult = IntersectKDTree(ray, intersectionInfo, bDebug);
     }
@@ -152,31 +153,31 @@ bool CMesh::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo, bool
         bResult = Intersect(ray, intersectionInfo, aTriangles, NULL, bDebug);
     }
 
-    //    if(bResult && intersectionInfo.m_bInitialRay)
-    //    {
-    //	int i = 0;
-    //	QVector3D vIntersection = intersectionInfo.m_vIntersectionPoint;
-    //	QVector3D vLIghtDirection = GetRaytracer()->GetLightScene().GetLight(i).GetPosition() - vIntersection;
-    //	vLIghtDirection.normalize();
-    //	vIntersection += vLIghtDirection * k_fSMALL;
+//    if(bResult && intersectionInfo.m_bInitialRay)
+//    {
+//        int i = 0;
+//        CVector3DF vIntersection = intersectionInfo.m_vIntersectionPoint;
+//        CVector3DF vLIghtDirection = GetRaytracer()->GetLightScene().GetLight(i).GetPosition() - vIntersection;
+//        vLIghtDirection.Normalize();
+//        vIntersection += vLIghtDirection * k_fSMALL;
 
-    //	//CRay LightRay(GetLightScene().GetLight(i).GetPosition(), vLIghtDirection);
-    //	CRay LightRay(vIntersection, vLIghtDirection);
+//        //CRay LightRay(GetLightScene().GetLight(i).GetPosition(), vLIghtDirection);
+//        CRay LightRay(vIntersection, vLIghtDirection);
 
-    //	float fDistToLight = vLIghtDirection.length();
+//        float fDistToLight = vLIghtDirection.Length();
 
-    //	CIntersactionInfo LightIntersectionInfo;
-    //	LightIntersectionInfo.m_bInitialRay = false;
-    //	if (Intersect(LightRay, LightIntersectionInfo))
-    //	{
-    //	    //if the first intersection is the intersection point
-    //	    if (LightIntersectionInfo.m_fDistance < fDistToLight - k_fSMALL)
-    //	    {
-    //		CColor colorForLight(0.f, 0.f, 0.f);
-    //		intersectionInfo.color = colorForLight;
-    //	    }
-    //	}
-    //    }
+//        CIntersactionInfo LightIntersectionInfo;
+//        LightIntersectionInfo.m_bInitialRay = false;
+//        if (Intersect(LightRay, LightIntersectionInfo))
+//        {
+//            //if the first intersection is the intersection point
+//            if (LightIntersectionInfo.m_fDistance < fDistToLight - k_fSMALL)
+//            {
+//                CColor colorForLight(0.2f, 0.2f, 0.2f);
+//                intersectionInfo.color = colorForLight;
+//            }
+//        }
+//    }
 
     return bResult;
 }
@@ -184,12 +185,16 @@ bool CMesh::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo, bool
 bool CMesh::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo, const std::vector<int>& aTriangles, CAABox* pBBox, bool bDebug)
 {
     bool bIntersected = false;
+    int nIntersections = 0;
+    qint64 nTime = 0;
+    QElapsedTimer timer;
+    timer.start();
 
     for (uint i = 0; i < aTriangles.size(); ++i)
     {
         CTriangle* Triangle = GetPrimitive(aTriangles[i]);
-        CIntersactionInfo LastIntersection;
-
+        CIntersactionInfo LastIntersection(intersectionInfo);
+        LastIntersection.m_nBezierIntersections = 0;
         if (bDebug)
         {
             qDebug() << "Intersecting Triangle: " << i;
@@ -197,14 +202,14 @@ bool CMesh::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo, cons
 
         if ( Triangle->Intersect(ray, LastIntersection, bDebug) )
         {
-            if (pBBox) // if bounding box is supplied, discard all intersection outside it
-            {
-                CVector3DF vIntersection = ray.GetPointAtDistance(LastIntersection.m_fDistance);
-                if (!pBBox->IsInside(vIntersection))
-                {
-                    continue;
-                }
-            }
+//            if (pBBox) // if bounding box is supplied, discard all intersection outside it
+//            {
+//                CVector3DF vIntersection = ray.GetPointAtDistance(LastIntersection.m_fDistance);
+//                if (!pBBox->IsInside(vIntersection))
+//                {
+//                    continue;
+//                }
+//            }
             if ( !bIntersected )
             {
                 intersectionInfo = LastIntersection;
@@ -218,17 +223,23 @@ bool CMesh::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo, cons
                 }
             }
         }
+
+        nIntersections += LastIntersection.m_nBezierIntersections;
     }
+    intersectionInfo.m_nObjTime = timer.nsecsElapsed();
+    intersectionInfo.m_nBezierIntersections = nIntersections;
     return bIntersected;
 }
 
 bool CMesh::IntersectKDTree(const CRay &ray, CIntersactionInfo &intersectionInfo, bool bDebug)
 {
-    if (bDebug)
-    {
-        qDebug()<<"Traverse KDTree";
-    }
-    return m_pRoot->Intersect(ray, intersectionInfo, bDebug);
+//    QElapsedTimer timer;
+//    timer.start();
+
+    bool b = m_pRoot->Intersect(ray, intersectionInfo, bDebug);
+//    intersectionInfo.m_nObjTime += timer.nsecsElapsed();
+//    intersectionInfo.m_nAABBTime += m_pRoot->m_ntimer;
+    return b;
 }
 
 std::vector<CTriangle*> *CMesh::GetPrimitives()
@@ -267,7 +278,9 @@ void CMesh::GenerateKDTree()
     {
         int nNumberOfSubTriangles = GetPrimitive(0)->GetNumberOfSubTriangle();
 
-        pAllSubTriangles->reserve(nNumberOfSubTriangles * nNumberOfPrimitives);
+        m_nNOfSubtriangles = nNumberOfSubTriangles * nNumberOfPrimitives;
+
+        pAllSubTriangles->reserve(m_nNOfSubtriangles);
 
         for (int j = 0; j < nNumberOfPrimitives; j++)
         {
@@ -283,7 +296,7 @@ void CMesh::GenerateKDTree()
         delete m_pRoot;
     }
     m_pRoot = new CKDTreeNode(pAllSubTriangles, 0, m_BoundingBox);
-    m_pRoot->Process();
+    n_mLeafs = m_pRoot->Process();
 }
 
 int CMesh::GetKDTreeNextID()

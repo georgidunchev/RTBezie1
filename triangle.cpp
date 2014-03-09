@@ -185,14 +185,17 @@ void CTriangle::AddSubTriangle(CSubTriangle* subTriangle)
     {
         //return GetRaytracer()->GetMesh().IntersectKDTree(ray, intersectionInfo, bDebug);
 
-        return IntersectSubdevidedTriangles(ray, intersectionInfo, aSubTriangles, NULL, bDebug);
+        return CSubTriangle::IntersectSubdevidedTriangles(ray, intersectionInfo, aSubTriangles, bDebug);
+//        return IntersectSubdevidedTriangles(ray, intersectionInfo, aSubTriangles, NULL, bDebug);
         //return IntersectFast(ray, intersectionInfo);
     }
 }
 
 bool CTriangle::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo, bool bDebug) const
 {
-    return CTriangle::Intersect(ray, intersectionInfo, m_aSubTriangles, bDebug);
+//    intersectionInfo.m_nBezierIntersections += m_aSubTriangles.size();
+    return CSubTriangle::IntersectSubdevidedTriangles(ray, intersectionInfo, m_aSubTriangles, bDebug);
+//    return CTriangle::Intersect(ray, intersectionInfo, m_aSubTriangles, bDebug);
 }
 
 /*static*/ bool CTriangle::IntersectHighQuality(const CRay &ray, CIntersactionInfo &intersectionInfo, const std::vector<CSubTriangle*>& aSubTriangles, bool bDebug)

@@ -18,7 +18,7 @@ public:
     CKDTreeNode(std::vector<CSubTriangle*>* pTriangles, int nLevel, const CAABox& BoundingBox);
     ~CKDTreeNode();
 
-    void Process();
+    int Process();
     bool Separate(std::vector<CSubTriangle*>& AllTriangles,
 					std::vector<CSubTriangle*>* pLeftTriangleIndeces,
 					std::vector<CSubTriangle*>* pRightTriangleIndeces,
@@ -26,6 +26,7 @@ public:
 					float& fBestPortion);
 
     bool Intersect(const CRay& ray, CIntersactionInfo& intersectionInfo, bool bDebug = false);
+
 private:
     CMesh &GetMesh();
     std::vector<CSubTriangle*>* m_pTriangles;

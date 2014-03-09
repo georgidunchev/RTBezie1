@@ -57,7 +57,7 @@ CColor CShader::ShadeLambert(const CRay &ray, CIntersactionInfo &intersectionInf
 	for (int i = 0; i < GetLightScene().GetLightsNumber(); ++i)
 	{
 		const CVector3DF& vIntersection = intersectionInfo.m_vIntersectionPoint;
-        const CVector3DF vLIghtDirection = GetRaytracer()->GetCamera().GetCameraPos() - vIntersection;
+        const CVector3DF vLIghtDirection = GetLightScene().GetLight(i).GetPosition() - vIntersection;
 		float fCos = vLIghtDirection.Normalized().Dot(intersectionInfo.GetFacingNormal(ray));
 
 		CColor colorForLight(1.0f, 1.0f, 1.0f);
@@ -65,8 +65,8 @@ CColor CShader::ShadeLambert(const CRay &ray, CIntersactionInfo &intersectionInf
 
 		if (fCos > 0.0f)
 		{
-            const float fLength = 2.f;//vLIghtDirection.Length()*10;
-		    fCos /= fLength;
+//            const float fLength = vLIghtDirection.Length();
+//		    fCos /= fLength;
 
 		    colorForLight *= fCos;
 		    fLightColor *= fCos;

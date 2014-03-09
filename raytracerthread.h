@@ -6,13 +6,14 @@ class CRaytracerThread: public QThread
 {
     Q_OBJECT
 public:
-    CRaytracerThread(int nThreadID);
+    CRaytracerThread(int nThreadID, int nThreads);
     virtual ~CRaytracerThread();
     void run();
 
 private:
     int m_nBucketId;
     int m_nThreadID;
+    int m_nThreads;
 
 signals:
     void sigThreadStarted(int nId);

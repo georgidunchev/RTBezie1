@@ -139,6 +139,5 @@ void Camera::Reset()
 
 void Camera::LookAtCentre()
 {
-    const QVector3D vTarget = GetRaytracer()->GetMesh().GetAABB().GetCentre().GetQVector();
-    m_vTempTarget = QVector3D(0, 0, 0);
+     m_vTempTarget = GetRaytracer()->GetMesh().GetAABB().GetCentre().GetQVector();
 }

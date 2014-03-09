@@ -17,6 +17,7 @@ private:
     CLightsScene &GetLightScene();
     CColor ShadeLambert(const CRay& ray, CIntersactionInfo& intersectionInfo);
     CColor ShadeGloss(const CRay& ray, CIntersactionInfo& intersectionInfo);
+    CVector3DF vLightPos;
 };
 
 #endif // SHADER_H

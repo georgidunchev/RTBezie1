@@ -14,6 +14,11 @@ RayTracer::RayTracer(QObject *parent)
     , m_Camera(this)
     , m_Mesh(this)
     , m_nRunningThreads(0)
+    , m_nAABBIntersections(0)
+    , m_nObjIntersections(0)
+    , m_nAABBTime(0)
+    , m_nObjTime(0)
+    , m_nTotalTime(0)
 {
     m_nHorizontalBuckets = 10;
     m_nVerticalBuckets = 10;
@@ -47,6 +52,15 @@ void RayTracer::BeginFrame(bool bHighQuality)
     m_pImage = pNewImage;
 
     GetCamera().BeginFrame();
+
+    const QVector3D vCentre = GetMesh().GetAABB().GetCentre().GetQVector();
+    QVector3D vPos = GetCamera().GetCameraPos().GetQVector() - vCentre;
+    vPos.normalize();
+    vPos = vCentre + vPos*2.f;// + GetCamera().m_vUp;
+    GetLightScene().GetLight(0).SetPosition(vPos);
+
+    m_nAABBIntersections = 0;
+    m_nObjIntersections = 0;
 }
 
 void RayTracer::SetCanvas(int fWidth, int fHeight)
@@ -132,12 +146,13 @@ void RayTracer::RenderThreaded()
 {
     m_nNextBucket = 0;
 
-    for( uint j = 0; j < GetSettings()->m_nThreads; ++j)
+    int nThreads = GetSettings()->m_nThreads;
+    for( uint j = 0; j < nThreads; ++j)
     {
 	CRaytracerThread* pThread;
 	if ( m_arrThreads.size() <= j)
 	{
-	    pThread = new CRaytracerThread(j);
+        pThread = new CRaytracerThread(j, nThreads);
 	    m_arrThreads.push_back(pThread);
 	    QObject::connect(pThread, SIGNAL(sigThreadStarted(int)), this, SLOT(slotThreadStarted(int)), Qt::UniqueConnection);
 	    QObject::connect(pThread, SIGNAL(sigThreadEnded(int)), this, SLOT(slotThreadEnded(int)), Qt::UniqueConnection);

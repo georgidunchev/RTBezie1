@@ -79,7 +79,7 @@ bool CAABox::Intersect(const CRay &ray, CIntersactionInfo& io_IntersectionInfo, 
 }
 
 bool CAABox::Intersect(const CRay &ray, bool bDebug) const
-{
+{ 
 	if (IsInside(ray.StartPoint()))
 	{
 		return true;

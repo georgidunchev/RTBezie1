@@ -46,26 +46,13 @@
    </property>
    <layout class="QVBoxLayout" name="verticalLayout">
     <property name="sizeConstraint">
-     <enum>QLayout::SetMaximumSize</enum>
+     <enum>QLayout::SetMinimumSize</enum>
     </property>
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout">
       <property name="sizeConstraint">
-       <enum>QLayout::SetFixedSize</enum>
+       <enum>QLayout::SetMinimumSize</enum>
       </property>
-      <item>
-       <spacer name="horizontalSpacer">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
       <item>
        <widget class="CView" name="Image">
         <property name="sizePolicy">
@@ -80,9 +67,22 @@
        </widget>
       </item>
       <item>
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
        <widget class="QGroupBox" name="groupBox">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+         <sizepolicy hsizetype="Fixed" vsizetype="Minimum">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
@@ -96,204 +96,13 @@
         <property name="layoutDirection">
          <enum>Qt::LeftToRight</enum>
         </property>
-        <widget class="QPushButton" name="openMeshButton">
-         <property name="geometry">
-          <rect>
-           <x>160</x>
-           <y>10</y>
-           <width>75</width>
-           <height>23</height>
-          </rect>
-         </property>
-         <property name="text">
-          <string>Browse</string>
-         </property>
-         <property name="checkable">
-          <bool>false</bool>
-         </property>
-        </widget>
-        <widget class="QPushButton" name="StartRender">
-         <property name="enabled">
-          <bool>true</bool>
-         </property>
-         <property name="geometry">
-          <rect>
-           <x>170</x>
-           <y>490</y>
-           <width>75</width>
-           <height>23</height>
-          </rect>
-         </property>
-         <property name="text">
-          <string>Render</string>
-         </property>
-        </widget>
-        <widget class="QPushButton" name="AutoRender">
-         <property name="enabled">
-          <bool>true</bool>
-         </property>
-         <property name="geometry">
-          <rect>
-           <x>10</x>
-           <y>490</y>
-           <width>75</width>
-           <height>23</height>
-          </rect>
-         </property>
-         <property name="text">
-          <string>Continuous</string>
-         </property>
-         <property name="checkable">
-          <bool>true</bool>
-         </property>
-        </widget>
-        <widget class="QTextBrowser" name="Output">
-         <property name="enabled">
-          <bool>true</bool>
-         </property>
-         <property name="geometry">
-          <rect>
-           <x>10</x>
-           <y>520</y>
-           <width>231</width>
-           <height>21</height>
-          </rect>
-         </property>
-         <property name="autoFillBackground">
-          <bool>true</bool>
-         </property>
-         <property name="frameShape">
-          <enum>QFrame::NoFrame</enum>
-         </property>
-         <property name="frameShadow">
-          <enum>QFrame::Plain</enum>
-         </property>
-         <property name="verticalScrollBarPolicy">
-          <enum>Qt::ScrollBarAlwaysOff</enum>
-         </property>
-         <property name="horizontalScrollBarPolicy">
-          <enum>Qt::ScrollBarAlwaysOff</enum>
-         </property>
-        </widget>
-        <widget class="QLabel" name="labelFileName">
-         <property name="geometry">
-          <rect>
-           <x>10</x>
-           <y>10</y>
-           <width>141</width>
-           <height>21</height>
-          </rect>
-         </property>
-         <property name="text">
-          <string>Open File</string>
-         </property>
-        </widget>
-        <widget class="QCheckBox" name="UseKDTreeCheckbox">
-         <property name="geometry">
-          <rect>
-           <x>10</x>
-           <y>60</y>
-           <width>124</width>
-           <height>17</height>
-          </rect>
-         </property>
-         <property name="text">
-          <string>Use KD Tree</string>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
-         </property>
-        </widget>
-        <widget class="QCheckBox" name="NormalSmoothingCheckBox">
-         <property name="geometry">
-          <rect>
-           <x>10</x>
-           <y>100</y>
-           <width>167</width>
-           <height>17</height>
-          </rect>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="text">
-          <string>Normal Smoothing</string>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
-         </property>
-        </widget>
-        <widget class="QCheckBox" name="ShowKDTreeCheckbox">
-         <property name="geometry">
-          <rect>
-           <x>10</x>
-           <y>80</y>
-           <width>124</width>
-           <height>17</height>
-          </rect>
-         </property>
-         <property name="text">
-          <string>Show KD Tree</string>
-         </property>
-        </widget>
-        <widget class="QCheckBox" name="WireframeCheckBox">
-         <property name="geometry">
-          <rect>
-           <x>10</x>
-           <y>120</y>
-           <width>167</width>
-           <height>17</height>
-          </rect>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="text">
-          <string>Wireframe</string>
-         </property>
-        </widget>
-        <widget class="QSpinBox" name="NofThreadsSpinBox">
-         <property name="geometry">
-          <rect>
-           <x>10</x>
-           <y>140</y>
-           <width>51</width>
-           <height>20</height>
-          </rect>
-         </property>
-         <property name="minimum">
-          <number>1</number>
-         </property>
-         <property name="value">
-          <number>12</number>
-         </property>
-        </widget>
-        <widget class="QLabel" name="NofThreadsLabel">
-         <property name="geometry">
-          <rect>
-           <x>70</x>
-           <y>140</y>
-           <width>111</width>
-           <height>21</height>
-          </rect>
-         </property>
-         <property name="text">
-          <string>Number of Threads</string>
-         </property>
-        </widget>
         <widget class="QGroupBox" name="groupBox">
          <property name="geometry">
           <rect>
            <x>10</x>
            <y>170</y>
            <width>231</width>
-           <height>80</height>
+           <height>71</height>
           </rect>
          </property>
          <property name="title">
@@ -303,7 +112,7 @@
           <property name="geometry">
            <rect>
             <x>10</x>
-            <y>50</y>
+            <y>40</y>
             <width>51</width>
             <height>20</height>
            </rect>
@@ -322,7 +131,7 @@
           <property name="geometry">
            <rect>
             <x>70</x>
-            <y>50</y>
+            <y>40</y>
             <width>111</width>
             <height>21</height>
            </rect>
@@ -355,7 +164,7 @@
          <property name="geometry">
           <rect>
            <x>10</x>
-           <y>260</y>
+           <y>240</y>
            <width>231</width>
            <height>91</height>
           </rect>
@@ -436,7 +245,7 @@
          <property name="geometry">
           <rect>
            <x>10</x>
-           <y>360</y>
+           <y>330</y>
            <width>231</width>
            <height>51</height>
           </rect>
@@ -471,13 +280,305 @@
           </property>
          </widget>
         </widget>
+        <widget class="QGroupBox" name="groupBox_4">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>380</y>
+           <width>231</width>
+           <height>71</height>
+          </rect>
+         </property>
+         <property name="title">
+          <string>Render</string>
+         </property>
+         <widget class="QRadioButton" name="MeshRB_2">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>20</y>
+            <width>82</width>
+            <height>17</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Mesh</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+         <widget class="QRadioButton" name="BezierRB_3">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>40</y>
+            <width>82</width>
+            <height>17</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Bezier</string>
+          </property>
+          <property name="checked">
+           <bool>false</bool>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="AutoRender">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
+          <property name="geometry">
+           <rect>
+            <x>150</x>
+            <y>10</y>
+            <width>75</width>
+            <height>23</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Continuous</string>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="StartRender">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
+          <property name="geometry">
+           <rect>
+            <x>150</x>
+            <y>40</y>
+            <width>75</width>
+            <height>23</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Single</string>
+          </property>
+         </widget>
+        </widget>
+        <widget class="QGroupBox" name="groupBox_5">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>0</y>
+           <width>231</width>
+           <height>41</height>
+          </rect>
+         </property>
+         <property name="title">
+          <string>File</string>
+         </property>
+         <widget class="QLabel" name="labelFileName">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>10</y>
+            <width>141</width>
+            <height>21</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>No file</string>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="openMeshButton">
+          <property name="geometry">
+           <rect>
+            <x>150</x>
+            <y>10</y>
+            <width>75</width>
+            <height>23</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Browse</string>
+          </property>
+          <property name="checkable">
+           <bool>false</bool>
+          </property>
+         </widget>
+         <zorder>labelFileName</zorder>
+         <zorder>openMeshButton</zorder>
+         <zorder>groupBox_6</zorder>
+         <zorder>groupBox</zorder>
+         <zorder>groupBox_2</zorder>
+         <zorder>verticalLayoutWidget</zorder>
+        </widget>
+        <widget class="QGroupBox" name="groupBox_6">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>40</y>
+           <width>231</width>
+           <height>131</height>
+          </rect>
+         </property>
+         <property name="title">
+          <string>Options</string>
+         </property>
+         <widget class="QCheckBox" name="UseKDTreeCheckbox">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>20</y>
+            <width>124</width>
+            <height>17</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Use KD Tree</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+         <widget class="QCheckBox" name="ShowKDTreeCheckbox">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>40</y>
+            <width>124</width>
+            <height>17</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Show KD Tree</string>
+          </property>
+         </widget>
+         <widget class="QCheckBox" name="WireframeCheckBox">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>80</y>
+            <width>167</width>
+            <height>17</height>
+           </rect>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Wireframe</string>
+          </property>
+         </widget>
+         <widget class="QCheckBox" name="NormalSmoothingCheckBox">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>60</y>
+            <width>167</width>
+            <height>17</height>
+           </rect>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Normal Smoothing</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+         <widget class="QSpinBox" name="NofThreadsSpinBox">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>100</y>
+            <width>51</width>
+            <height>20</height>
+           </rect>
+          </property>
+          <property name="minimum">
+           <number>1</number>
+          </property>
+          <property name="value">
+           <number>12</number>
+          </property>
+         </widget>
+         <widget class="QLabel" name="NofThreadsLabel">
+          <property name="geometry">
+           <rect>
+            <x>70</x>
+            <y>100</y>
+            <width>111</width>
+            <height>21</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Number of Threads</string>
+          </property>
+         </widget>
+         <zorder>UseKDTreeCheckbox</zorder>
+         <zorder>ShowKDTreeCheckbox</zorder>
+         <zorder>WireframeCheckBox</zorder>
+         <zorder>NormalSmoothingCheckBox</zorder>
+         <zorder>NofThreadsSpinBox</zorder>
+         <zorder>NofThreadsLabel</zorder>
+         <zorder>UseKDTreeCheckbox</zorder>
+         <zorder>ShowKDTreeCheckbox</zorder>
+         <zorder>UseKDTreeCheckbox</zorder>
+         <zorder>ShowKDTreeCheckbox</zorder>
+         <zorder>WireframeCheckBox</zorder>
+         <zorder>NormalSmoothingCheckBox</zorder>
+         <zorder>NofThreadsSpinBox</zorder>
+         <zorder>NofThreadsLabel</zorder>
+         <zorder>NofThreadsLabel</zorder>
+         <zorder>groupBox</zorder>
+         <zorder>groupBox_2</zorder>
+         <zorder>groupBox_3</zorder>
+         <zorder>groupBox_4</zorder>
+         <zorder>verticalSpacer</zorder>
+         <zorder>Output</zorder>
+        </widget>
+        <widget class="QGroupBox" name="groupBox_7">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>450</y>
+           <width>231</width>
+           <height>121</height>
+          </rect>
+         </property>
+         <property name="title">
+          <string>Output</string>
+         </property>
+         <widget class="QLabel" name="Output">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>10</y>
+            <width>211</width>
+            <height>111</height>
+           </rect>
+          </property>
+          <property name="frameShape">
+           <enum>QFrame::NoFrame</enum>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </widget>
        </widget>
       </item>
      </layout>
     </item>
    </layout>
   </widget>
-  <widget class="QStatusBar" name="statusBar"/>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>

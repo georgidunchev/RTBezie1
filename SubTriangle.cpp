@@ -175,8 +175,11 @@ void CSubTriangle::GetDivision(int& o_nStartOfLongest, CVector3DF& o_vMidPoint, 
 }
 
 /*static*/ bool CSubTriangle::IntersectSubdevidedTriangles(const CRay &ray, CIntersactionInfo &intersectionInfo, const std::vector<CSubTriangle*>& aSubTriangles, bool bDebug)
-{
+{    
     int nSize = aSubTriangles.size();
+
+    intersectionInfo.m_nBezierIntersections += nSize;
+
     float fModifier = 8.0f / static_cast<float>(nSize);
 
     if (bDebug)

@@ -26,7 +26,7 @@ void CLightsScene::AddLight(const ILight &Light)
     m_aLights.push_back(Light);
 }
 
-const ILight &CLightsScene::GetLight(int n)
+ILight &CLightsScene::GetLight(int n)
 {
     return m_aLights[n];
 }

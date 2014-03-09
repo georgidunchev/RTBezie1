@@ -13,7 +13,7 @@ public:
     virtual ~CLightsScene();
 
     void AddLight(const ILight &Light);
-    const ILight& GetLight(int n);
+    ILight& GetLight(int n);
     int GetLightsNumber();
 private:
     CMesh &GetMesh();

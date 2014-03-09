@@ -31,9 +31,9 @@ private slots:
     void slotLoadingStarted(int nMaxSteps);
     void slotLoadingFinished();
 
-    void on_RenderBezierCheckBox_toggled(bool checked);
+//    void on_RenderBezierCheckBox_toggled(bool checked);
 
-    void on_NormalSmoothingCheckBox_toggled(bool checked);
+//    void on_NormalSmoothingCheckBox_toggled(bool checked);
 
     void on_AutoRender_clicked(bool checked);
 
