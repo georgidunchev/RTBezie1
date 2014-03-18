@@ -225,6 +225,11 @@ CVector3DF CAABox::GetCentre() const
     return (m_vMaxVertex + m_vMinVertex)*0.5f;
 }
 
+int CAABox::GetMemory() const
+{
+    return 2 * sizeof(m_vMinVertex);
+}
+
 bool CAABox::Intersect_Test(const CRay &ray, CIntersactionInfo& io_IntersectionInfo, bool bDebug) const
 {
 //	if (IsInside(ray.StartPoint()))

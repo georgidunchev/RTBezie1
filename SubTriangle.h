@@ -56,6 +56,8 @@ public:
 
 //    const CVector3DF GetSubSurfSmoothedNormal(const CVector3DF& vCoords) const;
 
+    int GetMemory() const;
+
 private:
 
     void GetDivision(int& o_nStartOfLongest, CVector3DF& o_vMidPoint, CVector3DF& o_vMidPointBar) const;

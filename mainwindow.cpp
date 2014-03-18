@@ -68,6 +68,11 @@ void MainWindow::paintEvent(QPaintEvent *pe)
         {
             StartRender(false);
         }
+        else
+        {
+            EnableRefreshAndLoad(true);
+        }
+        m_bShouldRefreshView = false;
     }
 }
 
@@ -100,6 +105,8 @@ void MainWindow::on_openMeshButton_clicked()
 
 void MainWindow::on_StartRender_clicked()
 { 
+    if (!GetRaytracer()->GetMesh().isMeshLoaded()) return;
+
     if (m_bAutoRendering)
     {
         m_bStartNormalRender = true;
@@ -111,6 +118,12 @@ void MainWindow::on_StartRender_clicked()
 
 void MainWindow::on_AutoRender_clicked(bool checked)
 {
+    if (!GetRaytracer()->GetMesh().isMeshLoaded())
+    {
+        ui->AutoRender->setChecked(false);
+        return;
+    }
+
     m_bAutoRendering = checked;
 
     //ui->StartRender->setEnabled(m_bAutoRendering);
@@ -147,9 +160,12 @@ void MainWindow::slotRenderFinished()
         int c = GetRaytracer()->m_nAABBTime.fetchAndStoreRelaxed(0);
         int d = GetRaytracer()->m_nObjTime.fetchAndStoreRelaxed(0);
         int e = GetRaytracer()->m_nTotalTime.fetchAndStoreRelaxed(0);
-        stream << "Intersections - AABB: " << a << "\nObj: " << b
-               << "\nTime - AABB: "<< c << " Obj: "<< d << " " << c+d
+        int f = GetRaytracer()->GetMesh().GetMemorySubKB();
+        int g = GetRaytracer()->GetMesh().GetMemoryKDtreeKB();
+        stream << "Tests: AABB " << a << " Obj " << b
+               << "\nTime: AABB "<< c << " + Obj "<< d << " = " << c+d
                << "\nSubTriangles: " << GetRaytracer()->GetMesh().m_nNOfSubtriangles << " AABBs: " << GetRaytracer()->GetMesh().n_mLeafs
+               << "\n" << ((f+g>1024)?"MB: ":"KB: ") << ((f+g>1024)?f/1024:f) << "/" << ((f+g>1024)?g/1024:g)
                << "\nRender Finished in: " << GetRaytracer()->GetTimer().elapsed() << " / " << e;
         GetRaytracer()->GetTimer().invalidate();
         DisplayText(str);
@@ -199,10 +215,15 @@ void MainWindow::StartSingleRender()
     QObject::connect(GetRaytracer(), SIGNAL(sigBucketDone(int)), &progress, SLOT(setValue(int)), Qt::UniqueConnection);
     QObject::connect(GetRaytracer(), SIGNAL(sigThreadsFinished()), this, SLOT(slotRenderFinished()), Qt::UniqueConnection);
 
+//    QObject::connect(GetRaytracer()->GetMesh(), SIGNAL(sigLoadedMesh(bool)), this, SLOT(ui->AutoRender->setEnabled(bool)), Qt::UniqueConnection);
+
+
     if (!m_bAutoRendering)
     {
         StartRender();
     }
+
+//    EnableRefreshAndLoad(false);
 }
 
 void MainWindow::StartRender(bool bHighQuality)
@@ -221,6 +242,8 @@ void MainWindow::StartRender(bool bHighQuality)
     GetRaytracer()->BeginFrame(bHighQuality);
     GetRaytracer()->RenderThreaded();
     //GetRaytracer()->Render();
+
+    EnableRefreshAndLoad(false);
 }
 
 void MainWindow::DisplayText(const QString& strOutput)
@@ -280,4 +303,10 @@ void MainWindow::on_butResetCamera_clicked()
 void MainWindow::on_butLookAtCentre_clicked()
 {
     GetRaytracer()->GetCamera().LookAtCentre();
+}
+
+void MainWindow::EnableRefreshAndLoad(bool bEnable)
+{
+    ui->butRefresh->setEnabled(bEnable);
+    ui->openMeshButton->setEnabled(bEnable);
 }

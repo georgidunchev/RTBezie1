@@ -27,6 +27,8 @@ public:
 
     bool Intersect(const CRay& ray, CIntersactionInfo& intersectionInfo, bool bDebug = false);
 
+    int GetMemory() const;
+
 private:
     CMesh &GetMesh();
     std::vector<CSubTriangle*>* m_pTriangles;

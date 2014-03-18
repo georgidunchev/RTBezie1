@@ -14,6 +14,7 @@ CMesh::CMesh(QObject *parent)
     : QObject(parent)
     , m_pRoot(NULL)
     , n_mLeafs(0)
+    , m_bLoadedMesh(false)
 {
 
 }
@@ -39,10 +40,14 @@ void CMesh::Load(const QString& strInputFileName)
 
     GenerateKDTree(); // depends on the bounding box
     emit sigLoadingFinished();
+
+//    GetMemoryKB();
 }
 
 void CMesh::ReadFromFile(const QString &strInputFileName)
 {
+    m_bLoadedMesh = false;
+
     QFile file(strInputFileName);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
     {
@@ -120,6 +125,8 @@ void CMesh::ReadFromFile(const QString &strInputFileName)
         }
     }
     file.close();
+
+    m_bLoadedMesh = !m_aTriangles.empty();
 }
 
 void CMesh::MakeBoundingBox() 
@@ -199,7 +206,25 @@ bool CMesh::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo, cons
 
 bool CMesh::IntersectKDTree(const CRay &ray, CIntersactionInfo &intersectionInfo, bool bDebug)
 {
-   return m_pRoot->Intersect(ray, intersectionInfo, bDebug);
+    return m_pRoot->Intersect(ray, intersectionInfo, bDebug);
+}
+
+int CMesh::GetMemorySubKB() const
+{
+    int size = m_aTriangles.size();
+    const int subtrianglesSize = size==0?0:(size * m_aTriangles.front()->GetMemory())/1024;
+    return subtrianglesSize;
+}
+
+int CMesh::GetMemoryKDtreeKB() const
+{
+    const int kdtreeSize = m_pRoot->GetMemory()/1024;
+    return kdtreeSize;
+}
+
+bool CMesh::isMeshLoaded() const
+{
+    return m_bLoadedMesh;
 }
 
 std::vector<CTriangle*> *CMesh::GetPrimitives()

@@ -311,6 +311,20 @@ const CVector3DF CSubTriangle::GetSubBar(const CVector3DF &vParentBar) const
     return CVector3DF(fDetX/fDetCr, fDetY/fDetCr, fDetZ/fDetCr);
 }
 
+int CSubTriangle::GetMemory() const
+{
+    const int pointerSize = sizeof(m_pParent_SubTriangle);
+    const int vec3dfSize =  sizeof(m_vABar);
+    const int intSize = sizeof(m_nSavePos);
+    int size = 3*pointerSize;
+    size += 3*vec3dfSize;
+    size += 3*intSize;
+    size += m_BoundingBox.GetMemory();
+    size += m_pBezierPatch->GetMemory();
+
+    return size;
+}
+
 //const CVector3DF CSubTriangle::GetSubSurfSmoothedNormal(const CVector3DF &vCoords) const
 //{
 //    const CVector3DF vLocalCoords = GetSubBar(vCoords);

@@ -45,10 +45,17 @@ public:
     int m_nNOfSubtriangles;
     int n_mLeafs;
 
+    int GetMemorySubKB() const;
+    int GetMemoryKDtreeKB() const;
+
+    bool isMeshLoaded() const;
+
 signals:
     void sigLoadingStarted(int value);
     void sigLoadingStepDone(int value);
     void sigLoadingFinished();
+
+    void sigLoadedMesh(bool value);
 
 public slots:
 
@@ -66,6 +73,7 @@ private:
 
     CKDTreeNode * m_pRoot;
     CVector3DF::EDimiensions m_eSortingDimention;
+    bool m_bLoadedMesh;
 };
 
 

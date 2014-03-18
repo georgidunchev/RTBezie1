@@ -56,6 +56,8 @@ private slots:
 
     void on_butLookAtCentre_clicked();
 
+    void EnableRefreshAndLoad(bool bEnable);
+
 private:
     void StartSingleRender();
     void StartRender(bool bHighQuality = true);

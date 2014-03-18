@@ -36,6 +36,8 @@ public:
 
     CVector3DF GetCentre() const;
 
+    int GetMemory() const;
+
 signals:
     
 public slots:

@@ -25,6 +25,9 @@ CTriangle::CTriangle( const std::vector<CVertex> &aVertecis, int v1, int v2, int
     , m_bHasBoundingBox(false)
     , m_nTriangleId(nTriangleId)
     , m_BezierPatch(*this)
+    , m_aSubTriangles(GetSettings()->m_bHalfSubdvision ?
+                      (CUtils::PowerOf2(GetSettings()->GetNofSubdivisions())) :
+                      ((GetSettings()->GetNofSubdivisions() + 1)*(GetSettings()->GetNofSubdivisions() + 1)))
 {
     m_aVertIndices.push_back(v1);
     m_aVertIndices.push_back(v2);
@@ -118,7 +121,7 @@ void CTriangle::Subdivide()
     {
         //New test subdivision
         int nSubdivisionLevel = GetSettings()->GetNofSubdivisions();
-        m_aSubTriangles.resize((nSubdivisionLevel + 1)*(nSubdivisionLevel + 1));
+//        m_aSubTriangles.resize((nSubdivisionLevel + 1)*(nSubdivisionLevel + 1));
 
         if (nSubdivisionLevel == 0)
         {
@@ -151,7 +154,7 @@ void CTriangle::Subdivide()
     }
     else
     {
-        m_aSubTriangles.resize(CUtils::PowerOf2(GetSettings()->GetNofSubdivisions()));
+//        m_aSubTriangles.resize(CUtils::PowerOf2(GetSettings()->GetNofSubdivisions()));
 
         m_aSubTriangles[0] = new CSubTriangle(*this);
         m_aSubTriangles[0]->Subdivide();
@@ -173,6 +176,14 @@ void CTriangle::AddSubTriangle(CSubTriangle* subTriangle)
     }
     m_aSubTriangles[nSavePos] = subTriangle;
     m_aSubTriangles[nSavePos]->Subdivide();
+}
+
+int CTriangle::GetMemory() const
+{
+    const int size = m_aSubTriangles.size();
+    int total = size==0?0: size * m_aSubTriangles.front()->GetMemory();
+    total += m_BezierPatch.GetMemory();
+    return total;
 }
 
 bool CTriangle::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo, bool bDebug) const

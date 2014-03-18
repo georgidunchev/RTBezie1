@@ -11,16 +11,22 @@
 
 CBezierPatch::CBezierPatch(CTriangle& pParent)
     : m_Parent_Triangle(pParent)
-    , m_pParent_SubTriangle(NULL)
-    , m_aAdditionalPoints(10, CVector3DF(0, 0, 0))
+    , m_pParent_SubTriangle(NULL) 
 {
+    for (int i=0; i < 10; ++i)
+    {
+        m_aAdditionalPoints[i] = CVector3DF(0, 0, 0);
+    }
 }
 
 CBezierPatch::CBezierPatch(CSubTriangle *pParent)
     : m_Parent_Triangle(pParent->GetParent())
     , m_pParent_SubTriangle(pParent)
-    , m_aAdditionalPoints(10, CVector3DF(0, 0, 0))
 {
+    for (int i=0; i < 10; ++i)
+    {
+        m_aAdditionalPoints[i] = CVector3DF(0, 0, 0);
+    }
 }
 
 const CVector3DF CBezierPatch::GetPointFromBarycentric(const CVector3DF& vCoords) const
@@ -96,26 +102,25 @@ void CBezierPatch::BuildBezierPoints()
     m_aAdditionalPoints[1] = m_Parent_Triangle.B().GetPos();
     m_aAdditionalPoints[2] = m_Parent_Triangle.C().GetPos();
 
-    std::vector<CVertexInfo> aVertices;
+    unsigned int c = 0;
+    CVertexInfo aVertices[3];
     // Push the needed information for generating the additional points
-    aVertices.push_back(CVertexInfo(Point(3,0),
+    aVertices[c++] = (CVertexInfo(Point(3,0),
                                     Point(0,3), Point(2,1),
                                     Point(0,0), Point(2,0),
                                     m_Parent_Triangle.A().Normal_Get()));
 
-    aVertices.push_back(CVertexInfo(Point(0,3),
+    aVertices[c++] = (CVertexInfo(Point(0,3),
                                     Point(0,0), Point(0,2),
                                     Point(3,0), Point(1,2),
                                     m_Parent_Triangle.B().Normal_Get()));
 
-    aVertices.push_back(CVertexInfo(Point(0,0),
+    aVertices[c++] = (CVertexInfo(Point(0,0),
                                     Point(3,0), Point(1,0),
                                     Point(0,3), Point(0,1),
                                     m_Parent_Triangle.C().Normal_Get()));
 
-    //Generate the new bezier points
-    unsigned int nSize = aVertices.size();
-    for( unsigned int i = 0; i < nSize; ++i )
+    for( unsigned int i = 0; i < c; ++i )
     {
         BuildBezierPoint(aVertices[i]);
     }
@@ -444,12 +449,23 @@ const CVector3DF &CBezierPatch::GetPoint(QVector2D bar) const
     return m_aAdditionalPoints[GetIndex(bar.x(),bar.y())];
 }
 
+int CBezierPatch::GetMemory() const
+{
+    const int pointerSize = sizeof(m_pParent_SubTriangle);
+    const int vec3dfSize =  sizeof(Q30);
+
+    int size = 2 * pointerSize;
+    size += 20 * vec3dfSize;
+
+    return size;
+}
+
 bool CBezierPatch::IntersectHighQuality(const CRay &ray, CIntersactionInfo &intersectionInfo, bool bDebug) const
 {
     //    return IntersectLowQuality(ray, intersectionInfo, bDebug);
 
     //    return false;
-    std::vector<CVector3DF> aPointsToCheck;
+    CVector3DF aPointsToCheck[4];
     //    CSubTriangle& SubTriangle = * intersectionInfo.pSubTriangle;
 
     //    aPointsToCheck.push_back(CVector3DF(intersectionInfo.u,intersectionInfo.v,intersectionInfo.w));
@@ -482,12 +498,13 @@ bool CBezierPatch::IntersectHighQuality(const CRay &ray, CIntersactionInfo &inte
     //	}
     //    }
     float fA = 0.33f;
-    aPointsToCheck.push_back( CVector3DF(fA, fA, 1.0f - 2 * fA) );
+    int nPoints = 0;
+    aPointsToCheck[nPoints++] = ( CVector3DF(fA, fA, 1.0f - 2 * fA) );
     if (GetSettings()->m_bMultipleSeeds)
     {
-        aPointsToCheck.push_back( CVector3DF(1.0f, 0.0f, 0.0f) );
-        aPointsToCheck.push_back( CVector3DF(0.0f, 1.0f, 0.0f) );
-        aPointsToCheck.push_back( CVector3DF(0.0f, 0.0f, 1.0f) );
+        aPointsToCheck[nPoints++] = ( CVector3DF(1.0f, 0.0f, 0.0f) );
+        aPointsToCheck[nPoints++] = ( CVector3DF(0.0f, 1.0f, 0.0f) );
+        aPointsToCheck[nPoints++] = ( CVector3DF(0.0f, 0.0f, 1.0f) );
     }
 
     //    for (uint i = 0, n = m_aAdditionalPoints.size(); i < n; ++i)
@@ -505,7 +522,7 @@ bool CBezierPatch::IntersectHighQuality(const CRay &ray, CIntersactionInfo &inte
     bool bezierFast = false;
     if (!bezierFast)
     {
-        for (int i = 0, n = aPointsToCheck.size(); i < n; ++i)
+        for (int i = 0; i < nPoints; ++i)
         {
             //	    if (bDebug)
             //	    {

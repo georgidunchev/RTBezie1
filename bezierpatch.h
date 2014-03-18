@@ -59,13 +59,6 @@ public:
 
     void BuildBezierPoints_Sub2();
 
-    void Subdivide();
-//    void AddSubTriangle(CSubTriangle* subTriangle);
-//    CSubTriangle* GetSubTriangle(int n) const
-//    {
-//	return m_aSubTriangles[n];
-//    };
-
     bool IntersectHighQuality(const CRay& ray, CIntersactionInfo& intersectionInfo, bool bDebug = false) const;
     bool IntersectHighQuality(const CRay &ray, CIntersactionInfo &intersectionInfo, const CSubTriangle &SubTriangle, bool bDebug) const;
 
@@ -85,6 +78,8 @@ public:
     const CVector3DF &GetPoint(int a, int b) const;
     const CVector3DF &GetPoint(QVector2D bar) const;
 
+    int GetMemory() const;
+
 private:
 
     //used internally
@@ -103,7 +98,7 @@ private:
     CTriangle& m_Parent_Triangle;
     CSubTriangle* m_pParent_SubTriangle;
 
-    std::vector<CVector3DF> m_aAdditionalPoints;
+   CVector3DF m_aAdditionalPoints[10];
 
     CVector3DF Q30, Q03, Q21, Q12, Q20, Q02, Q11, Q10, Q01, Q00;
 };

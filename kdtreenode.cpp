@@ -65,7 +65,7 @@ int CKDTreeNode::Process()
 	m_pRightNode = new CKDTreeNode(pRightTriangles, m_nLevel+1, RightBBox);
     nLeafs += m_pRightNode->Process();
 
-	m_pTriangles->clear();
+    m_pTriangles->clear();
     return nLeafs;
 }
 
@@ -196,6 +196,24 @@ bool CKDTreeNode::Intersect(const CRay &ray, CIntersactionInfo &intersectionInfo
 			return true;
 		}
     }
+}
+
+int CKDTreeNode::GetMemory() const
+{
+    const int pointerSize = sizeof(m_pLeftNode);
+    int size = 3* pointerSize;
+    size += m_pTriangles->size()*pointerSize;
+    size += sizeof(m_nLevel);
+    size += m_BoundingBox.GetMemory();
+    if (m_pLeftNode)
+    {
+        size += m_pLeftNode->GetMemory();
+    }
+    if (m_pRightNode)
+    {
+        size += m_pRightNode->GetMemory();
+    }
+    return size;
 }
 
 CMesh &CKDTreeNode::GetMesh()

@@ -51,6 +51,9 @@ public:
     }
 
     CBezierPatch& GetBezierPatch()  { return m_BezierPatch; }
+
+    int GetMemory() const;
+
 protected:
     std::vector<int> m_aVertIndices;
     std::vector<CVertex>& m_aVertecis;
